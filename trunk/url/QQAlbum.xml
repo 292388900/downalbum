@@ -2,16 +2,16 @@
 
 <soft>
 <name>QQAlbum</name>
-<version>2.16</version>
+<version>3.17</version>
 <downurl>
 http://softsing.googlecode.com/svn/trunk/QQAlbum/QQAlbum.exe
 </downurl>
 <regurl>http://softsing.weebly.com/3/post/2010/10/1.html</regurl>
 <help>http://softsing.weebly.com/3/post/2010/10/1.html</help>
 <news>
-修复重大bug，如果您是注册用户但是软件提示未注册，&#x000A;&#x000D;
-请发邮件给作者（附上您的订单号和您的机器码），&#x000D;&#x000A;
-免费赠送新的注册码！&#x000A;&#x000D;
+修复重大bug，如果您是注册用户但是软件提示未注册，&#x000D;
+请发邮件给作者（附上您的订单号和您的机器码），&#x000D;
+免费赠送新的注册码！&#x000D;
 </news>
 </soft>
 
