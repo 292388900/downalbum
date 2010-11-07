@@ -2,12 +2,15 @@
 
 <soft>
 <name>RrAlbum</name>
-<version>1.26</version>
+<version>2.27</version>
 <downurl>
 http://softsing.googlecode.com/svn/trunk/RrAlbum/RrAlbum.exe
 </downurl>
 <regurl>http://softsing.weebly.com/3/post/2010/10/4.html</regurl>
 <help>http://softsing.weebly.com/3/post/2010/10/4.html</help>
+<news>
+新版本修复了一些bug! &#x000D;
+</news>
 </soft>
 
 </data>
