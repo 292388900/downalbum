@@ -2,12 +2,16 @@
 
 <soft>
 <name>sinablogAlbum</name>
-<version>1.1</version>
+<version>1.2</version>
 <downurl>
 http://softhao.googlecode.com/svn/trunk/sinablogAlbum/sinablogAlbum.exe
 </downurl>
 <regurl>http://blog.sina.com.cn/s/blog_6bf6a90a0100n7np.html</regurl>
 <help>http://blog.sina.com.cn/s/blog_6bf6a90a0100n7np.html</help>
+<news>
+新版本修复了一些bug! &#x000D;
+请下载最新版，或者到官方网站选择最新版下载!
+</news>
 </soft>
 
 </data>
