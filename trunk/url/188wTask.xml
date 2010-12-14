@@ -3,11 +3,10 @@
 <soft>
 <name>188wTask</name>
 <version>1.0</version>
-<downurl>
-http://www.linystar.com/soft/188wTask/188wTask.exe
-</downurl>
-<regurl>http://www.linystar.com/?p=98</regurl>
-<help>http://www.linystar.com/?p=98</help>
+<downurl>http://softsing.googlecode.com/svn/trunk/188wTask/188wTask.rar</downurl>
+<downurl2>http://softsing.googlecode.com/svn/trunk/188wTask/188wTask2.rar</downurl2>
+<regurl>http://item.taobao.com/item.htm?id=8715682965</regurl>
+<help>http://item.taobao.com/item.htm?id=8715682965</help>
 <news>
 新版本修复了一些bug! 增强了一些功能！&#x000D;
 建议更新下载！
