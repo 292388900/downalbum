@@ -2,12 +2,11 @@
 
 <soft>
 <name>kaixin001Album</name>
-<version>2.5</version>
-<downurl>
-http://www.linystar.com/soft/kaixin001Album/kaixin001Album.exe
-</downurl>
-<regurl>http://softsing.weebly.com/3/post/2010/10/8.html</regurl>
-<help>http://softsing.weebly.com/3/post/2010/10/8.html</help>
+<version>2.6</version>
+<downurl>http://softsing.googlecode.com/svn/trunk/kaixin001Album/kaixin001Album.exe</downurl>
+<downurl2>http://softsing.googlecode.com/svn/trunk/kaixin001Album/kaixin001Album2.exe</downurl2>
+<regurl>http://item.taobao.com/item.htm?id=7816641147</regurl>
+<help>http://item.taobao.com/item.htm?id=7816641147</help>
 <news>
 新版本修复了一些bug! &#x000D;
 请下载最新版，或者到官方网站选择最新版下载!
