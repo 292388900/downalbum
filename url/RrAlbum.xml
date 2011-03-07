@@ -1,17 +1,13 @@
 <data>
-
-<soft>
-<name>RrAlbum</name>
-<version>2.45</version>
-<downurl>http://www.linystar.com/soft/RrAlbum/RrAlbum.exe</downurl>
-<downurl2>http://www.linystar.com/soft/RrAlbum/RrAlbum2.exe</downurl2>
-<regurl>http://item.taobao.com/item.htm?id=7816476309</regurl>
-<help>http://www.linystar.com/rw/rralbum.html</help>
-<bbs>http://www.linystar.com</bbs>
-<pswd>http://www.linystar.com/logging.php?action=login</pswd>
-<news>
-新版本修复了一些bug! 加快了图片下载速度，建议更新下载！&#x000D;
-</news>
-</soft>
-
+    <soft>
+        <name>RrAlbum</name>
+        <version>2.45</version>
+        <downurl>http://www.linystar.com/soft/RrAlbum/RrAlbum.exe</downurl>
+        <downurl2>http://www.linystar.com/soft/RrAlbum/RrAlbum2.exe</downurl2>
+        <regurl>http://item.taobao.com/item.htm?id=7816476309</regurl>
+        <help>http://www.linystar.com/rw/rralbum.html</help>
+        <bbs>http://www.linystar.com</bbs>
+        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <news>新版本修复了一些bug! 加快了图片下载速度，建议更新下载！&#x0D;</news>
+    </soft>
 </data>

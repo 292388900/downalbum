@@ -1,18 +1,13 @@
 <data>
-
-<soft>
-<name>picasaAlbum</name>
-<version>2.11</version>
-<downurl>http://www.linystar.com/soft/picasaAlbum/picasaAlbum.exe</downurl>
-<downurl2>http://www.linystar.com/soft/picasaAlbum/picasaAlbum2.exe</downurl2>
-<regurl>http://item.taobao.com/item.htm?id=8178372653</regurl>
-<help>http://www.linystar.com/rw/picasaalbum.html</help>
-<bbs>http://www.linystar.com</bbs>
-<pswd>http://www.linystar.com/logging.php?action=login</pswd>
-<news>
-新版本不用翻墙也能下载了! &#x000D;
-请下载最新版，或者到官方网站选择最新版下载!
-</news>
-</soft>
-
+    <soft>
+        <name>picasaAlbum</name>
+        <version>2.11</version>
+        <downurl>http://www.linystar.com/soft/picasaAlbum/picasaAlbum.exe</downurl>
+        <downurl2>http://www.linystar.com/soft/picasaAlbum/picasaAlbum2.exe</downurl2>
+        <regurl>http://item.taobao.com/item.htm?id=8178372653</regurl>
+        <help>http://www.linystar.com/rw/picasaalbum.html</help>
+        <bbs>http://www.linystar.com</bbs>
+        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <news>新版本不用翻墙也能下载了! &#x0D; 请下载最新版，或者到官方网站选择最新版下载!</news>
+    </soft>
 </data>
