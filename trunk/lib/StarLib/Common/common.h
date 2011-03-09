@@ -98,5 +98,8 @@ namespace Star
 		int SplitString(CString strSrc,CString strSep,CStringArray&strArr);
 
 		CString Certify(CString strHostServer,CString strPage,CString strName,CString strPswd,CString strAppName);
+
+		//在字符串中查找字符，pSub含有多个字符
+		int StrFindOneOf(char*pMain,char*pSub);
 	}
 }
