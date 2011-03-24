@@ -38,6 +38,8 @@ namespace Star
 		BOOL WINAPI RemoteLoadLibrary(LPCTSTR pszDllName, DWORD dwProcessId);
 		CString GetStartPath();
 		CString GetMyTempPath();
+		CString GetSysTempPath();
+		CString GetSysTempFileName();
 		CString GetModuleFilePath();
 		CString GetWindowsPath();
 		CString GetSystemPath();
