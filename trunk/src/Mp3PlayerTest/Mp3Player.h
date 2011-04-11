@@ -5,7 +5,7 @@
 //  
 //
 // Created On:	2011Äê4ÔÂ2ÈÕ 10:14:23
-// Original author:	xxzhu
+// Original author:	xiaolin
 ///////////////////////////////////////////////////////////
 
 #pragma once

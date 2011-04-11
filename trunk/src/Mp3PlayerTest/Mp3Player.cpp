@@ -5,7 +5,7 @@
 //  
 //
 // Created On:	2011Äê4ÔÂ2ÈÕ 10:14:32
-// Original author:	xxzhu
+// Original author:	xiaolin
 ///////////////////////////////////////////////////////////
 
 
