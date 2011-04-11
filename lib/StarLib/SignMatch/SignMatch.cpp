@@ -85,7 +85,7 @@ BYTE CSignMatch::HexCharToBin(BYTE chHex)
 }
 
 /*------------------------------------------------------------------------
-[8/6/2009 zhuxingxing]
+[8/6/2009 xiaolin]
 说明:   接受16进制的特征码字符串,((orig or mask) xor pure) ==0
 ------------------------------------------------------------------------*/
 BOOL CSignMatch::SetOrigSign(CString strOrigSign,DWORD dwStartRva,DWORD dwEndRva)

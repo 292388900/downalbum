@@ -4,7 +4,7 @@
 #include <Tlhelp32.h>
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明:	return PID from a process name
 		need :
 		#include <Shlwapi.h>
@@ -37,7 +37,7 @@ ULONG  Star::Process::GetProcessID(char *szProcessName)
 }
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明: Enum Threads of a process,return size needed
 ------------------------------------------------------------------------*/
 ULONG Star::Process::GetProcessThreads(ULONG PID,PULONG lpBuffer,ULONG dwBufferSize)
@@ -68,7 +68,7 @@ ULONG Star::Process::GetProcessThreads(ULONG PID,PULONG lpBuffer,ULONG dwBufferS
 }
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明:挂起或唤醒进程的所有线程
 ------------------------------------------------------------------------*/
 BOOL WINAPI Star::Process::SuspendProcess(DWORD dwProcessID, BOOL bSuspend)
@@ -115,7 +115,7 @@ BOOL WINAPI Star::Process::SuspendProcess(DWORD dwProcessID, BOOL bSuspend)
 }
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明:获取内存地址所在的模块基址
 ------------------------------------------------------------------------*/
 HMODULE WINAPI Star::Process::ModuleFromAddress(PVOID pv) 
@@ -132,7 +132,7 @@ HMODULE WINAPI Star::Process::ModuleFromAddress(PVOID pv)
 }
 
 /*------------------------------------------------------------------------
-[2010-1-23 zhuxingxing]
+[2010-1-23 xiaolin]
 说明:由进程ID获取相应的主线程ID
 ------------------------------------------------------------------------*/
 DWORD WINAPI Star::Process::GetThreadIdFromPID(DWORD dwProcessId)
@@ -158,7 +158,7 @@ DWORD WINAPI Star::Process::GetThreadIdFromPID(DWORD dwProcessId)
 }
 
 /*------------------------------------------------------------------------
-[2010-1-23 zhuxingxing]
+[2010-1-23 xiaolin]
 说明:获取进程指定名称的模块信息
 ------------------------------------------------------------------------*/
 BOOL WINAPI Star::Process::GetModuleEntry(DWORD dwProcessID,LPCTSTR lpszModuleName,MODULEENTRY32*pEntry)

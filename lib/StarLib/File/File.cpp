@@ -5,7 +5,7 @@
 #include "File.h"
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明:  让用户选择一个文件夹或目录,返回选择的路径.
 ------------------------------------------------------------------------*/
 CString	Star::File::BrowseFolder()
@@ -36,7 +36,7 @@ CString	Star::File::BrowseFolder()
 }
 
 /************************************************************************
-[3/23/2009 zhuxingxing]
+[3/23/2009 xiaolin]
 函数名：DeleteDirectory
 参数：  DirName:目录名(需要后面带\);bDeleteSelf:最终是否把这个目录也删除.
 返回值：该目录下的文件总数
@@ -78,7 +78,7 @@ int Star::File::DeleteDirectory(CString DirName,BOOL bDeleteSelf)
 }
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 strRarCmd:	rar.exe程序全路径名,如:C:\Program Files\WinRAR\Rar.exe
 rarFile:	待解压的.rar或者.zip文件
 strFilter:	解压参数
@@ -129,7 +129,7 @@ void Star::File::RarExtactorFile(CString strRarCmd,CString rarFile,CString strFi
 }
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 strRarCmd:	rar.exe程序全路径名,如:C:\Program Files\WinRAR\Rar.exe
 rarFile:	.rar或者.zip文件
 strFileToAdd:要添加的文件
@@ -181,7 +181,7 @@ void Star::File::RarAddFile(CString strRarCmd,CString rarFile,CString strFileToA
 
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明: 
 ------------------------------------------------------------------------*/
 void Star::File::OpenFile(CString strFileName)
@@ -202,7 +202,7 @@ void Star::File::OpenFile(CString strFileName)
 }
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明: 
 ------------------------------------------------------------------------*/
 void Star::File::SearchFile(CString strDirectory)
@@ -239,7 +239,7 @@ WORD Star::File::MakeLangID()
 //=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 
 /*------------------------------------------------------------------------
-[7/24/2009 zhuxingxing]
+[7/24/2009 xiaolin]
 说明:API更改exe文件图标,并没有检测此文件是否是PE文件.
 示例:ChangeIcon("c:\\test.exe","c:\\test.ico","AyIcon");
 ------------------------------------------------------------------------*/
