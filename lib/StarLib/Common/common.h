@@ -103,5 +103,12 @@ namespace Star
 
 		//在字符串中查找字符，pSub含有多个字符
 		int StrFindOneOf(char*pMain,char*pSub);
+
+		//实现关机的函数,借鉴：http://shareaza.svn.sourceforge.net/svnroot/shareaza
+		BOOL SetShutdownRights();
+		//默认关机
+		BOOL ShutDownComputer(UINT ShutdownFlags=EWX_POWEROFF);
+
+
 	}
 }
