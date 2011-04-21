@@ -103,6 +103,8 @@ namespace Star
 
 		//在字符串中查找字符，pSub含有多个字符
 		int StrFindOneOf(char*pMain,char*pSub);
+		//查找直到不是数字的字符
+		int StrFindCharNotDigit(char*pMain);
 
 		//实现关机的函数,借鉴：http://shareaza.svn.sourceforge.net/svnroot/shareaza
 		BOOL SetShutdownRights();
