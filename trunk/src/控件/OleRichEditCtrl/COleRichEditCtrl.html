@@ -1,0 +1,392 @@
+<!--------------------------------------------------------------------------->  
+<!--                           INTRODUCTION                                
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->  
+<!--------------------------------------------------------------------------->  
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>The Code Project</title>
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+<link rel="stylesheet" type=text/css href="http://www.codeproject.com/styles/global.css">
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+<!--------------------------------------------------------------------------->  
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       A Rich Edit Control That Displays Bitmaps and Other OLE Objects
+Author:      Mike O'Neill
+Email:       MikeAThon2000@hotmail.com
+Environment: VC++ 5.0-6.0, NT 4.0, Win95/98, WinXP/2K
+Keywords:    CRichEditCtrl, OLE, Embedded Objects, Bitmaps
+Level:       Beginner
+Description: COleRichEditCtrl will display RTF text as well as bitmaps, video clips, Word, Excel and PowerPoint documents, and any other kind of OLE object 
+Section      Rich Edit Controls
+SubSection   General
+</pre>
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       --> 
+
+<P><ul class=download>
+<li><a href="COleRichEditCtrl-DemoProject.zip">Download demonstration project for COleRichEditCtrl - 462 Kb </a>(includes a release-build executable that you can run without the need to compile)</li>
+<li><a href="COleRichEditCtrl-Source.zip">Source Code for COleRichEditCtrl only - 4 Kb </A>
+</UL>
+
+<p><img src="Screenshot-COleRichEdit.gif" alt="Bitmaps and other OLE objects displayed in a rich edit control" width=600 height=999></p>
+
+
+<!-------------------------------     STEP 3      --------------------------->
+<!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   --> 
+<A name="Top"/>
+<H2>Contents</H2>
+<UL>
+<LI><A HREF="#Introduction">Introduction</A>
+<LI><A HREF="#Class">The <code>COleRichEditCtrl</code> Class</A>
+<LI><A HREF="#Demo">The Demo Program</A>
+<LI><A HREF="#Problem">A Problem During Development of the <code>COleRichEditCtrl</code> Class</A>
+<LI><A HREF="#Use">How To Use The <code>COleRichEditCtrl</code> Control In Your Project</A>
+<LI><A HREF="#Gotcha">Some Final Few Words</A>
+<LI><A HREF="#Version">Version and Revision History</A>
+<LI><A HREF="#Bibliography">Bibliography</A>
+</UL>
+
+<P><A name="Introduction"/>
+<h2>Introduction&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></h2>
+
+<P>I needed a rich edit control that could display bitmaps.  Searching around the Web, I could see that others have faced the same need.  For me, I wanted a &quot;light-weight&quot; Help functionality that I could embed as an RTF resource and display from my application, so that I did not need a full-blown Help companion.  And what good is a Help file without screenshots of your application -- hence the need for bitmaps in a rich edit control.
+
+<P>That same searching around the Web also convinced me that the solution was not easy to come by.  By chance I found the hint that made it all work, in a <B><I>comment</I></B> to an article (i.e., not the article itself) posted by Stephane Lesage at <A HREF="http://www.codeguru.com/Cpp/controls/richedit/comments.php/c5383/?thread=58860">http://www.codeguru.com/Cpp/controls/richedit/comments.php/c5383/?thread=58860</A> which he titled &quot;Getting Images with a StreamIn/ClipBoard/Drag'n'Drop operation&quot;:
+
+<BLOCKQUOTE><FONT SIZE=-1><I>Quote from Mr. Lesage:</I></FONT><P>&quot;If you want object insertion operations to work in your RichEdit Control, you have to supply an IRichEditOleCallback interface and implement the GetNewStorage method.&quot;
+</BLOCKQUOTE>
+
+<P>OLE was the needed hint, and informed with code suggested by Mr. Lesage, I was able to write the <code>COleRichEditCtrl</code> class, which is derived from MFC's <code>CRichEditCtrl</code> class.
+
+<P>
+<P><A name="Class"/>
+<H2>The <code>COleRichEditCtrl</code> Class&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+
+<P>The code for the class is actually straightforward.  Inside the header, I defined a nested class (actually, it's not really a <code>class</code>; it's an <code>interface</code>) derived from <code>IRichEditOleCallback</code>, which is documented in MSDN at <A HREF="http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/richeditcontrolreference/richeditinterfaces/iricheditolecallback.asp">http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/richeditcontrolreference/richeditinterfaces/iricheditolecallback.asp</A>.  The most significant method implemented in this nested class is <code>GetNewStorage</code> which provides storage for a new object pasted from the clipboard or read in from an RTF stream.  Here's the header for class <code>COleRichEditCtrl</code>, with most of the ClassWizard boilerplate deleted for simplification:
+
+<PRE>
+<FONT SIZE=-1>#include &lt;richole.h&gt;
+
+
+/////////////////////////////////////////////////////////////////////////////
+// COleRichEditCtrl window
+
+class COleRichEditCtrl : public CRichEditCtrl
+{
+// Construction
+public:
+	COleRichEditCtrl();
+	virtual ~COleRichEditCtrl();
+
+	long StreamInFromResource(int iRes, LPCTSTR sType);
+
+
+
+protected:
+	static DWORD CALLBACK readFunction(DWORD dwCookie,
+		 LPBYTE lpBuf,			// the buffer to fill
+		 LONG nCount,			// number of bytes to read
+		 LONG* nRead);			// number of bytes actually read
+
+	interface IExRichEditOleCallback;  // forward declaration (see below in this header file)
+
+	IExRichEditOleCallback* m_pIRichEditOleCallback;
+	BOOL m_bCallbackSet;
+	
+	
+	interface IExRichEditOleCallback : public IRichEditOleCallback
+	{
+	public:
+		IExRichEditOleCallback();
+		virtual ~IExRichEditOleCallback();
+		int m_iNumStorages;
+		IStorage* pStorage;
+		DWORD m_dwRef;
+
+		virtual HRESULT STDMETHODCALLTYPE GetNewStorage(LPSTORAGE* lplpstg);
+		virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject);
+		virtual ULONG STDMETHODCALLTYPE AddRef();
+		virtual ULONG STDMETHODCALLTYPE Release();
+		virtual HRESULT STDMETHODCALLTYPE GetInPlaceContext(LPOLEINPLACEFRAME FAR *lplpFrame,
+			LPOLEINPLACEUIWINDOW FAR *lplpDoc, LPOLEINPLACEFRAMEINFO lpFrameInfo);
+ 		virtual HRESULT STDMETHODCALLTYPE ShowContainerUI(BOOL fShow);
+ 		virtual HRESULT STDMETHODCALLTYPE QueryInsertObject(LPCLSID lpclsid, LPSTORAGE lpstg, LONG cp);
+ 		virtual HRESULT STDMETHODCALLTYPE DeleteObject(LPOLEOBJECT lpoleobj);
+ 		virtual HRESULT STDMETHODCALLTYPE QueryAcceptData(LPDATAOBJECT lpdataobj, CLIPFORMAT FAR *lpcfFormat,
+			DWORD reco, BOOL fReally, HGLOBAL hMetaPict);
+ 		virtual HRESULT STDMETHODCALLTYPE ContextSensitiveHelp(BOOL fEnterMode);
+ 		virtual HRESULT STDMETHODCALLTYPE GetClipboardData(CHARRANGE FAR *lpchrg, DWORD reco, LPDATAOBJECT FAR *lplpdataobj);
+ 		virtual HRESULT STDMETHODCALLTYPE GetDragDropEffect(BOOL fDrag, DWORD grfKeyState, LPDWORD pdwEffect);
+ 		virtual HRESULT STDMETHODCALLTYPE GetContextMenu(WORD seltyp, LPOLEOBJECT lpoleobj, CHARRANGE FAR *lpchrg,
+			HMENU FAR *lphmenu);
+	};
+ 
+
+public:
+
+// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(COleRichEditCtrl)
+	protected:
+	virtual void PreSubclassWindow();
+	//}}AFX_VIRTUAL
+
+// Implementation
+public:
+
+
+	// Generated message map functions
+protected:
+	//{{AFX_MSG(COleRichEditCtrl)
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	//}}AFX_MSG
+
+	DECLARE_MESSAGE_MAP()
+};
+</FONT>
+</PRE>
+
+<P>An <code>IExRichEditOleCallback</code> object is allocated from the heap in the <code>OnCreate</code> handler for the class (not precisely: see below where I describe <A HREF="#Problem">a problem encountered during development</A>).  Implementation of its <code>GetNewStorage</code> method followed a few examples I found elsewhere, and really is a textbook use of various APIs specifically designed for the task:
+
+<PRE>
+HRESULT STDMETHODCALLTYPE 
+COleRichEditCtrl::IExRichEditOleCallback::GetNewStorage(LPSTORAGE* lplpstg)
+{
+	m_iNumStorages++;
+	WCHAR tName[50];
+	swprintf(tName, L"REOLEStorage%d", m_iNumStorages);
+
+	HRESULT hResult = pStorage->CreateStorage(tName, 
+		STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE | STGM_CREATE ,
+		0, 0, lplpstg );
+
+	if (hResult != S_OK )
+	{
+		::AfxThrowOleException( hResult );
+	}
+
+	return hResult;
+}
+</PRE>
+
+<P>Finally, since my purpose was to use the class by streaming in an RTF stream stored as a resource in the executable, I provided a <code>StreamInFromResource</code> member function, together with a statically-scoped callback function used in the <code>EDITSTREAM</code> structure:
+
+<PRE>long COleRichEditCtrl::StreamInFromResource(int iRes, LPCTSTR sType)
+{
+	HINSTANCE hInst = AfxGetInstanceHandle();
+	HRSRC hRsrc = ::FindResource(hInst,
+		MAKEINTRESOURCE(iRes), sType);
+	
+	DWORD len = SizeofResource(hInst, hRsrc); 
+	BYTE* lpRsrc = (BYTE*)LoadResource(hInst, hRsrc); 
+	ASSERT(lpRsrc); 
+ 
+	CMemFile mfile;
+	mfile.Attach(lpRsrc, len); 
+
+	EDITSTREAM es;
+	es.pfnCallback = readFunction;
+	es.dwError = 0;
+	es.dwCookie = (DWORD) &mfile;
+
+	return StreamIn( SF_RTF, es );
+}
+
+
+/* static */
+DWORD CALLBACK COleRichEditCtrl::readFunction(DWORD dwCookie,
+		 LPBYTE lpBuf,			// the buffer to fill
+		 LONG nCount,			// number of bytes to read
+		 LONG* nRead)			// number of bytes actually read
+{
+	CFile* fp = (CFile *)dwCookie;
+	*nRead = fp->Read(lpBuf,nCount);
+	return 0;
+}</PRE>
+
+<P>One amazing (to me) benefit from this architecture is that I got a tremendous &quot;bang for the buck&quot;.  When I set out, my only goal was to display a bitmap, yet I ended up with a control that could display <I><B>ANY</B></I> OLE object.  Compound documents that contained completely arbitrary objects work just fine: bitmaps, video and audio clips, Office documents (Word, Excel, PowerPoint), and the like.  Any other content could also be contained (like PDF files and HTML files), and the content would be launched by double-clicking on the content's icon, but there will not be an in-place display of those objects unless the OLE server application were written and configured for in-place OLE display.
+
+<P>
+<p><A name="Demo"/>
+<H2>The Demo Program&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+
+<P>The demo program is a pathetic shell of an MFC SDI doc/view application, whose only purpose in life is to launch a dialog that contains a <code>COleRichEditCtrl</code>.  Under the assumption that the dialog contains Help-type information, a left-click will launch the dialog modelessly, so that the user can still interact with the main application.  The code for the dialog uses simple technique involving a <code>BOOL</code> flag that's tested in <code>OnPostNcDestroy</code> so as to delete memory allocated for the dialog object; but since that's not the point of this article you'll need to look at the code for the <code>CRichEditHelpDialog</code> class if you're interested.  A right-click will launch the dialog in the more-familiar modal mode, so that you can see the difference.
+
+<P>Run the program and click anywhere in the view to launch the Help dialog with its <code>COleRichEditCtrl</code>.  The contents of the control are streamed in from an RTF resource that's part of the executable; the contents include standard RTF text, a bitmap, a video clip, an Excel spreadsheet, and a PowerPoint presentation.  If you can't see one or more of these objects, then you probably do not have the associated program installed.
+
+<P>
+<p><A name="Problem"/>
+<H2>A Problem During Development of the <code>COleRichEditCtrl</code> Class&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+
+<P>I thought I was finished with development of the <code>COleRichEditCtrl</code> class, and I was nearly finished writing this article, when I ran into a stumbling block that sent me back to the coding table.  You can skip this part if you want, and proceed directly to <A HREF="#Use">using the class in your project</A>, by clicking <A HREF="#Use">here</A>.
+
+<P>The problem is rooted in the fact that the class wraps a control.  Because it's a control, the class must expect that its Windows window will be created in either of two different ways: by an explicit call to <code>::CreateWindow</code> (or <code>::CreateWindowEx</code>, both of which are wrapped by the <code>CWnd::Create</code> member of all CWnd-derived classes), or automatically by Windows during a call to <code>::CreateDialogParam</code> which builds a dialog based on template defined in the program's resources.  The latter is more common (and in fact is the way that the next section describes use of the class), but the former is also used often (and in fact is the method used in the demo project).
+
+<P>To implement OLE functionality, the control needs the OLE callback function very early on, before almost anything else was done.  When I initially wrote the wrapper class, I therefore put the call to <code>SetOLECallback</code> in the <code>COleRichEditCtrl::OnCreate</code> handler, since this handler is called in response to one of the very-first messages sent by Windows to the control.   That was a silly oversight, and I should have known better, since it only handles the first method of window creation (i.e., through <code>::CreateWindow</code>) and not the second method (i.e., from a dialog resource template).
+
+<P>The correct way to accommodate both methods of window creation is well-known: put this kind of early initialization in <code>CWnd::PreSubclassWindow</code>.  The <code>PreSubclassWindow</code> function is a virtual function that's called by the MFC framework just before the Windows window is subclassed to the C++ CWnd object, and it's called regardless of whether the window is created by the first or second method.  Paul Dilascia discusses this in significantly more detail in his C++ Q&amp;A column from the March 2002 issue of MSDN Magazine, see <A HREF="http://msdn.microsoft.com/msdnmag/issues/02/03/c/default.aspx">http://msdn.microsoft.com/msdnmag/issues/02/03/c/default.aspx</A>.  So I moved all the <code>SetOLECallback</code> code into a new <code>COleRichEditCtrl::PreSubclassWindow</code> handler.
+
+<P>And this is where I encountered the real problem.  For although creation via dialog template now worked great, creation via <code>CreateWindow</code> did not.  The call to <code>SetOLECallback</code> returned an error code signifying that the call failed, and indeed OLE capabilities were broken.  I traced through the code but was unable to find the reason for the failure, and diligent searching of the web turned up nothing.
+
+<P>I figured that the problem was related to a too-soon call to <code>SetOLECallback</code>, reasoning that when <code>SetOLECallback</code> was called in <code>PreSubclassWindow</code> after creation via a dialog template, the Windows window for the rich edit control was ready to accept messages, whereas after creation by <code>CreateWindow</code> it might not yet be ready.  So I looked for ways to delay the call to <code>SetOLECallback</code>.  I looked for other functions called early by the MFC framework (and found none), and considered installing an <code>OnNcCreate</code> handler for the <code>WM_NCCREATE</code> message (which is actually sent before the <code>WM_CREATE</code> message) or PostMessage'ing my own custom message.  None of these really seemed right.
+
+<P>In the end, I added a <code>BOOL</code> flag to the class to capture the result of the call to <code>SetOLECallback</code> from <code>PreSubclassWindow</code>.  Then, I maintained the <code>OnCreate</code> handler, and inside it I tested the flag to see if <code>SetOLECallback</code> had successfully been called already from inside <code>PreSubclassWindow</code>.  If not, I simply called it again.  Here's the code:
+
+<PRE>int COleRichEditCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+{
+ 	if (CRichEditCtrl::OnCreate(lpCreateStruct) == -1)
+ 		return -1;
+ 	
+	// m_pIRichEditOleCallback should have been created in PreSubclassWindow
+
+ 	ASSERT( m_pIRichEditOleCallback != NULL );	
+
+	// set the IExRichEditOleCallback pointer if it wasn't set 
+	// successfully in PreSubclassWindow
+
+	if ( !m_bCallbackSet )
+	{
+		SetOLECallback( m_pIRichEditOleCallback );
+	}
+ 	
+ 	return 0;
+}
+
+void COleRichEditCtrl::PreSubclassWindow() 
+{
+	// base class first
+	CRichEditCtrl::PreSubclassWindow();	
+
+	m_pIRichEditOleCallback = NULL;
+	m_pIRichEditOleCallback = new IExRichEditOleCallback;
+	ASSERT( m_pIRichEditOleCallback != NULL );
+
+	m_bCallbackSet = SetOLECallback( m_pIRichEditOleCallback );
+}</PRE>
+
+<P>I'm not totally satisfied with the solution or the explanation of the problem, but it works.  If anyone has seen this kind of behavior before, and knows what causes it or has another solution, please let us know.
+
+<P>
+<P><A name="Use"/>
+<H2>How To Use The <code>COleRichEditCtrl</code> Control In Your Project&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+
+<P>These instructions are for use with VC++ version 6.0, but it should be easy to use them with other versions like .NET.
+
+<P>To use the control in your project, download the source and header files (i.e., <code>COleRichEditCtrl.cpp</code> and <code>COleRichEditCtrl.h</code>) to a convenient folder and then include both of them in your project (&quot;Project&quot;-&gt;&quot;Add To Project&quot;-&gt;&quot;Files...&quot;).
+
+<P>Create your dialog resource template and add a standard rich edit control using the control toolbar:
+
+<P><IMG SRC="ControlToolbar.gif" WIDTH="133" HEIGHT="229" BORDER="0" ALT="Using the control toolbar to add a rich edit control">
+
+<P>Open the &quot;Properties&quot; window for the just-added rich edit control, and under the &quot;Styles&quot; tab select &quot;Multi-line&quot;, &quot;Vertical scroll&quot; and &quot;Want return&quot;, and de-select &quot;Auto H-scroll&quot;.  These are typical styles for most likely uses of the control, but you might want to play with them if you're not totally pleased with the result.  For example, you might also want the &quot;Read-only&quot; style:
+
+<P><IMG SRC="Styles.gif" WIDTH="403" HEIGHT="164" BORDER="0" ALT="Setting styles of the rich edit">
+
+<P>Now we will add a member variable of type <code>COleRichEditCtrl</Code> to your dialog.  (See <A HREF="#footnote1">footnote 1</A>.)  Open ClassWizard and select the class that corresponds to your dialog.  Then, add a &quot;control&quot;-style variable of type <code>CRichEditCtrl</code>, which is the base class for <code>COleRichEditCtrl</code>.  You should see something like this screenshot: 
+
+<P><IMG SRC="AddMemberVariable.gif" WIDTH="599" HEIGHT="500" BORDER="0" ALT="Screenshot of ClassWizard, showing how to add a member variable of type CRichEditCtrl">
+
+<P>Click &quot;OK&quot; everywhere to exit out of ClassWizard, and then manually edit your dialog class to substitute the real target class, <code>COleRichEditCtrl</code>.  Here's how.
+
+<P>First, open the header file for your dialog class, and add <code>#include &quot;OleRichEditCtrl.h&quot;</code> at the top.  If you added the <code>COleRichEditCtrl.cpp</code> and <code>COleRichEditCtrl.h</code> files to a folder that's different from that of your main project, you'll need to give the folder name too, like so: <code>#include &quot;../components/OleRichEditCtrl.h&quot;</code>.  Then, to use the OLE rich edit control instead of the standard rich edit control, page down in the header file until you see a line like
+
+<PRE>CRichEditCtrl	m_ctlRichEdit;</PRE>
+
+and replace it with the following
+
+<PRE>COleRichEditCtrl	m_ctlRichEdit;</PRE>
+
+<P>Before you build and run your program, you <I><B>must</B></I> be certain that it calls <code>AfxInitRichEdit()</code> somewhere, usually in the <code>CWinApp::InitInstance()</code> call.  If you did not choose &quot;Compound Document Support&quot; when creating your application with the AppWizard, then you must edit your code manually to insert a call to <code>AfxInitRichEdit()</code>.  Do it now.  Now build and run your program.
+
+<P>To include RTF text as part of your program's resources, use a &quot;bare-bones&quot; RTF editor like standard WordPad to create your document.  (I recommend simple RTF editors like WordPad because more complex editors like Word often insert large amounts of needless and confusing tags into the RTF stream.)  Save the document in RTF format and then move a <I><B>copy</B></I> of it into the <code>/res</code> folder of your project.  I suggest a copy instead of a direct save, since Visual Studio has a nasty habit of erasing the contents of customized resources if you're not careful (which is very frustrating, believe me).  Let's say that the name of the file is <code>text.rtf</code>.  Go to the &quot;Resources&quot; tab of the ClassView, right-click the project, and select to &quot;Import&quot; a resource from the pop-up menu:
+
+<P><IMG SRC="ImportResources.gif" WIDTH="250" HEIGHT="280" BORDER="0" ALT="Importing a custom resource">
+
+<P>Select your <code>text.rtf</code> file and then define an alphabetic &quot;type&quot; for your custom resource.  I tend to use something obvious, like &quot;RTF_TEXT&quot;, as shown in this screenshot:
+
+<P><IMG SRC="CustomResourceType.gif" WIDTH="264" HEIGHT="230" BORDER="0" ALT="Defining the alphabetic type of the resource">
+
+<P>Now, to stream in this resource when the dialog opens, simply use the <code>COleRichEditCtrl::StreamInFromResource</code> function.  In your dialog's <code>OnInitDialog()</code> function, simply add the following line of code:
+
+<PRE>m_ctlRichEdit.StreamInFromResource( IDR_RTF_TEXT1, &quot;RTF_TEXT&quot; );</PRE>
+
+<P>That's it: build and run your program.  You might need to do a &quot;Rebuild All&quot; to get your custom resource built into your executable, since Visual Studio is not very good at detecting when a non-standard resource (like your &quot;RTF_TEXT&quot; resource) has been added into a project. 
+
+<P>
+<P><A name="Gotcha"/>
+<H2>Some Final Few Words&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+
+<P>Here are a few practical suggestions if you run into trouble using the class.
+
+<OL>
+<P><LI>If your program worked fine before adding <code>COleRichEditCtrl</code> to it, but then doesn't seem to work at all afterwards, then you probably need to insert a call to <code>AfxInitRichEdit()</code>.  The best place for this in inside your application's <code>CMyApp::InitInstance</code> function.
+
+<P><LI>If you added a customized &quot;RTF_TEXT&quot; resource like the fictitious <code>test.rtf</code> file mentioned above, but after building you can't see the contents of the resource in the control, then you probably need to do a &quot;Rebuild All&quot;.  Visual Studio is not very good at detecting when a non-standard resource (like your &quot;RTF_TEXT&quot; resource) has been added into a project. 
+
+<P><LI>I noticed some odd behavior in the demo program, in which the rich edit control doesn't seem to erase and repaint itself properly if you give it a particular sequence of re-sizings and scrolls.  In the demo, the dialog has a re-sizing border and can be re-sized in the conventional way by dragging on the border.  The control itself also has a vertical scroll bar for vertical scrolling of the contents.  If you launch the dialog and then re-size the dialog before touching the scroll bar, then you'll see the odd behavior, particularly if you re-size to a narrow width and then make the dialog wider again (this makes the control calculate new line-break positions).  As soon as you touch the scroll bar at least once, then all is good from there on out.  In other words, once you scroll once, then you can re-size all you want, and the control will erase and repaint itself perfectly.  I don't know the reason for this behavior, and nothing turned up in my web searches.  If anyone has a fix for this, then please let us know.
+
+</OL>
+
+<P>
+<P><A name="Version"/>
+<H2>Version and Revision History&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+
+<P>February 4, 2005 - First release
+
+<P>
+<P><A name="Bibliography"/>
+<h2>Bibliography&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></h2>
+
+<p>Here, in one place, is a list of all the articles and links mentioned in the article
+<UL>
+
+<LI>Stephane Lesage, &quot;Getting Images with a StreamIn/ClipBoard/Drag'n'Drop operation&quot;, at <A HREF="http://www.codeguru.com/Cpp/controls/richedit/comments.php/c5383/?thread=58860">http://www.codeguru.com/Cpp/controls/richedit/comments.php/c5383/?thread=58860</A>
+
+<LI>MSDN, &quot;IRichEditOleCallback Interface&quot;, at <A HREF="http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/richeditcontrolreference/richeditinterfaces/iricheditolecallback.asp">http://msdn.microsoft.com/library/en-us/shellcc/platform/commctls/richedit/richeditcontrols/richeditcontrolreference/richeditinterfaces/iricheditolecallback.asp</A>
+
+<LI>Paul Dilascia, &quot;C++ Q&amp;A: PreSubclassWindow In a CWnd Control&quot;, March 2002 issue of MSDN Magazine, at <A HREF="http://msdn.microsoft.com/msdnmag/issues/02/03/c/default.aspx">http://msdn.microsoft.com/msdnmag/issues/02/03/c/default.aspx</A>
+
+</UL>
+
+<P>
+<H2>Footnotes&nbsp;&nbsp;<A HREF="#Top"><FONT SIZE=-2>top</FONT></A></H2>
+<OL>
+
+<LI><A name="footnote1"/>At this point, you really should be able to use ClassWizard to add a variable of type <code>COleRichEditCtrl</code> directly, without the steps mentioned in the main text.  However, I have found that the ClassWizard has problems enrolling the new class in its database.  You can try the following procedure to force ClassWizard to re-build its database, but even though this has worked for me in the past with other controls, I just tried it and for some reason it didn't work.  The procedure in the main text above always works, but in case this alternative procedure works for you, here it is:  The class database is stored in a file whose extension is &quot;.clw&quot; in your project's folder.  To force ClassWizard to re-build the class database, open your project's workspace with Explorer and find the file whose extension is &quot;.clw&quot;.  Delete it.  (Trust me, but if you don't, rename it to an extension like &quot;.clw~1&quot;.)  Now, open ClassWizard, and you'll get a message saying that the &quot;.clw&quot; file doesn't exist, and asking if you would like to re-build it from your source files.  Of course you should select &quot;Yes&quot;.  From the resulting dialog, select &quot;Add All&quot;.  In addition, make certain that you also add <code>COleRichEditCtrl.cpp</code> and <code>COleRichEditCtrl.h</code> from whatever folder you stored them to.
+
+</OL>
+
+<!-------------------------------    That's it!   --------------------------->
+</body>
+</html>
+
+
