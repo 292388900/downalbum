@@ -1,0 +1,40 @@
+CTabCtrl m_Tab;
+
+//**********************************************************************************
+	this->m_Tab.InsertItem(0,CString("¼ÆËãHash"));
+	this->m_Tab.InsertItem(1,CString("Èë¿â²Ù×÷"));
+	this->m_CalHashDlg.Create(IDD_CALHASH_DIALOG,&this->m_Tab);
+	this->m_OperateDbDlg.Create(IDD_DBDIALOG,&this->m_Tab);
+
+	CRect rect;
+
+	this->m_Tab.GetClientRect(&rect);
+	rect.top=rect.top+20;
+	this->m_CalHashDlg.MoveWindow(rect);
+	this->m_CalHashDlg.ShowWindow(SW_SHOWDEFAULT);
+	nTabIndex=0;
+	this->m_OperateDbDlg.MoveWindow(rect);
+	this->m_OperateDbDlg.ShowWindow(SW_HIDE);
+	m_Tab.SetCurSel(0); 
+//**********************************************************************************
+
+void CBlackWhiteDlg::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	if (pNMHDR->code==TCN_SELCHANGE)
+	{
+		switch (m_Tab.GetCurSel())
+		{
+		case 0:
+			this->m_CalHashDlg.ShowWindow(SW_SHOW);
+			this->m_OperateDbDlg.ShowWindow(SW_HIDE);
+			break;
+		case 1:
+			this->m_CalHashDlg.ShowWindow(SW_HIDE);
+			this->m_OperateDbDlg.ShowWindow(SW_SHOW);
+			break;
+		}
+	}
+	*pResult = 0;
+}
+
+
