@@ -413,9 +413,9 @@ extc void _export cdecl ODBG_Pluginaction(int origin,int action,void *item)
 	int nPos1=0;
 	int nPos2=0;
 
-	if (origin != PM_DISASM)//是否在反汇编窗口中 
+	if ( origin!=PM_DISASM && origin!=PM_MAIN ) //是否在反汇编窗口或者主窗口中 
 		return;
-	if(action != 0)			//是否是第1个菜单响应
+	if( action!=0)			//是否是第1个菜单响应
 		return;
 
 	pDump = (t_dump *)item;
