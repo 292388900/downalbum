@@ -85,13 +85,8 @@ extc int _export cdecl ODBG_Plugininit( int ollydbgversion,HWND hw,ulong *featur
 	if (ollydbgversion<PLUGIN_VERSION)
 		return -1;
 	hwmain=hw;
-#ifdef _DEBUG
-	g_edtTemp.Create(WS_CHILD|WS_VISIBLE|ES_MULTILINE|ES_WANTRETURN,
-		CRect(0,0,600,600),AfxGetMainWnd(),0);
-#else
 	g_edtTemp.Create(WS_CHILD|/*WS_VISIBLE|*/ES_MULTILINE|ES_WANTRETURN,
 		CRect(-100,-100,10,10),AfxGetMainWnd(),0);
-#endif
 
 
 	memset(&m_cfDefault,0,sizeof(m_cfDefault));   
@@ -186,245 +181,68 @@ void CheckEbpEsp()
 
 }
 
-/*不含十六进制数
 
-extc void _export cdecl ODBG_Pluginaction(int origin,int action,void *item) 
+void AlignOpcode(CString&strOpcode)
 {
-	CString strText;		//保存反汇编后的文本
-	CString strOpcode;		//保存反汇编文本的操作码
-	CString strOprand1;		//保存反汇编文本的操作数
-	CString strOprand2;
-	t_dump *pDump;			//pDump = item
-	t_disasm stDisasm={0};	//保存反汇编后的信息
-	uchar *pDecode=NULL;	//保存指令码的起始地址
-	ulong nOpcodeLen;		//保存一条指令的长度，按字节计算
-	BYTE buff[0x10]={0};	//一段缓冲区
-	DWORD RetLen=0;			//
-
-	if (origin != PM_DISASM)//是否在反汇编窗口中 
-		return;
-	if(action != 4)			//是否是第1个菜单响应
-		return;
-
-	pDump = (t_dump *)item;
-	if (pDump==NULL || pDump->size==0) //Window empty, don't add
-		return;
-
-	//没有选择任何文本
-	if (pDump->sel1<=pDump->sel0)
-		return;
-
-	/************************************************************************
-	// 以下处理选择了一段文本后的情况，格式化处理后复制到剪贴板上           
-	/************************************************************************
-	
-	DWORD dwSize=pDump->sel1-pDump->sel0;	//选择的文本大小
-	DWORD dwAddr=pDump->sel0;				//选择的文本起始地址
-	edtTemp.Clear();						//清空编辑框
-	while (dwSize)
-	{	
-		Readmemory(buff,dwAddr,0x10,MM_RESILENT);
-		pDecode = Finddecode(dwAddr,&RetLen);
-		nOpcodeLen = Disasm(buff,dwSize,dwAddr,pDecode,&stDisasm,DISASM_RTRACE,pDump->runtraceoffset);
-
-		//恢复为黑色，添加EIP信息
-		ChangeTextColor(RGB(0,0,0));
-		strText.Format("%08X| ",stDisasm.ip);
-		AppendMsg(strText);
-		
-		//反汇编文本
-		strText.Format("%s",stDisasm.result);
-
-		//针对跳转指令：jmp,jnz……，call
-		if (stDisasm.jmpconst||stDisasm.jmptable||stDisasm.jmpaddr)
-		{
-			strOpcode=strText.Mid(0,8).TrimRight();
-			strOprand1=strText.Mid(strOpcode.GetLength());
-			if ((char)strOpcode[0]==(char)'j')
-			{
-				if((char)strOpcode[1]!=(char)'m')
-					ChangeTextColor(RGB(255,0,0));	//红色前景色
-					ChangeBackColor(RGB(255,255,0));//黄色背景色								
-			}
-			else
-			{
-				ChangeBackColor(RGB(0,255,255));//海蓝色背景色
-			}
-			AppendMsg(strOpcode);
-			ChangeBackColor(RGB(255,255,255));//恢复白色背景色
-
-			ChangeTextColor(RGB(128,0,0));	
-			AppendMsg(strOprand1);
-		}
-		else if (*((DWORD*)&stDisasm.result[0])==(DWORD)'nter')
-		{
-			strOpcode=strText.Mid(0,8).TrimRight();
-			
-			ChangeBackColor(RGB(0,255,255));//海蓝色背景色
-			AppendMsg(strOpcode);
-			ChangeBackColor(RGB(255,255,255));//恢复白色背景色
-			if (nOpcodeLen>4)
-			{
-				strOprand1=strText.Mid(strOpcode.GetLength());
-				AppendMsg(strOprand1);
-			}
-			
-		}
-		else//处理 ptr [ebp...]和 ptr [esp...]
-		{
-			int nPos=-1;
-			int nLocation=-1;
-			strOpcode=strText.Mid(0,8);
-			strOprand1=strText.Mid(strOpcode.GetLength());
-
-			if ((char)strText[0]==(char)'p')//push pop
-			{
-				ChangeTextColor(RGB(0,0,255));
-				AppendMsg(strOpcode);
-
-				if (stDisasm.immconst)//push pop后跟立即操作数
-				{
-					ChangeTextColor(RGB(128,128,0));
-					AppendMsg(strOprand1);
-					goto _AppendCmt;
-				}
-				else//需要检测是否有ptr [ebp...]和 ptr [esp...]
-				{
-					goto _CheckEbpEsp;
-				}
-				ChangeTextColor(RGB(0,0,0));
-				AppendMsg(strOprand1);
-				goto _AppendCmt;				
-			}
-			
-			ChangeTextColor(RGB(0,0,0));
-			AppendMsg(strOpcode);
-_CheckEbpEsp:
-			nPos=strText.Find("[ebp");
-			nLocation=strText.Find(',',0);
-			if (nPos==-1)
-				nPos=strText.Find("[esp");
-			if(nPos==-1)
-				goto _AppendOpcode;
-
-			
-			if (nLocation!=-1)
-			{
-				if (nPos<nLocation)//ptr在左侧
-				{
-					strOprand1=strText.Mid(8,nLocation-8);
-					strOprand2=strText.Mid(nLocation);
-					ChangeBackColor(RGB(0,255,255));//海蓝色背景色
-					AppendMsg(strOprand1);
-					ChangeBackColor(RGB(255,255,255));//恢复白色背景色
-					if (stDisasm.immconst)
-					{
-						AppendMsg(", ");
-						ChangeTextColor(RGB(128,128,0));
-						strOprand2=strText.Mid(nLocation+2);
-						AppendMsg(strOprand2);
-					}
-					AppendMsg(strOprand2);
-				}
-				else//ptr在右侧
-				{
-					strOprand1=strText.Mid(8,nLocation+2-8);
-					AppendMsg(strOprand1);
-					strOprand2=strText.Mid(nLocation+2);
-					ChangeBackColor(RGB(0,255,255));//海蓝色背景色
-					AppendMsg(strOprand2);
-					ChangeBackColor(RGB(255,255,255));//恢复白色背景色
-				}
-				goto _AppendCmt;
-			}
-			else //push    dword ptr [ebp-18]	
-			{
-				ChangeBackColor(RGB(0,255,255));//海蓝色背景色
-				ChangeTextColor(RGB(0,0,0));
-				AppendMsg(strOprand1);
-				goto _AppendCmt;
-			}
-_AppendOpcode:
-			if (stDisasm.immconst)
-			{
-				if(nLocation>0)
-				{
-					strOprand1=strText.Mid(8,nLocation-8+2);
-					strOprand2=strText.Mid(nLocation+2);
-					AppendMsg(strOprand1);
-					ChangeTextColor(RGB(128,128,0));
-					AppendMsg(strOprand2);
-				}
-				else//db 1111
-				{
-					ChangeTextColor(RGB(128,128,0));
-					AppendMsg(strOprand1);
-				}
-				
-			}
-			else
-			{
-				ChangeTextColor(RGB(0,0,0));
-				AppendMsg(strOprand1);
-			}
-			
-		}
-
-_AppendCmt:
-		//添加注释，使用绿色
-		int nLineLen=strText.GetLength()+10;
-		if (nLineLen>60)
-		{
-			strText="……\r\n";
-		}
-		else
-		{
-			char szBuff[61];
-			memset(szBuff,' ',60-nLineLen);
-			szBuff[60-nLineLen]=0;
-			strText.Format("%s|%s\r\n",szBuff,stDisasm.comment);
-		}
-		ChangeTextColor(RGB(0,128,0));						
-		AppendMsg(strText);
-
-		//继续反汇编
-		dwSize-=nOpcodeLen;
-		dwAddr+=nOpcodeLen;
-	}//end while
-	
-	//复制文本到剪贴板
-	edtTemp.SetSel(0,-1);
-	edtTemp.Copy();
+	//设置白底，补齐8位
+	ChangeBackColor(RGB(255,255,255));
+	int nLen=strOpcode.GetLength();
+	if ( nLen>=8 ){	//直接加一个空格
+		AppendMsg(" ");
+	}else{
+		char szBuff[MAX_PATH]={0};
+		memset(szBuff,' ',8-nLen);
+		AppendMsg(szBuff);
+	}
 }
-*/
-extc void _export cdecl ODBG_Pluginaction(int origin,int action,void *item) 
+
+void AppendOprand(int nOprandCnt,t_operand&op,CString&strOprand1)
+{
+	if ( nOprandCnt==1 && op.opsize==0 ){	//操作数只有一个的特殊处理
+		//应该是jmp和call的常数:棕红色
+		ChangeTextColor(RGB(128,0,0));	
+		ChangeBackColor(RGB(255,255,255));
+		AppendMsg(strOprand1);
+		return;
+	}
+
+	if ( op.seg==(char)SEG_UNDEF ){	
+		if ( op.optype==0x40 ){							//常数：金色
+			ChangeTextColor(RGB(128,128,0));	
+			ChangeBackColor(RGB(255,255,255));
+		}else{											//黑底黑字
+			ChangeTextColor(RGB(0,0,0));	
+			ChangeBackColor(RGB(255,255,255));
+		}
+	}else if (op.seg==SEG_SS ){							//ss:[ebp] s::[esp] 蓝底蓝字
+		ChangeTextColor(RGB(0,0,128));	
+		ChangeBackColor(RGB(0,255,255));	
+	}else{												//基本上是ds:[edi] 白底蓝字
+		ChangeTextColor(RGB(0,0,128));	
+		ChangeBackColor(RGB(255,255,255));
+	}
+	AppendMsg(strOprand1);
+}
+
+void ColorCopy(int origin,int action,void *item)
 {
 	CString strText;		//保存反汇编后的文本
 	CString strOpcode;		//保存反汇编文本的操作码
 	CString strOprand1;		//保存反汇编文本的操作数1
-	CString strOprand2;		//保存反汇编文本的操作数2,三个操作数的先不管
-	t_dump *pDump;			//pDump = item
+	CString strOprand2;		//保存反汇编文本的操作数2
+	CString strOprand3;		//保存反汇编文本的操作数3
+
+	t_dump *pDump=(t_dump *)item;//pDump = item
 	t_disasm stDisasm={0};	//保存反汇编后的信息
 	uchar *pDecode=NULL;	//保存指令码的起始地址
 	ulong nOpcodeLen;		//保存一条指令的长度，按字节计算
 	BYTE buff[MAXCMDSIZE]={0};	//一段缓冲区
 	DWORD RetLen=0;			//
 
+	int nOPCnt=0;			//操作数个数
 	int nPos1=0;
 	int nPos2=0;
-
-	if ( origin!=PM_DISASM && origin!=PM_MAIN ) //是否在反汇编窗口或者主窗口中 
-		return;
-	if( action!=0)			//是否是第1个菜单响应
-		return;
-
-	pDump = (t_dump *)item;
-	if (pDump==NULL || pDump->size==0) //Window empty, don't add
-		return;
-
-	//没有选择任何文本
-	if (pDump->sel1<=pDump->sel0)
-		return;
+	int nPos3=0;
 
 	/************************************************************************/
 	/* 以下处理选择了一段文本后的情况，格式化处理后复制到剪贴板上           */
@@ -479,124 +297,200 @@ extc void _export cdecl ODBG_Pluginaction(int origin,int action,void *item)
 		strOpcode.Empty();
 		strOprand1.Empty();
 		strOprand2.Empty();
+		strOprand3.Empty();
 
-		//分离操作码和操作数
 		nPos1=strText.Find(' ');
-		if ( nPos1==-1 ){		//0操作数
+		if ( nPos1==-1 ){			//0操作数
+			nOPCnt=0;
 			strOpcode=strText;
 		}else{
 			strOpcode=strText.Left(nPos1);
 			nPos2=strText.Find(',',nPos1+1);
-			if ( nPos2==-1 ){	//1操作数
+			if ( nPos2==-1 ){		//1操作数
+				nOPCnt=1;
 				strOprand1=strText.Mid(nPos1+1);
-			}else{				//2操作数
+			}else{
 				strOprand1=strText.Mid(nPos1+1,nPos2-nPos1-1);
-				strOprand2=strText.Mid(nPos2+1);
+				nPos3=strText.Find(',',nPos2+1);
+				if ( nPos3==-1 ){	//2操作数
+					nOPCnt=2;
+					strOprand2=strText.Mid(nPos2+1);
+				}else{				//3操作数
+					nOPCnt=3;
+					strOprand2=strText.Mid(nPos2+1,nPos3-nPos2-1);
+					strOprand3=strText.Mid(nPos3+1);
+				}
 			}
 		}
 
-		if ( stDisasm.cmdtype==C_JMP ){			//jmp 黄底黑字
-			ChangeTextColor(RGB(0,0,0));									
-			ChangeBackColor(RGB(255,255,0));
-			AppendMsg(strOpcode);
-			
-		}else if ( stDisasm.cmdtype==C_JMC ){	//条件跳转 黄底红字
-			ChangeTextColor(RGB(255,0,0));									
-			ChangeBackColor(RGB(255,255,0));
-			AppendMsg(strOpcode);
+		//////////////////////////////////////////////////////////////////////////
 
-		}else if ( stDisasm.cmdtype==C_REP ){	//rep
-			ChangeTextColor(RGB(255,0,0));									
-			ChangeBackColor(RGB(255,255,0));
-			AppendMsg(strOpcode);
+		if ( nOPCnt==0 ){						//0操作数
+			//ret pushad popad pushaf popaf...
 
-		}else if ( stDisasm.cmdtype==C_CAL ){	//call 海蓝底黑字
-			ChangeTextColor(RGB(0,0,0));									
-			ChangeBackColor(RGB(0,255,255));//海蓝色背景色
-			AppendMsg(strOpcode);
-		
-		}else if ( stDisasm.cmdtype==C_RET ){	//ret 海蓝底黑字
-			ChangeTextColor(RGB(0,0,0));									
-			ChangeBackColor(RGB(0,255,255));
-			AppendMsg(strOpcode);
-
-		}else if ( stDisasm.cmdtype==C_PSH || stDisasm.cmdtype==C_POP ){	//PUSH POP 白底蓝字
-			ChangeTextColor(RGB(0,0,255));
-			ChangeBackColor(RGB(255,255,255));
-			AppendMsg(strOpcode);	
-		
-		}else if ( stDisasm.cmdtype==C_FLT ){
-			ChangeTextColor(RGB(128,0,0));
-			ChangeBackColor(RGB(255,255,255));
-			AppendMsg(strOpcode);
-
-		}else{									//白底黑字
-			ChangeTextColor(RGB(0,0,0));
-			ChangeBackColor(RGB(255,255,255));
-			AppendMsg(strOpcode);	
-		}
-
-		
-		if ( strOprand1.IsEmpty()==FALSE ){	//操作数1不为空
-			//设置白底，添加一个空格
-			ChangeBackColor(RGB(255,255,255));
-			AppendMsg(" ");
-
-			//如果有直接地址则显示为白底棕红字体
-			if ( stDisasm.jmpconst || stDisasm.jmptable || stDisasm.jmpaddr ){
-				ChangeTextColor(RGB(128,0,0));	
+			if ( (stDisasm.cmdtype&C_TYPEMASK)==C_RET ){		//ret 海蓝底黑字
+				ChangeTextColor(RGB(0,0,0));									
+				ChangeBackColor(RGB(0,255,255));
+			}else{
+				ChangeTextColor(RGB(0,0,0));									
 				ChangeBackColor(RGB(255,255,255));
-			}else if ( strOprand1.Find("[esp")!=-1 || strOprand1.Find("[ebp")!=-1 ){	//蓝底蓝字
-				ChangeTextColor(RGB(0,0,128));	
-				ChangeBackColor(RGB(0,255,255));	
-			}else if ( stDisasm.memtype==DEC_BYTE || stDisasm.memtype==DEC_WORD || stDisasm.memtype==DEC_DWORD ){//白底浅蓝字
-				ChangeTextColor(RGB(0,0,128));	
-				ChangeBackColor(RGB(255,255,255));
-				
-			}else if ( (stDisasm.adrconst || stDisasm.immconst) && strOprand2.IsEmpty()==TRUE ){	
-				//处理优先级比DEC_BYTE DEC_WORD DEC_DWORD低，在有两个操作数时直接地址不可能在操作数1上
-				ChangeTextColor(RGB(128,0,0));	
-				ChangeBackColor(RGB(255,255,255));
-			}else{	//白底黑字
+			}
+			AppendMsg(strOpcode);
+			AlignOpcode(strOpcode);
+
+		}else if ( nOPCnt==1 ){					//1操作数
+			//ret 4; ret eax
+			//push eax; push 1; pop eax; push dword ptr ds:[eax]; push dword ptr ss:[ebp]
+			//jmp 400000; jmp eax; jmp dword ptr ds:[eax]; jmp dword ptr ss:[ebp]
+			//jnz 400000; jnz eax; jnz dword ptr ds:[eax]; jnz dword ptr ss:[ebp]
+			//call 400000; call eax; call dword ptr ds:[eax]; call dword ptr ss:[ebp]
+
+			if ( (stDisasm.cmdtype&C_TYPEMASK)==C_JMP ){			//jmp 黄底黑字
+				ChangeTextColor(RGB(0,0,0));									
+				ChangeBackColor(RGB(255,255,0));
+				AppendMsg(strOpcode);
+
+				AlignOpcode(strOpcode);
+
+				AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			}else if ( (stDisasm.cmdtype&C_TYPEMASK)==C_JMC ){	//条件跳转 黄底红字jpo:0x68
+				ChangeTextColor(RGB(255,0,0));									
+				ChangeBackColor(RGB(255,255,0));
+				AppendMsg(strOpcode);
+
+				AlignOpcode(strOpcode);
+
+				AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+
+			}else if ( (stDisasm.cmdtype&C_TYPEMASK)==C_REP ){	//rep
+				ChangeTextColor(RGB(255,0,0));									
+				ChangeBackColor(RGB(255,255,0));
+				AppendMsg(strOpcode);
+
+				AlignOpcode(strOpcode);
+
 				ChangeTextColor(RGB(0,0,0));	
-				ChangeBackColor(RGB(255,255,255));	
-			}
-			AppendMsg(strOprand1);
-		}
+				ChangeBackColor(RGB(255,255,255));
+				AppendMsg(strOprand1);
 
-		if ( strOprand2.IsEmpty()==FALSE ){	//操作数2不为空
-			//设置白底，添加一个逗号
+			}else if ( (stDisasm.cmdtype&C_TYPEMASK)==C_CAL ){	//call 海蓝底黑字
+				ChangeTextColor(RGB(0,0,0));									
+				ChangeBackColor(RGB(0,255,255));	//海蓝色背景色
+				AppendMsg(strOpcode);
+
+				AlignOpcode(strOpcode);
+
+				AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			}else if ( (stDisasm.cmdtype&C_TYPEMASK)==C_RET ){	//ret 海蓝底黑字
+				ChangeTextColor(RGB(0,0,0));									
+				ChangeBackColor(RGB(0,255,255));
+				AppendMsg(strOpcode);
+
+				AlignOpcode(strOpcode);
+
+				AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			}else if ( (stDisasm.cmdtype&C_TYPEMASK)==C_PSH || (stDisasm.cmdtype&C_TYPEMASK)==C_POP ){	//PUSH POP 白底蓝字
+				ChangeTextColor(RGB(0,0,255));
+				ChangeBackColor(RGB(255,255,255));
+				AppendMsg(strOpcode);	
+
+				AlignOpcode(strOpcode);
+
+				AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			}else{
+
+				if ( (stDisasm.cmdtype&C_TYPEMASK)==C_FLT ){
+					ChangeTextColor(RGB(128,0,0));
+					ChangeBackColor(RGB(255,255,255));
+				}else{
+					ChangeTextColor(RGB(0,0,0));
+					ChangeBackColor(RGB(255,255,255));
+				}
+				AppendMsg(strOpcode);	
+
+				AlignOpcode(strOpcode);
+
+				AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			}
+
+		}else if ( nOPCnt==2 ){					//2操作数
+			if ( (stDisasm.cmdtype&C_TYPEMASK)==C_FLT ){
+				ChangeTextColor(RGB(128,0,0));
+				ChangeBackColor(RGB(255,255,255));
+			}else{
+				ChangeTextColor(RGB(0,0,0));
+				ChangeBackColor(RGB(255,255,255));
+			}
+			AppendMsg(strOpcode);	
+
+			AlignOpcode(strOpcode);
+
+			AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			//设置白底黑字，添加一个逗号
+			ChangeTextColor(RGB(0,0,0));	
 			ChangeBackColor(RGB(255,255,255));
 			AppendMsg(",");
 
-			//通常如果指令有两个操作数，并且操作数2为常数则显示棕红色
-			if ( strOprand2.Find("[esp")!=-1 || strOprand2.Find("[ebp")!=-1 ){	//蓝底蓝字
-				ChangeTextColor(RGB(0,0,128));	
-				ChangeBackColor(RGB(0,255,255));	
-			}else if ( stDisasm.memtype==DEC_BYTE || stDisasm.memtype==DEC_WORD || stDisasm.memtype==DEC_DWORD ){//白底浅蓝字
-				ChangeTextColor(RGB(0,0,128));	
+			AppendOprand(nOPCnt,stDisasm.op[1],strOprand2);
+
+		}else if ( nOPCnt==3 ){					//3操作数
+			if ( (stDisasm.cmdtype&C_TYPEMASK)==C_FLT ){
+				ChangeTextColor(RGB(128,0,0));
 				ChangeBackColor(RGB(255,255,255));
-			}else if ( stDisasm.adrconst || stDisasm.immconst ){
-				ChangeTextColor(RGB(128,0,0));	
+			}else{
+				ChangeTextColor(RGB(0,0,0));
 				ChangeBackColor(RGB(255,255,255));
-			}else{	//白底黑字
-				ChangeTextColor(RGB(0,0,0));	
-				ChangeBackColor(RGB(255,255,255));	
 			}
-			AppendMsg(strOprand2);
+			AppendMsg(strOpcode);	
+
+			AlignOpcode(strOpcode);
+
+			AppendOprand(nOPCnt,stDisasm.op[0],strOprand1);
+
+			//设置白底黑字，添加一个逗号
+			ChangeTextColor(RGB(0,0,0));	
+			ChangeBackColor(RGB(255,255,255));
+			AppendMsg(",");
+
+			AppendOprand(nOPCnt,stDisasm.op[0],strOprand2);
+
+			//设置白底黑字，添加一个逗号
+			ChangeTextColor(RGB(0,0,0));	
+			ChangeBackColor(RGB(255,255,255));
+			AppendMsg(",");
+
+			AppendOprand(nOPCnt,stDisasm.op[0],strOprand3);
 		}
 
-		TRACE("反汇编：%s %s , \n",strOpcode,strOprand1,strOprand2);
+		//////////////////////////////////////////////////////////////////////////
+
+		TRACE("反汇编：%s %s, %s, %s\n",strOpcode,strOprand1,strOprand2,strOprand3);
 
 _AppendCmt:
 		//添加注释，使用绿色
-		int nLineLen=strText.GetLength()+10;
-		if (nLineLen>60){
+		int nLineLen=0;
+		if ( strOpcode.GetLength()>=8 ){
+			nLineLen=strText.GetLength();	//一个空格和若干个逗号都算进去了
+		}else{
+			nLineLen=strText.GetLength()+ (8-strOpcode.GetLength());	//加上由于调用AlignOpcode多出的空格长度
+			if ( strOprand1.IsEmpty()==FALSE ){	//原本就有间隔的一个空格
+				nLineLen--;
+			}
+		}
+
+		if (nLineLen>50){
 			strText="……\r\n";
 		}else{
-			char szBuff[61];
-			memset(szBuff,' ',60-nLineLen);
-			szBuff[60-nLineLen]=0;
+			char szBuff[51];
+			memset(szBuff,' ',50-nLineLen);
+			szBuff[50-nLineLen]=0;
 			strText.Format("%s|%s\r\n",szBuff,stDisasm.comment);
 		}
 		ChangeTextColor(RGB(0,128,0));						
@@ -611,6 +505,119 @@ _AppendCmt:
 	//复制文本到剪贴板
 	g_edtTemp.SetSel(0,-1);
 	g_edtTemp.Copy();
+}
+
+void HexCopy(int origin,int action,void *item)
+{
+	CString strText;		//保存反汇编后的文本
+	CString strTemp;		
+	t_dump *pDump=(t_dump *)item;//pDump = item
+	t_disasm stDisasm={0};	//保存反汇编后的信息
+	uchar *pDecode=NULL;	//保存指令码的起始地址
+	ulong nOpcodeLen;		//保存一条指令的长度，按字节计算
+	BYTE buff[MAXCMDSIZE]={0};	//一段缓冲区
+	DWORD RetLen=0;			//
+
+	int nCount=0;
+	/************************************************************************/
+	/* 以下处理选择了一段文本后的情况，格式化处理后复制到剪贴板上           */
+	/************************************************************************/
+
+	DWORD dwSize=pDump->sel1 - pDump->sel0;	//选择的文本大小
+	DWORD dwAddr=pDump->sel0;				//选择的文本起始地址
+	while ( dwSize ){	
+		//从指定地址开始读取解码数据，成功返回解码数据，psize＝数据大小；未成功则返回NULL,psize＝0
+		Readmemory(buff,dwAddr,MAXCMDSIZE,MM_RESILENT);
+
+		pDecode = Finddecode(dwAddr,&RetLen);
+
+		//汇编指令到stDisasm结构
+		nOpcodeLen = Disasm(buff,dwSize,dwAddr,pDecode,&stDisasm,DISASM_RTRACE,pDump->runtraceoffset);
+		//继续反汇编
+		dwSize-=nOpcodeLen;
+		dwAddr+=nOpcodeLen;
+
+		if ( action==1 ){
+			for ( int i=0; i<nOpcodeLen; ++i ){
+				strTemp.Format("%02X ",buff[i]);
+				strText+=strTemp;
+			}
+		}else if ( action==2 ){
+			for ( int i=0; i<nOpcodeLen; ++i ){
+				strTemp.Format("%02X",buff[i]);
+				strText+=strTemp;
+			}
+		}else if ( action==3 ){
+			for ( int i=0; i<nOpcodeLen; ++i ){
+				if ( nCount%0x10 == 0 ){
+					strText+="\r\n\t";
+				}
+				if ( i==nOpcodeLen-1 && dwSize==0 ){	//最后一个
+					strTemp.Format("0x%02X \r\n};",buff[i]);
+					strText+=strTemp;
+					nCount++;
+					strTemp.Format("unsigned char data[%d] = {",nCount);
+					strText=strTemp+strText;
+				}else{
+					strTemp.Format("0x%02X, ",buff[i]);
+					strText+=strTemp;
+					nCount++;
+				}
+			}//end for
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		
+	}//end while
+
+	//最后都加个换行
+	strText+="\r\n";
+
+	//复制到剪贴板
+	if ( ::OpenClipboard(hwmain) ){
+		::EmptyClipboard();
+
+		HANDLE hData=::GlobalAlloc(GMEM_MOVEABLE,strText.GetLength()+1);
+		LPSTR pData=(LPSTR)::GlobalLock(hData);
+		lstrcpy(pData,(LPCTSTR)strText);
+		::GlobalUnlock(hData);
+
+		::SetClipboardData(CF_TEXT,hData);
+		::CloseClipboard();
+	}
+
+}
+
+
+extc void _export cdecl ODBG_Pluginaction(int origin,int action,void *item) 
+{
+	if ( origin!=PM_DISASM && origin!=PM_MAIN ) //是否在反汇编窗口或者主窗口中 
+		return;
+
+	t_dump *pDump = (t_dump *)item;
+	if (pDump==NULL || pDump->size==0) //Window empty, don't add
+		return;
+
+	//没有选择任何文本
+	if ( pDump->sel1 <= pDump->sel0 )
+		return;
+
+	switch( action )
+	{
+	case 0:	//第1个菜单
+		ColorCopy(origin,action,item);
+		break;
+	case 1:
+	case 2:
+	case 3:
+		HexCopy(origin,action,item);
+		break;
+	case 4:
+		AfxMessageBox("啥玩意儿没有!");
+		break;
+	default:
+	    break;
+	}
 }
 
 extc int ODBG_Pluginshortcut(int origin,int ctrl,int alt,int shift,int key,void *item)
