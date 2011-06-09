@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="bin\$(ProjectName)D.dll"
+				OutputFile="E:\°²È«\OllyICE\plugin\$(ProjectName)D.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\ColorCopy.def"
 				GenerateDebugInformation="true"
