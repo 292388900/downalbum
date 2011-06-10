@@ -1,0 +1,36 @@
+http://ffmpeg.mplayerhq.hu/ffmpeg-doc.html
+
+
+
+// 如何转IPOD
+//  by the 5th generation iPods, aka the iPod Video
+//
+https://help.ubuntu.com/community/iPodVideoEncoding
+
+
+// 如何转AndroidVideo
+// Android 为google的手机操作系统平台
+https://help.ubuntu.com/community/AndroidVideoEncoding?highlight=%28%28iPodVideoEncoding%29%29
+
+
+// 简单的x264文档
+http://rob.opendot.cl/index.php/useful-stuff/ffmpeg-x264-encoding-guide/
+
+
+////////////////////////////////////////////////////////////////////////////
+1. 音频mpeg2注意事项，具体代码在mpegaudioenc.c中
+
+mp2 音频通道必须是 1，2 单声道和立体声，其他不支持。一般大的文件都是6声道的，所以转成mp3的时候要处理一下，默认双声道
+频率必须是这几个值之一：44100, 48000, 32000，
+Bitrate(kbps)必须是32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448
+
+如果频率是22050, 24000, 16000, 这几个值，那么自动启动mpeg2 low bitrate
+在这种情况下，bitrate(kbps)为：32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256
+
+
+
+
+
+
+
+
