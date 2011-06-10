@@ -1,0 +1,778 @@
+说明：问题讨论列表，新问题追加序号即可，回复者另起一段对应序号回复，不要改原内容，以利浏览和取证.
+格式：
+------------------------------------------------------------------------------
+//日期
+==========================================
+(发帖人):
+(空一行)
+1.
+(空一行)
+2.
+...
+(空两行以上)
+==========================================
+(回复人):
+(空一行)
+1.
+(空一行)
+2.
+...
+
+------------------------------------------------------------------------------
+//2009-05-05
+==========================================
+xb:
+
+1.换肤不要两个菜单项吧，本来就是支持一下就行了，不是主体功能，弄2个十分不妥！最好一个就解决。很多软件都是这样。换肤就不用加vc默认风格了吧，给一个彩色皮肤作为默认即可，灰色没人用，都可以换肤了，谁还换成土鳖背景。
+
+2.语言!位置：bool CVideoConverterApp::do_some_init()
+::AfxMessageBox(_T("参数列表读取失败，程序不能继续，请重新安装程序"));
+第一次不写，后面写全需要花5倍的时间。加个fixme也行啊？靠，自己建议加，自己又不用。还不如我的？？？？？？？？？？快呢。
+
+3.位置：stdafx.h
+// FIXME - the ugly !
+// don't declared in header!
+using namespace std;	
+又咋了？这是应用层工程！咋了又？
+
+
+==========================================
+lsy:
+
+1.一个是皮肤风格，一个是界面颜色，两个不同的功能啊，很多共享都是这样啊。msn9.0也是这样啊。
+原始风格留着呗，反正我用原始风格。XP我都用原始风格。
+
+2.
+啥？
+
+3.
+为啥C++标准会把vector都放到std中？
+这句 using namespace std; 是决定不能定义在.h中的！！！尤其是stdafx.h。
+
+4.偶然看到
+		TCHAR temp[MAX_PATH]; 
+		SHGetFolderPath(NULL,CSIDL_PERSONAL,NULL,0,temp);  
+		_tcscat_s(temp, _T("\\My Pictures")) ;
+
+
+好像可以直接得到我的图片目录，不要直接写死，可能会有问题！
+德文，日文操作系统不一定是这个目录吧？？？？
+你研究一下
+
+5. 播放的问题，我写了一个图片，你看一下
+我到时候修改一下，底层设置是异步的，所以有时会再播放几帧。。我到时候修改一下
+
+6. 我说的是分辨率设置对话框，combobox为啥不显示文字了？
+还有就是布局一下，你看看怎么合理，站在一个不是很熟悉这个的角度
+
+
+==========================================
+xb:
+
+1.唉，先这样吧。
+
+2.我的意思是afxmessagebox显示的字符串应该国际化，即getlangstr
+
+3.标准的立场可就不一样了，我写也不会这么写，但是在具体的工程里可以，放在头文件没问题。先这样。
+
+4.对啊直接得到就是CSIDL_PERSONAL，没有直接得到图片的吧，你看看吧，我研究没有这个宏，那个操作系统都可以_T("\\My Pictures")，没有咱们建呗，
+这里尽量用系统而已，没有新建一个没有问题，曦力就是新建的。
+
+5.我明白你的意思了，我再看看。
+
+6.我还没来的急，我先都看一遍再说，先放着。
+
+7.////////////////////////////////////////////////////////
+	// FIXME
+	// XTP的BUG(v11版本以上)，但是只能由上层来买单，靠！！！
+	// 在XTPSkinObjectToolBar的371行，它设置了两个初始值
+	// 	int iDxBitmap = 16, iDyBitmap = 16;
+	// 然后得到IMAGELIST，但是如果没有IMAGELIST，他的y值还是偏移了16
+	// 看他的代码，本意是想把文字绘制在图片下方，但是没有考虑到没有图片的情况
+	m_ilToolbarTools.Create(4, 1, ILC_MASK|ILC_COLOR16, 0, 1);
+
+	CBitmap bmp;
+	bmp.LoadBitmap(IDB_IMAGELIST);
+	m_ilToolbarTools.Add(&bmp, 0xFF00FF);
+	m_wndMenuBar.SendMessage(TB_SETIMAGELIST, 0, (LPARAM)m_ilToolbarTools.GetSafeHandle());
+再研究。。。看代码的意思是设置imagelist，原代码我看了，没有问题，肯定是哪里使用的不对，后面再研究，你为啥设置宽度是4，高度是1？
+
+8.换颜色时看到右上角的最小化最大化按钮了吗？buttonwnd就要这个！滑动时有个框，是不是应该和menubar似的在stbutton的paint里用上xtp的部分？
+
+9.菜单的刷新你是说的在子菜单时左边有个条老刷新吗？我这里是这样，下午我大概研究了一下，没有结果。xtp有menubar，不好用？可以参考。
+不过有个问题是为什么总是前四个有这个现象？你看到了吗？即子菜单的前四项有个条状物刷新，后面没有，这个是关键，和id有关？再研究。
+
+
+
+
+
+
+
+
+==========================================
+lsy:
+
+1. 将颜色菜单移动到换肤子菜单下了，这样似乎比较合理。。。
+
+7. 那天不是说了吗，他没有考虑没有图片的情况，所以我做了高度为1的图片，这样就能显示菜单文字了啊，
+你去掉可以研究一下。
+
+
+8. 没明白啥意思，你的意思是按钮换颜色？？按钮换颜色的代码我研究过！xili现在的颜色也是你自己换的。
+对了，还有一个问题是，现在的按钮高亮的时候很土，最好有个框框起来。
+就像.net的toolbar上的按钮一下，不过这个最后再说吧，不行上网找一段代码，用程序实现之！
+也就是按钮就一帧图片，其余的都用程序实现。最后再说！
+
+
+9. 早晚得脱离xtp，除非我们购买，要不然侵权很麻烦的。所以能不用尽量少用。
+暂时先这样，菜单闪那个不好调试，我那天研究过了，是因为skin的时候,xtp给菜单加了一个钩子hook，
+然后每次鼠标移动的时候就会调用onpaint，造成重叠区域不停的onpaint而导致闪烁。
+你可以试一下，子菜单弹出来以后，鼠标不再菜单上移动（但在窗体范围内），都会闪。
+可以现就那样，这一点闪估计没啥事，一般用户不会在意。最后再研究
+
+
+4. 新建一个没问题，但问题是_T("\\My Pictures")，这种代码尽量少些，我们是国际化软件。
+譬如你用一个软件，那个软件在你的系统上创建了一个文件夹，
+名称叫 "ㄉㄚ ㄇㄎㄋㄑㄇㄎㄑ" 你会不会把这个文件夹删了？？
+要不然就把这个写到lang里， += GetLangString(_T("\\My Pictures"));
+呵呵~基本上可以得到一些普版的共识：就是语言问题是阻碍共享软件发展的主要因素。
+为啥暴风后起之秀？mplayer等就是因为没有及时推出中文版而丧失良机。
+
+
+
+
+------------------------------------------------------------------------------
+//2009-05-07
+==========================================
+xb:
+7.等我再研究
+
+8.按钮没问题，显示外框是界面库的功能，试研究
+
+9.XTP最新版已解决，暂时不管这个问题
+
+4.还真有现成的，但是MS写的不对，靠：
+#define CSIDL_MYPICTURES                0x0027        // C:\Program Files\My Pictures
+我一试才发现就是我的文档里的图片目录，他爷爷的，微软也犯这错误，不过只是注释，
+因为我看和
+#define CSIDL_MYVIDEO                   0x000e        // "My Videos" folder
+命名是一样的，才猜到可能是微软搞错了，可能是复制造成的：
+#define CSIDL_PROGRAM_FILES             0x0026        // C:\Program Files
+#define CSIDL_MYPICTURES                0x0027        // C:\Program Files\My Pictures
+我说没见过C:\Program Files\My Pictures啊？晕。
+我都顺便改过来了。
+
+10.代码没看完发现的bug(先不要改)：
+1）vcd格式时的参数
+2）分割时选择“nosplit”结果变成“0MB”，建议仍显示“nosplit”
+
+11.分割自定义后的值插在custom之后？比较难看。我原先是之前，并且有custom前缀，
+这个问题后放。
+
+12.滑动条可以滑动到鼠标指定位置了，但底层不对：
+OnTimer_SetPos: 1
+OnTimer_SetPos: 1
+OnTimer_SetPos: 2
+Slider_SetPos: 5633
+OnTimer_SetPos: 1331
+OnTimer_SetPos: 1332
+OnTimer_SetPos: 1332
+
+13.类型菜单好像不支持3行？应该根据内容确定下一行的偏移啊，看最后一个类型，描述有未显示出来的部分
+
+14.位置：void CMainWnd::SetLangStr()
+为何注释掉提示？
+//m_btnDistypeSuper.SetTooltipText(GetLangString(LS_TIP_DISTYPE_SUPER)) ;
+	//m_btnOutputBrowse.SetTooltipText(GetLangString(LS_TIP_OUTPUT_BROWSE)) ;
+	//m_btnOutputOpen.SetTooltipText(GetLangString(LS_TIP_OUTPUT_OPEN)) ;
+
+15.类型菜单建议和曦力一样加一个常规格式，便于用户选择，还有语言问题也得考虑啊？
+你都显示英文？pictures都不认识的用户能认识device video？
+
+16.ParametersWnd::pump_message()搞不明白
+原意看着好像是想控制，不知道为何这么麻烦，他本身是CWnd，2个菜单也是CWnd，
+就按照常规做呗，弹出来showwindow，然后处理鼠标消息就完了，没见过搞这么复杂的。
+反正也做了，不研究了，如果还有问题你慢慢第二版研究吧。
+不过左边菜单的箭头怎么是白色？不能和底色一样？
+
+17.
+ON_COMMAND(ID_MENU_UI_COLOR0, &CMainFrame::OnMenuUiColor0)
+	ON_COMMAND(ID_MENU_UI_COLOR1, &CMainFrame::OnMenuUiColor1)
+	ON_COMMAND(ID_MENU_UI_COLOR2, &CMainFrame::OnMenuUiColor2)
+	ON_COMMAND(ID_MENU_UI_COLOR3, &CMainFrame::OnMenuUiColor3)
+	ON_COMMAND(ID_MENU_UI_COLOR4, &CMainFrame::OnMenuUiColor4)
+	ON_COMMAND(ID_MENU_UI_COLOR5, &CMainFrame::OnMenuUiColor5)
+	ON_COMMAND(ID_MENU_UI_COLOR6, &CMainFrame::OnMenuUiColor6)
+	ON_COMMAND(ID_MENU_UI_COLOR7, &CMainFrame::OnMenuUiColor7)
+	ON_COMMAND(ID_MENU_UI_COLOR8, &CMainFrame::OnMenuUiColor8)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR0, &CMainFrame::OnUpdateMenuUiColor0)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR1, &CMainFrame::OnUpdateMenuUiColor1)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR2, &CMainFrame::OnUpdateMenuUiColor2)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR3, &CMainFrame::OnUpdateMenuUiColor3)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR4, &CMainFrame::OnUpdateMenuUiColor4)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR5, &CMainFrame::OnUpdateMenuUiColor5)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR6, &CMainFrame::OnUpdateMenuUiColor6)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR7, &CMainFrame::OnUpdateMenuUiColor7)
+	ON_UPDATE_COMMAND_UI(ID_MENU_UI_COLOR8, &CMainFrame::OnUpdateMenuUiColor8)
+
+这一段可以再resource.h中定义一段特殊的连续的id，防止其他控件冲突，然后就可以
+用一个函数解决了，ON_COMMAND_range，manager中有此应用。不过写了就先这样了，不改。
+
+
+
+=================================================================
+siyang liu:
+
+10. 我晚上看一下
+
+
+11. 自定义几乎用不到，目前到也可接受，呵呵
+
+12. 因为是异步的，估计有问题，因为还没有set，你便get了，我到时候看一下，应该是小问题。
+
+13. 类型菜单我用的是DrawText，然后DrawText指定了一个矩形，xili的做法是将字固定在2行了。避免了这个问题
+
+14. 这个几个按钮没有用stbutton，要加这些按钮的话，得响应对话框消息。同时这种简单的按钮不加提示也可。
+
+15. 不用，我们分平台的，常规有点重复，还没想好。。。语言问题到时候把所有地方修改成GetLangStr即可，这个简单，但是麻烦，到时候你搞定
+
+16. 因为那个窗体是当鼠标点击在其他地方或者失去焦点就要收回，不是showwindow那么简单，我研究了好几个晚上呢
+    左边菜单箭头是白色？？？你说那个 向右 的箭头？？
+
+17. 我不是加注视了吗，我知道有range，但是必须连续，我以前用过，很麻烦，以后要是再增加几项的话，就会有问题，微软这里没做好，应该用宏展开形式。
+   所以我就没用range。
+
+
+
+=================================================================
+xb:
+
+18.位置：void CListWnd::OnItemSelectedChange()
+{
+....
+else
+	{
+		// 一个都没有选择直接退出
+		//fixme：需要的地方设置默认值，比如param，刘思阳完成
+		//((CMainFrame *)AfxGetMainWnd())->m_wndParam.SetConverSetting(_T(""), NULL);??????????
+		return;
+	}
+....
+
+// 最后把这个ConverSetting传给参数窗体
+	if (AfxGetMainWnd()) 
+	{
+		((CMainFrame *)AfxGetMainWnd())->m_wndParam.SetConverSetting(filename, setting);
+	}
+
+	//fixme：还应该传递给Mainwnd窗体，刘思阳完成。。。SetStyleButtonText？？
+}
+
+你完成。
+并且if (AfxGetMainWnd()) 不用判断。
+
+
+19.位置：void CListWnd::OnLvnItemchangedList(NMHDR *pNMHDR, LRESULT *pResult)
+我初步检测还是以前的测试结果，即
+
+	if (nIndex < 0 || pNMLV->uNewState & LVIS_SELECTED)
+可以。
+如果你发现问题，告我如何操作。
+
+20.about 对话框基本样子做完了，你看可以不，可以就完善后面的，比如版本号和license。
+<<<<<<< .mine
+版本号我做也可。
+
+
+
+
+
+
+======================================================
+20。
+
+版本号就先是 1.0
+
+// 如果取得用户名为空，表示没有注册，否则注册了
+regname_ = theApp.get_app_username();
+
+有个对外版本号和对内版本号。
+对外就是 x.x 1位小数即可，很多软件用1.x.x表示，比较复杂，用户一般口头就是x.x
+编译版本号你自定。
+
+
+
+
+21. 注意一个问题！
+
+  视频时间这个值是按照视频惯例，使用的是__int64，有时我看到时间为负数，估计就是溢出了。
+还有这个值不能用"%d"来format，否则有可能会导致堆栈错误。
+必须得使用"%I64d"，或者在变量处加上(int)，这种强制类型转换。这样format才不会出错。
+
+
+
+22. 水印我基本上已经做好了，现在给目标格式为：rmvb和源图像格式为：wmv。加水印还有点问题。
+
+有个结构  WATER_MARK ，在上层判断一下，如果没有注册，就填充这个结构。否则不填充。
+
+
+
+23. 关于最下边的广告，得从服务器获取。
+    每次开启软件的是，发送一个http请求，请求中包括很多用户信息，包括用户所在的国家区域，
+    然后网站返回10个广告列表，然后客户端每几秒钟切换一下。
+    要不然第一版可以先不做。
+
+
+
+24. list 快捷键！
+
+=======
+版本号我做也可。
+
+=================================================================
+//2009-05-08
+xb:
+
+21.换肤后再换语言，怎么又看不见菜单了？可能需要再设置，你甭管了。
+
+22.同意那两个按钮就不加提示了，没有文字的加提示，这么一致就行了，就2个按钮。
+
+23.CVStatic有必要吗？个人认为这个类没有理由活在世上。
+
+24.
+class CNagDialog : public CDialog
+{
+private:
+	CString regname_;				// 注册用户名（一开始得到一遍，不要每次得）
+
+	CStatic frame_reg_;				// static框
+
+	CStatic static_mc_;				// 上方提示
+	CStatic static_name_;
+	CStatic static_code_;
+
+	CEdit edit_machinecode_;
+	CEdit edit_name_;
+	CEdit edit_regcode_;
+
+	CStatic frame_suppor
+
+}
+
+唉，这你写的类？感觉比新手还新手，反正不加m_开头容易和其他变量混淆，这是无可争辩的；其次私有的加个_后缀没看出有什么好处，我不需要总是知道他是什么访问权限，加个后缀难看无比；算了，个人习惯反正你也肯定有你的理由。不管了。个人不愿意看这种代码，浪费生命。愿意看xtp的代码。
+关于这个对话框的那个扩展部分个人感觉不好，没意义。你要是保留随你。我有空把字符串的语言做做就行了，逻辑不改。另外软件一启动就弹个人觉得不好，标题已经加未注册，时刻提醒了，总是启动就弹注册只能让人反感，适得其反。你非要这么做也行，我保留意见。
+个人感觉过时的不友好的东西太多，什么上来就注册，about写个感谢贡献人，等。
+
+=================================================================
+//2009-05-08
+xb:
+25.注册码太长，about对话框只能加滚动条了，倒是小问题。注册码还是要显示的，不显示对专门想破解的也没有任何作用，因为license文件可以记事本打开。而显示后方便提供注册信息进行技术支持，所以还是显示为好。
+
+26.重新注册的话，是否删除注册信息？删除即表示如果重新注册失败则软件为未注册状态这样用户先前的注册就废弃了，不过也对啊，谁叫他重新注册啊，符合逻辑。并且如果不删除注册信息，重新注册时的按钮是“以后提醒我”，这个也应该是未注册版本才有，所以建议删除，即重新注册失败就变成了未注册版本。同意否？软件现在没有这么做，你同意就改。
+
+27.
+BOOL CVideoManager::SaveSnap(int nIndex, CORE_HANDLE handle, CString strDir)
+{
+	ASSERT(handle >= 0) ;
+}
+你改的>=0？是有效的吗？要改得统一逻辑的改啊，全部用到handle的地方都得改啊？
+m_handle = create_play(m_info.execinfo.trans_param.input_path, (long)m_wndPlay.GetSafeHwnd());
+			if (m_handle <= 0)
+			{
+				return ;
+			}
+这是源头，播放句柄。如果是临时的或手误，那加fixme或者改过来，要是真的是handle>=0有效，那就得全改啊，改一部分肯定有bug啊。
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+CSubtitleParse
+
+有几个地方要修改一下，
+第一个是怎么没有0号字幕？？？
+而且貌似有些时候有问题，得不到，你再测测
+
+第二个是接口提供2种，你内部使用unicode，
+
+	CP_HANDLE LoadSRT(LPCTSTR pszPath) ;
+
+	// 输入视频文件绝对路径，自动判断加载本地语言的SRT
+	CP_HANDLE LoadLocalSRT(LPCTSTR pszVideoPath) ;
+
+	// 获取字幕文件的语言
+	//int GetSRTLanguage(CP_HANDLE handle, int& id) ;
+
+	// 根据时间点获取字幕内容
+	int	GetSRTString(CP_HANDLE handle, int nTime, TCHAR *buf, int *nLen) ;
+
+
+爆楼的接口要const char* 和 const wchar_t* 两种版本
+否则我上层还得转。
+
+还有应该提供一个static接口，表示是否有字幕，没有的话，我就不创建对象了
+bool has_subtitle(...);
+
+
+还有一个问题，譬如我现在想把中英文字幕都添加到视频中，我该如何处理？
+即每次显示两行。
+
+- 中文，英文
+- Chinese, English
+
+
+还有一个问题，我把类加入到ffmpeglib\encoder\funcionts\目录下了，你看看有什么问题
+
+=================================================================
+//2009-05-24
+xb:
+
+28.字幕怎么有单独的函数？参数不是有参数的设置和获取函数吗？字幕为什么单独写了？
+我的意思是如果可以统一用参数的函数就用，这个是小问题。
+
+29.delete_directory可以递归否。
+
+30.
+if (dw2-dw1>0) {
+		TRACE(_T("OnItemSelectedChange : time = %d !\n"), dw2 - dw1)
+
+想干啥？
+肯定不会有这种代码在界面，如果有，肯定是哪里的逻辑不合理。尽量解决问题，或做个记号，不要写非正规代码，否则别人还得猜啥意思。解决不了的可以直接描述问题。
+
+31.
+//free((void*)theApp.m_pszAppName);
+	//m_pszAppName = _tcsdup(GetLangString(LS_APP_NAME));
+又是非正规代码？确定一下。并且不用新建字符串了，产品名称只有一个，在about那一部分，以那个为准。建议删除LS_APP_NAME。
+
+32.皮肤菜单颜色还没有中文
+
+33.超链接给个内容啊，现在就一个就行，第二版再完善。问题是不能就现在这样显示年费吧，年费应该是协商的结果，呵呵。
+
+34.超链接就加下划线吧，这样人家看着还知道是个超链接，也不能太弱了，否则广告商也不愿意。
+msn不一样，他已经用了那么多年，用户都知道是广告链接部分。
+另外，滑动时加下划线可以，但去掉好像有问题，简单试了几次，包括重绘的风格和矩形，都去不掉，
+所以先暂时这样，估计应该是父窗口刷新才管用，线画到外面了，不属于static窗口了，拖动就可以刷新去掉。
+
+void CHyperLink::OnMouseMove(UINT nFlags, CPoint point) 
+{
+    CStatic::OnMouseMove(nFlags, point);
+
+    if (m_bOverControl)        // Cursor is currently over control
+    {
+        CRect rect;
+        GetClientRect(rect);
+
+        if (!rect.PtInRect(point))
+        {
+            m_bOverControl = FALSE;
+			//SetFontUnderline(m_bUnderline) ;
+            ReleaseCapture();
+		    RedrawWindow(rect);//fixme:下划线无法去掉
+
+            return;
+        }
+    }
+    else                      // Cursor has just moved over control
+    {
+        m_bOverControl = TRUE;
+
+		//xubing added to set hover underline in 2009-05-24
+		//SetFontUnderline(m_bUnderlineHover) ;
+
+        RedrawWindow();
+        SetCapture();
+    }
+}
+
+
+--------------------------------------------
+28. 你说单独的变量？处理的方式不太一样。所以很多地方我修改了一下。下一版将那个结构展开
+
+29. 可以递归，使用系统的函数处理的
+
+30. 这一段代码效率比较低，我没时间查了，先记着
+
+31. 这个是弹出::AfxMessageBox时候的title。本来想修改一下，但是我查了，微软在这个地方是个没完善的东西。
+这个值只能在CWinApp的构造函数中设置
+
+32. 颜色这块有解决不了的问题，现在，最后再说
+
+33. 根本就不是年费。一般是一周一换。不可能永远不变。我的意思是你有时间就完善一下。第一版就直接显示成我们网站的得了。
+
+34. 商业软件（指用户直接购买）上做广告本来就是有问题的，就跟你买了一件衣服，然后衣服上有一个广告链接一样。所以这种文字广告大都出现在非用户付费软件中。
+当时的想法是，如果用户注册了，就不显示了，如果没有注册。那么就显示。跟以前flashget那种营销模式一样。
+这个问题一会我看一行啊
+
+
+
+
+
+5.24 目前xubing要做的任务
+--------------------------------
+0.有一个很重要的任务，翻译shangdi\code\bin\lang。其中<!-- style menu 的文字翻译 -->
+  也就是那个就是那个styelmenu菜单项！根据xilisoft等组织语言。正好熟悉视频格式！
+
+1。增加list快捷键
+2. list普通界面下排序后，listheader显示不对！
+3. list 中进度条还有点问题。（还是会绘制错误，转换时改变别的列宽，滚动条列就会出现问题）可以最后做，最后一起做！
+4. buttonbar 上的右键菜单和主菜单不一致，应该不用手动去复制2份。而是利用insertmenu等几个函数，弹出右键菜单的时候动态把主菜单的项添加进去。
+这样就不会产生不同步的问题了！！！
+5. 转换完成后退出程序及自动关机（需要注意关机死锁现象）实现。
+
+
+=================================================================
+//2009-05-25
+xb:
+35.以下翻译如果你知道，补充之：
+没有<pc_mkv_name>MKV Video Format</pc_mkv_name>
+根据描述对应的是MPEG-4 AVC视频格式，对否？
+
+没有<device_dv_name>DV Format</device_dv_name>
+    <device_dv_desc>DV Format.</device_dv_desc>
+曦力是
+=DV - 数字视频格式
+=多家厂商联合制定的家用数字视频格式, 广泛应用于各种数字摄像机.
+对否？
+
+
+ <device_vcd_name>Video CD - MPEG1 PS Format</device_vcd_name>
+    <device_vcd_desc>Video CD - MPEG1 PS Format.</device_vcd_desc>
+    <device_svcd_name>Super VideoCD - MPEG2 PS Format</device_svcd_name>
+    <device_svcd_desc>Super VideoCD - MPEG2 PS Format.</device_svcd_desc>
+    <device_dvd_name>DVD - MPEG2 PS Format</device_dvd_name>
+    <device_dvd_desc>DVD - MPEG2 PS Format.</device_dvd_desc>
+
+曦力显示的就是英文，咱们呢？要是需要显示中文，你写。
+
+没有<mobile_mpeg4_name>Mobile MPEG-4 Video</mobile_mpeg4_name>
+<mobile_avc_name>Mobile AVC</mobile_avc_name>
+<portable_mp4_name>Removable Media MP4</portable_mp4_name>
+
+另好几处是
+“为网络广播、视频通信制定的压缩标准，很小的体积却有很好的画质。”
+你确定一下。
+
+36.已确定的其他问题（不必再讨论，有意见放在第二版讨论）
+1.buttonbar的菜单采用复制模式，我负责一致
+2.转换完成的操作开发时已实现，最后你验证（因为我已测）。
+3.关闭软件不保存目录，如果没有有效的进一步操作（比如点击转换）。
+4.hyperlink的样式就目前这样。
+5.void CMainWnd::OnCbnKillfocusComboOutput()
+{
+	CString strDir = GetOutputDir() ;
+	if (strDir.IsEmpty()) {
+		m_cbOutput.GetLBText(0, strDir);
+	}
+
+}
+后面既然有setcursel，这里不必处理。
+if (strDir.IsEmpty()) {
+		m_cbOutput.GetLBText(0, strDir);
+	}
+的代码明显是画蛇添足。并且不符合逻辑（用户是1，程序自己拿2来处理)，没有理由程序自动选择一个，给后面处理。
+以后面的判断提示为主而给一个有效的已经足够了。
+已删之。
+
+37.语言文本里的当前版本用不到的先放在另一个文本中，因为发布必须是有效的，
+比如
+<!-- 所有选项的名称 （第一版不一定能用了） -->
+
+我认为发布出去不妥，你要非认为可以，随你。
+
+38.
+set_color(RGB(255, 144, 210));//fixme: test
+还要否，不要删之。
+这几天规整代码。
+
+
+	// 目前这个设置的效率似乎有点低
+	if (dw2-dw1>0) {
+		TRACE(_T("OnItemSelectedChange : time = %d !\n"), dw2 - dw1);
+	}
+
+	//fixme：还应该传递给Mainwnd窗体，刘思阳完成。。。SetStyleButtonText？？
+
+
+// FIXME 这么写估计不一定正确
+	// Sets the locale to the default, which is the user-default ANSI code page obtained from the operating system.
+	setlocale(LC_ALL, "");
+
+为何要setlocale？
+
+
+// FIXME 中止的时候会崩溃，暂时没有时间研究了
+	//btn_ignore_.ShowWindow(SW_SHOW);
+
+？？？？？？？？你不是update完成了吗？？？？？？？？
+
+39.
+else//error
+	{
+		//strProgress = GetLangString(LS_ERROR) ;//出错
+		strProgress.Format(_T("%s:%.1f"), GetLangString(LS_ERROR), fProgress) ;//debug
+		m_list.SetItem(nIndex, 0, LVIF_IMAGE, NULL, 7, 0, 0, 0) ;
+	}
+
+我是给你测试用的，你稳定了？我就删除了。回复。
+
+还有
+if (info.info.has_video)
+	{
+		temp.Format(_T("%s + %s"), info.szVcodecType, info.szVideoFormat) ;//debug
+
+
+
+还有
+
+#if 0
+//	各种反调试代码
+//#ifndef _DEBUG
+//	BlockInput(TRUE);
+//#endif
+
+如果确定了，就删之。
+
+查找fixme和#if 0的代码，还有大片注释的代码，规整之。
+
+40.关于header的问题，没仔细研究，等做完listctrl再研究，初步是这样：
+
+void CSortHeaderCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
+{
+	// attath to the device context.
+	CDC dc;
+	VERIFY( dc.Attach( lpDrawItemStruct->hDC ) );
+	
+	// save the device context.
+	const int iSavedDC = dc.SaveDC();
+
+	// get the column rect.
+	CRect rc( lpDrawItemStruct->rcItem );
+
+	// set the clipping region to limit drawing within the column.
+	//fixme:打开注释则排序后刷新有问题，注释掉则进度条好像有问题，需要结合起来解决
+	//CRgn rgn;
+	//VERIFY( rgn.CreateRectRgnIndirect( &rc ) );
+	//int nRet = dc.SelectClipRgn( &rgn );//对于header，不clip也可，参考XTP的源码	
+	//VERIFY( rgn.DeleteObject() );//应该在自绘完再释放，不过即使放在最后也会出现为空的现象，不知何故？
+	//if (nRet == NULLREGION || nRet == ERROR)//出错不再重绘
+	//{
+	//	//ASSERT(0) ;
+	//	return ;//先返回以解决为空的问题
+	//}
+
+}
+
+看注释部分。
+
+
+
+
+
+
+
+
+
+
+
+=======================================================
+CMainWnd::OnCbnKillfocusComboOutput
+
+的问题，我的意见是messagebox是一种很严肃的问题，能不弹则不弹。如果为空，估计多半是用户不小心删除的。
+所以我默认到上一次正确的地方。不过这是小问题，我个人不是特别喜欢弹messagebox。
+
+
+
+setlocale 是需要的，否则unicode下，很多函数会有问题，尤其是C++标准库的，打开文件啥都有可能出错。
+
+
+
+
+// 目前这个设置的效率似乎有点低
+这个代码测试用的，现在效率低，到时候得优化！等优化完再删除！
+
+
+39： 
+
+#if 0
+//	各种反调试代码
+//#ifndef _DEBUG
+//	BlockInput(TRUE);
+//#endif
+
+这个得要啊，反调试用的，
+
+
+
+关于  我是给你测试用的，你稳定了？我就删除了。回复。
+
+写成
+#ifdef _DEBUG
+ ...
+#else
+#endif
+
+形式即可。
+
+
+
+
+
+
+
+---
+语言你组织一下就行，还有一个问题就是你用中英文文件比较。很多地方还是没同步
+
+<!-- 所有选项的名称 （第一版不一定能用了） -->   ++++++ 这个带不带都行，不会有人去看的。
+
+
+
+
+===================================================================================
+
+客户端bug    5月26日
+
+1. 目标文件设置目录保存不了，我转换了，也没保存，我试了3次，都不行
+2. 转换列表逻辑有问题，我正在转换一个文件，然后加入了一个文件，结果新加入的文件立即运行了。
+3. 有好几个文件，当我转换完第一个之后，我删除第一个会造成VERIFY(CVideoManager::GetItem(i, info)) ;弹错误！
+4. 现在转换目标是2个扩展名.mov.avi。需修改到一个。
+
+以上你测试测试即可
+
+我今天想了一下，由于我们第一版肯定问题比较多，所以打算把左下角的广告链接变成 问题反馈 
+用户一点打开一个ie，然后跳转到留言板，然后他留言反馈。这样比较好。
+
+
+关于第一个问题，如果有两个的话，好像是第二个显示是在等待中，也就是进度条没走，貌似
+而且有时候我删除了一个文件，内核还在转。具体你再测测
+
+
+
+
+
+
+=====================================================================================
+
+9月3日 BUG
+
+1. 停止时未删除临时文件（出BUG了）
+2. 暂停再开始又创建了一次文件（这里的逻辑和BUG1一样有些问题）
+3. psp参数似乎不太正确，还需要多多测试
+4. 有时退出会崩溃，未找到原因，初步估计在界面库HOOK中
+5. 保持当前视频宽高比，须好好测试
+6. 完毕时关闭应用程序似乎有问题。
+
+
+
+
+
+
+
+
+
+
+
+
