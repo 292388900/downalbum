@@ -214,7 +214,7 @@ BOOL CPathDialog::IsFileNameValid(LPCTSTR lpFileName)
   return FALSE;
  }
 
- int nLen = _tcslen(lpFileName);
+ size_t nLen = _tcslen(lpFileName);
  if(nLen<=0)
  {
   return FALSE;
@@ -345,8 +345,8 @@ int CPathDialog::Touch(LPCTSTR lpPath, BOOL bValidate)
  }
 
  TCHAR szPath[MAX_PATH];
- _tcscpy(szPath, lpPath);
- int nLen = _tcslen(szPath);
+ _tcscpy_s(szPath, MAX_PATH, lpPath);
+ size_t nLen = _tcslen(szPath);
 
  //path must be "x:\..."
  if( ( nLen<3 ) || 
@@ -420,33 +420,33 @@ int CPathDialog::Touch(LPCTSTR lpPath, BOOL bValidate)
 //return 1: error
 int CPathDialog::ConcatPath(LPTSTR lpRoot, LPCTSTR lpMorePath)
 {
- if(lpRoot==NULL)
- {
-  return 1;
- }
+	 if(lpRoot==NULL)
+	 {
+	  return 1;
+	 }
 
- int nLen = _tcslen(lpRoot);
+	 size_t nLen = _tcslen(lpRoot);
 
- if(nLen<3)
- {
-  return 1;
- }
+	 if(nLen<3)
+	 {
+	  return 1;
+	 }
 
- if(lpMorePath==NULL)
- {
-  return 0;
- }
+	 if(lpMorePath==NULL)
+	 {
+	  return 0;
+	 }
 
- if(nLen==3)
- {
-  _tcscat(lpRoot, lpMorePath);
-  return 0;
- }
+	 if(nLen==3)
+	 {
+	  _tcscat(lpRoot, lpMorePath);
+	  return 0;
+	 }
 
- _tcscat(lpRoot, _T("\\"));
- _tcscat(lpRoot, lpMorePath);
+	 _tcscat(lpRoot, _T("\\"));
+	 _tcscat(lpRoot, lpMorePath);
 
- return 0;
+	 return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
