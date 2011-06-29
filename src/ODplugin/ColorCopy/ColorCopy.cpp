@@ -96,7 +96,7 @@ extc int _export cdecl ODBG_Plugininit( int ollydbgversion,HWND hw,ulong *featur
 	lstrcpy(m_cfDefault.szFaceName,_T("宋体"));//字体    
 	m_cfDefault.yHeight=180;  
 
-
+	//在log窗口显示插件名称和版本，以及版权信息
 	Addtolist(0,0,"ColorCopy plugin v0.1");
 	Addtolist(0,-1," Copyright (C) 2009 sing");
 	return 0;
