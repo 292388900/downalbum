@@ -25,11 +25,13 @@ public:
 	//搜索的结束rva
 	DWORD	m_dwSearchEnd;
 
-	DWORD	m_nRange;
+	int		m_nRange;
 	DWORD	m_dwMatchPos;
+
 private:
 	void	FreeMemory();
 	BYTE	HexCharToBin(BYTE chHex);
+	bool	m_bFuzzy;	//是否是模糊匹配
 
 public:
 	CSignMatch();
@@ -38,6 +40,8 @@ public:
 	virtual ~CSignMatch();
 
 	BOOL	SetOrigSign(PBYTE pBase,DWORD dwStartRva,DWORD dwEndRva,char*szOrigSign);
-	PBYTE	SearchSign();
-	PBYTE	SearchProcessSign(HANDLE hProcess);
+
+	//如果pBase为NULL，则使用SetOrigSign设置的pBase，否则使用参数pBase
+	PBYTE	SearchSign(PBYTE pBase=NULL);
+	PBYTE	SearchProcessSign(HANDLE hProcess,PBYTE pBase=NULL);
 };
