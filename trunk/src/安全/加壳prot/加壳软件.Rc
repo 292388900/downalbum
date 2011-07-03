@@ -1,0 +1,4 @@
+#include "Res/加壳软件Dlg.rc"
+#include "Res/关于Dlg.rc"
+#include "Res/FirstChildDlg.rc"
+#include "Res/SecondChildDlg.rc"

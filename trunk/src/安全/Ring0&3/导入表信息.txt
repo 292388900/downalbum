@@ -1,0 +1,6 @@
+
+GetModuleHandleA - call dword ptr [0001507d]
+MessageBoxA - call dword ptr [00015055]
+
+ntoskrnl.exe/DbgPrint
+DbgPrint - call dword ptr [00015068]
