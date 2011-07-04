@@ -24,8 +24,12 @@ int main(int argc, char* argv[])
 	
 	//打开test.exe文件，并读取文件内容
 	char pFilePath[256] = {0};
-	DWORD dwLen = GetCurrentDirectory( 256, pFilePath );
-	strcat( pFilePath, "\\test.dll" );
+	GetModuleFileName(NULL,pFilePath,_countof(pFilePath));
+#ifdef _DEBUG
+	strcpy(&strrchr(pFilePath,'\\')[1],"dllD.dll");
+#else
+	strcpy(&strrchr(pFilePath,'\\')[1],"dll.dll");
+#endif
 
 	HANDLE hFile = CreateFile( pFilePath, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 	DWORD dwErr = GetLastError();
@@ -112,9 +116,9 @@ int main(int argc, char* argv[])
 		cin.get();
 		return -1;
 	}
-	WaitForSingleObject( hThread, INFINITE );
+	//WaitForSingleObject( hThread, INFINITE );
 
-
+	system("pause");
 	return 0;
 }
 
@@ -198,6 +202,9 @@ DWORD GetFuncAddrFromModule( char *pDllName, char *pFuncName )
 	
 
 	DWORD dwModuleBase = (DWORD)GetModuleHandle( pDllName );
+	if ( dwModuleBase==NULL ){
+		dwModuleBase = (DWORD)LoadLibrary( pDllName );
+	}
 
 	//查找到模块基址后，解析其导出表获取指定函数地址
 	//再次获取RtlImageDirectoryEntryToData函数地址
