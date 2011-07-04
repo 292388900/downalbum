@@ -343,7 +343,7 @@ void CLoaderDlg::OnBnClickedOk()
 	//首先获取目标exe的OEP
 	//////////////////////////////////////////////////////////////////////////
 
-	HANDLE hFile=CreateFile(m_strExeFile,GENERIC_WRITE|GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+	HANDLE hFile=CreateFile(m_strExeFile,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 	if ( hFile==INVALID_HANDLE_VALUE ){
 		AfxMessageBox(_T("打开文件失败"));
 		return;
