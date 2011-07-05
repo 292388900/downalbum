@@ -352,14 +352,14 @@ void CLoaderDlg::OnBnClickedOk()
 	DWORD size_low,size_high;
 	size_low= GetFileSize(hFile,&size_high); 
 
-	HANDLE hMap=CreateFileMapping(hFile,NULL,PAGE_READWRITE,size_high,size_low,NULL);
+	HANDLE hMap=CreateFileMapping(hFile,NULL,PAGE_READONLY,size_high,size_low,NULL);
 	if ( hMap==NULL ){
 		AfxMessageBox(_T("CreateFileMapping ß∞‹"));
 		CloseHandle(hFile);
 		return;
 	}
 
-	PBYTE pFile=(PBYTE)MapViewOfFile(hMap,FILE_MAP_READ|FILE_MAP_WRITE,0,0,0);
+	PBYTE pFile=(PBYTE)MapViewOfFile(hMap,FILE_MAP_READ,0,0,0);
 	if ( pFile==NULL ){
 		AfxMessageBox(_T("MapViewOfFile ß∞‹"));
 		CloseHandle(hMap);
