@@ -58,12 +58,13 @@ extern "C" int WinMainCRTStartup(void);
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpCmdLine, int nCmdShow)
 {
 	int nRetCode = 0;
+	HANDLE hRealModule=GetSelfModuleHandle();
 
 	
 	::MessageBox(0,"_tWinMain",0,0);
 
 	// 初始化 MFC 并在失败时显示错误
-	if (!AfxWinInit(hInstance, NULL, NULL, 0))
+	if (!AfxWinInit((HINSTANCE)hRealModule, NULL, NULL, 0))
 	{
 		// TODO: 更改错误代码以符合您的需要
 		_tprintf(_T("错误: MFC 初始化失败\n"));
@@ -146,6 +147,7 @@ BOOL WINAPI myDllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 #endif
 	}else{
 #ifndef __MAKEDLL
+		::MessageBox(0,"myDllMain",0,0);
 		WinMainCRTStartup();
 #endif
 	}
