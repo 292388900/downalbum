@@ -487,6 +487,18 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 		</Filter>
+		<Filter
+			Name="Common"
+			>
+			<File
+				RelativePath=".\Common.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Common.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
