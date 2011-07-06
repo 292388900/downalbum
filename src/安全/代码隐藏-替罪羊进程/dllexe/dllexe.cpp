@@ -1,21 +1,32 @@
 
 /*
-注意：预处理器一定不能含有_USRDLL　DLLEXE_EXPORTS
+注意：无论哪种编译方法，预处理器一定不能含有_USRDLL，DLLEXE_EXPORTS
+
+三种编译方法：
+
+1.编译exe程序，需要设置【属性】－【配置属性】－【常规】－【配置类型】为“应用程序(.exe)”，
+注释掉：#pragma comment(linker, "/entry:myMain") 
+注释掉：#define  __MAKEDLL  也就是关闭__MAKEDLL宏
+编译出来的可以直接运行，成功后弹出MFC对话框。
+
+2.编译dll程序，需要设置【属性】－【配置属性】－【常规】－【配置类型】为“动态库(.dll)”，
+开启__MAKEDLL宏，编译出来的dll可以使用loaddll.exe加载，成功后弹出MFC对话框。
+
+3.编译patch程序，需要设置【属性】－【配置属性】－【常规】－【配置类型】为“动态库(.dll)”，
+注释掉：#define  __MAKEDLL  也就是关闭__MAKEDLL宏
+编译出来的文件使用PeLoad.exe加载到notepad.exe（替罪羊）进程中，成功后弹出MFC对话框。
+
+by sing
+2011-7-6 20:09
 */
 
 #include <afx.h>
 #include <afxwin.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <tchar.h>
-#include <afxstat_.h>
 #include "MainDlg.h"
 #include "exeApp.h"
 #include "../Common.h"
 
-#define  __MAKEDLL
-#undef __MAKEDLL
-
+//#define  __MAKEDLL
 #pragma comment(linker, "/entry:myDllMain") 
 
 
@@ -93,14 +104,7 @@ END_MESSAGE_MAP()
 
 
 // 唯一的一个 CinjectApp 对象
-
-
-
-#ifdef __MAKEDLL
- CinjectApp theApp;
-#else
- CWinApp theApp;
-#endif
+CinjectApp theApp;
 
 
 
@@ -136,7 +140,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpC
 //CWinApp theApp;
 BOOL WINAPI myDllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-	hModule=::GetModuleHandle(NULL);
+	//hModule=::GetModuleHandle(NULL);
+	GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,(LPCTSTR)myDllMain,(HMODULE*)&hModule);
 	HMODULE hRealModule=GetSelfModuleHandle();
 
 	if ( hModule==hRealModule ){

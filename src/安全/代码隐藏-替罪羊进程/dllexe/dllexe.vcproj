@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="1"
 			CharacterSet="2"
@@ -188,10 +188,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\exeApp.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\MainDlg.cpp"
 				>
 			</File>
@@ -201,10 +197,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\exeApp.h"
-				>
-			</File>
 			<File
 				RelativePath=".\MainDlg.h"
 				>
