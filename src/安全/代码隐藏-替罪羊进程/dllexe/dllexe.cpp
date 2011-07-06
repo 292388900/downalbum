@@ -23,7 +23,6 @@ by sing
 #include <afx.h>
 #include <afxwin.h>
 #include "MainDlg.h"
-#include "exeApp.h"
 #include "../Common.h"
 
 //#define  __MAKEDLL
