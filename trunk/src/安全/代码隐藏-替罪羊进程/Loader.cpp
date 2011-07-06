@@ -318,6 +318,9 @@ bool ProcessImportTable( PVOID pBaseAddr, PVOID lpNewImgBase )
 		{
 			PIMAGE_IMPORT_BY_NAME pImageImportByName = (PIMAGE_IMPORT_BY_NAME)( (ULONG)pBaseAddr + (ULONG)(pOriginalThunkData->u1.AddressOfData) );
 			char *pFuncName = (char*)(&pImageImportByName->Name);
+			if ( stricmp(pDllName,"SHLWAPI.DLL")==0 ){
+				int a=0;
+			}
 			DWORD dwFuncAddr = GetFuncAddrFromModule( pDllName, pFuncName );
 			TRACE("函数名：%s  函数地址：%08X\n",pFuncName,dwFuncAddr);
 
@@ -409,6 +412,19 @@ DWORD GetFuncAddrFromModule( char *pDllName, char *pFuncName )
 	PULONG pAddressTableBase = (PULONG)(dwModuleBase + pExportDescriptor->AddressOfFunctions);
 	DWORD dwFuncAddr = dwModuleBase + pAddressTableBase[dwOridinalName];
 
+	//////////////////////////////////////////////////////////////////////////
+	//这里简单处理下转向问题
+	if ( IsCharAlphaNumeric(*(PCHAR)dwFuncAddr) && IsCharAlphaNumeric(*(PCHAR)(dwFuncAddr+1))
+		&& IsCharAlphaNumeric(*(PCHAR)(dwFuncAddr+2)) && IsCharAlphaNumeric(*(PCHAR)(dwFuncAddr+3)) ){
+		CString strText=(LPCTSTR)dwFuncAddr;
+		int nPos1=strText.Find('.');
+		if ( nPos1!=-1 ){
+			CString strDllName=strText.Left(nPos1)+".dll";
+			CString strFuncName=strText.Mid(nPos1+1);
+			dwFuncAddr=(DWORD)GetProcAddress(GetModuleHandleA(strDllName),strFuncName);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	return dwFuncAddr;
 
 }

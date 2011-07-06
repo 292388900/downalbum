@@ -1,6 +1,6 @@
 
 /*
-注意：预处理器一定不能含有__USERDLL,DLL_EXPORT
+注意：预处理器一定不能含有_USRDLL　DLLEXE_EXPORTS
 */
 
 #include <afx.h>
@@ -19,24 +19,23 @@
 
 
 
-__declspec(naked) HANDLE WINAPI GetSelfModuleHandle()
+__declspec(naked) HMODULE WINAPI GetSelfModuleHandle()
 {
-  _asm
-  {
-    sub esp, 28
-    mov eax, esp
-    push 28
-    push eax
-    call label0
-  label0:
-    call dword ptr[VirtualQuery]
-    test eax, eax
-    jz label1
-    mov eax, [esp + 4]
-  label1:
-    add esp, 28
-    ret
-  }
+	_asm{
+		sub esp, 28;
+		mov eax, esp;
+		push 28;
+		push eax;
+		call label0;
+		label0:
+		call dword ptr[VirtualQuery];
+		test eax, eax;
+		jz label1;
+		mov eax, [esp + 4];
+		label1:
+		add esp, 28;
+		ret;
+	}
 }
 
 #ifdef __MAKEDLL
@@ -53,31 +52,6 @@ extern "C" int WinMainCRTStartup(void);
 //extern "C" int wWinMainCRTStartup(void);
 //#endif
 
-
-
-int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpCmdLine, int nCmdShow)
-{
-	int nRetCode = 0;
-	HANDLE hRealModule=GetSelfModuleHandle();
-
-	
-	::MessageBox(0,"_tWinMain",0,0);
-
-	// 初始化 MFC 并在失败时显示错误
-	if (!AfxWinInit((HINSTANCE)hRealModule, NULL, NULL, 0))
-	{
-		// TODO: 更改错误代码以符合您的需要
-		_tprintf(_T("错误: MFC 初始化失败\n"));
-		nRetCode = 1;
-		return nRetCode;
-	}
-	AfxMessageBox("_tWinMain");
-
-	CMainDlg dlg;
-	dlg.DoModal();
-
-	return nRetCode;
-}
 
 
 // CinjectApp
@@ -135,7 +109,33 @@ END_MESSAGE_MAP()
 #endif
 
 
- 
+
+
+int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpCmdLine, int nCmdShow)
+{
+	//这句话是必须的，因为mfc的VC\atlmfc\src\mfc\appinit.cpp第87行调用了SHLWAPI.DLL的函数::PathFindExtension
+	//由此想到输入表不应该由loader来处理，而是要自己去处理。
+	::LoadLibrary("SHLWAPI.DLL");
+
+	// 初始化 MFC 并在失败时显示错误
+	if ( !AfxWinInit(GetModuleHandle(NULL), NULL, NULL, 0) ){
+		 // TODO: 更改错误代码以符合您的需要
+		 //_tprintf(_T("错误: MFC 初始化失败\n"));
+		 return 0;
+	}
+
+	AfxMessageBox(_T("AfxWinInit OK"));
+
+	//初始化成功后，设置资源句柄为我们的真实基址
+	AfxSetResourceHandle(GetSelfModuleHandle());
+
+	CMainDlg dlg;
+	dlg.DoModal();
+
+	return 0;
+}
+
+
 
 //CWinApp theApp;
 BOOL WINAPI myDllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
