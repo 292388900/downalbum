@@ -11,6 +11,7 @@
 #include <afxstat_.h>
 #include "MainDlg.h"
 #include "exeApp.h"
+#include "../Common.h"
 
 #define  __MAKEDLL
 #undef __MAKEDLL
@@ -45,13 +46,6 @@ extern "C" BOOL WINAPI InternalDllMain(HANDLE hDllHandle, DWORD dwReason, LPVOID
 extern "C" BOOL WINAPI _tmainCRTStartup(void);
 extern "C" int WinMainCRTStartup(void);
 #endif
-
-//#ifndef _UNICODE
-//extern "C" int WinMainCRTStartup(void);
-//#else
-//extern "C" int wWinMainCRTStartup(void);
-//#endif
-
 
 
 // CinjectApp
@@ -113,9 +107,11 @@ END_MESSAGE_MAP()
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpCmdLine, int nCmdShow)
 {
-	//这句话是必须的，因为mfc的VC\atlmfc\src\mfc\appinit.cpp第87行调用了SHLWAPI.DLL的函数::PathFindExtension
+	//注：如果模块不是自己处理输入表，而是让loader处理的话，旺旺有些dll不能正确加载。
+	//例如mfc的VC\atlmfc\src\mfc\appinit.cpp第87行调用了SHLWAPI.DLL的函数::PathFindExtension
+	//loader处理后即便获得了地址，但是模块并没有加载该dll，一样不能正确调用。
 	//由此想到输入表不应该由loader来处理，而是要自己去处理。
-	::LoadLibrary("SHLWAPI.DLL");
+	//::LoadLibrary("SHLWAPI.DLL");
 
 	// 初始化 MFC 并在失败时显示错误
 	if ( !AfxWinInit(GetModuleHandle(NULL), NULL, NULL, 0) ){
@@ -140,14 +136,19 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpC
 //CWinApp theApp;
 BOOL WINAPI myDllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
-	HANDLE hRealModule=GetSelfModuleHandle();
+	hModule=::GetModuleHandle(NULL);
+	HMODULE hRealModule=GetSelfModuleHandle();
+
 	if ( hModule==hRealModule ){
 #ifdef __MAKEDLL
 		_DllMainCRTStartup(hRealModule,ul_reason_for_call,NULL);
 #endif
 	}else{
 #ifndef __MAKEDLL
-		::MessageBox(0,"myDllMain",0,0);
+		//::MessageBox(0,"myDllMain",0,0);
+		//__asm{__emit 0xCC}
+		//加载dll并修复输入表
+		ProcessImportTable(hRealModule);
 		WinMainCRTStartup();
 #endif
 	}
