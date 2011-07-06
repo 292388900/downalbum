@@ -470,14 +470,6 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\Loader.h"
-				>
-			</File>
-			<File
-				RelativePath="ntimage.h"
-				>
-			</File>
-			<File
 				RelativePath="StdAfx.h"
 				>
 			</File>

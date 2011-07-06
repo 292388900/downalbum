@@ -1,12 +1,6 @@
 // Loader.cpp : Defines the entry point for the console application.
 //
 
-/*
-时间：2011年2月12日
-作者：angelkiss
-函数功能：Reload And Run程序目录下的test.exe程序
-*/
-
 #include "stdafx.h"
 #include <afx.h>
 #include <iostream>
