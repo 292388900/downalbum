@@ -2,7 +2,7 @@
 /*
 注意：无论哪种编译方法，预处理器一定不能含有_USRDLL，DLLEXE_EXPORTS
 
-三种编译方法：
+三种编译方法四种用途：
 
 1.编译exe程序，需要设置【属性】－【配置属性】－【常规】－【配置类型】为“应用程序(.exe)”，
 注释掉：#pragma comment(linker, "/entry:myMain") 
@@ -15,6 +15,9 @@
 3.编译patch程序，需要设置【属性】－【配置属性】－【常规】－【配置类型】为“动态库(.dll)”，
 注释掉：#define  __MAKEDLL  也就是关闭__MAKEDLL宏
 编译出来的文件使用PeLoad.exe加载到notepad.exe（替罪羊）进程中，成功后弹出MFC对话框。
+
+我们的patch程序是一个dll文件，但是如果把pe属性改为exe，并将文件后缀改为.exe，那么直接双击可运行。
+
 
 by sing
 2011-7-6 20:09
@@ -123,7 +126,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR    lpC
 		 return 0;
 	}
 
-	AfxMessageBox(_T("AfxWinInit OK"));
+	AfxMessageBox(_T("start as normal exe"));
 
 	//初始化成功后，设置资源句柄为我们的真实基址
 	AfxSetResourceHandle(GetSelfModuleHandle());
@@ -146,6 +149,9 @@ BOOL WINAPI myDllMain(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserve
 	if ( hModule==hRealModule ){
 #ifdef __MAKEDLL
 		_DllMainCRTStartup(hRealModule,ul_reason_for_call,NULL);
+#else
+		//_tmainCRTStartup();
+		WinMainCRTStartup();
 #endif
 	}else{
 #ifndef __MAKEDLL
