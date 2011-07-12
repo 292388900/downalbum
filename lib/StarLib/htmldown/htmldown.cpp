@@ -379,7 +379,6 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 
 	CInternetSession session("HttpClient");
 	session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
-
 	try{  
 		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl,1);  //使用默认的flag即可 否则肯会卡
 
@@ -399,6 +398,54 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 			dwHttpStatus=0;
 		}  
 	}catch(CInternetException*e){ 
+		CString s;
+		TCHAR szCause[MAX_PATH];
+		e->GetErrorMessage(szCause,MAX_PATH);
+		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e->m_dwError,e->m_dwContext);
+		AfxMessageBox(s);
+		//e->ReportError();
+		e->Delete();  
+		//可能是超时引起的
+		dwHttpStatus=0x80000000;
+	}
+
+	return   dwHttpStatus;  
+}
+
+UINT GetHttpFileContentUseProxy(LPCTSTR lpszUrl,CString&strHtml,const CString&strProxy,int nTimeOutSeconds)
+{
+	int		nRead=0;  
+	CString strText;
+	DWORD	dwHttpStatus=0x80000000;
+	strHtml=_T("");
+
+	CInternetSession session("HttpClient");
+	session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
+	try{  
+		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl,1);  //使用默认的flag即可 否则肯会卡
+		Star::Common::SetProxy(session,pHttpFile,(char*)(LPCTSTR)strProxy,"","");
+
+		if ( pHttpFile!=NULL && pHttpFile->QueryInfoStatusCode(dwHttpStatus)!=0 ){  
+			if ( dwHttpStatus>=200 && dwHttpStatus<300 ){
+				//Success
+#ifdef _UNICODE
+#error Unicode 模式下CHttpFile::ReadString读入乱码
+#endif
+				while( pHttpFile->ReadString(strText)!=0 ){  
+					strHtml=strHtml+strText+_T("\n");   
+				}
+			}  
+
+			pHttpFile->Close();
+			delete pHttpFile;
+			dwHttpStatus=0;
+		}  
+	}catch(CInternetException*e){ 
+		CString s;
+		TCHAR szCause[MAX_PATH];
+		e->GetErrorMessage(szCause,MAX_PATH);
+		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e->m_dwError,e->m_dwContext);
+		AfxMessageBox(s);
 		//e->ReportError();
 		e->Delete();  
 		//可能是超时引起的
