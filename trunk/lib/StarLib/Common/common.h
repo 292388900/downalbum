@@ -2,6 +2,7 @@
 #pragma once
 #include <afx.h>
 #include <afxmt.h>
+#include <afxinet.h>
 
 
 // _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
@@ -99,6 +100,7 @@ namespace Star
 		int SplitString(CString strSrc,CString strSep,CStringList&strList);
 		int SplitString(CString strSrc,CString strSep,CStringArray&strArr);
 
+		int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword);   
 		CString Certify(CString strHostServer,CString strPage,CString strName,CString strPswd,CString strAppName);
 
 		//在字符串中查找字符，pSub含有多个字符
