@@ -38,7 +38,7 @@ typedef struct _SYSTEM_MODULE
 typedef struct _SYSTEM_MODULE_INFORMATION
 {
 	ULONG            uCount;
-	SYSTEM_MODULE    ModuleInfo[];
+	SYSTEM_MODULE    ModuleInfo[1];
 } SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION; 
 
 typedef enum _SYSTEM_INFORMATION_CLASS
@@ -120,7 +120,7 @@ NTSTATUS
 								  OUT PULONG ReturnLength OPTIONAL
 								  );
 
-DWORD GetFuncAddrFromModule( char *pDllName, char *pFuncName );
+PVOID GetFuncAddrFromModule( char *pDllName, char *pFuncName );
 PVOID AlignFileToMem(PVOID pImageBuffer,DWORD dwImageSize,PVOID pFileBuffer,DWORD dwFileSize);
 DWORD GetTotalImageSize( PVOID pFileBuffer, DWORD dwFileSize );
 DWORD GetAlignSize( DWORD dwSize, DWORD dwAlignSize );
