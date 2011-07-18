@@ -8,47 +8,35 @@
 bool ProcessImportTable(PVOID lpNewImgBase)
 {
 	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)lpNewImgBase;
-	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (ULONG)pDosHeader + pDosHeader->e_lfanew );
+	PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)( (PBYTE)pDosHeader + pDosHeader->e_lfanew );
 
 	//获取RtlImageDirectoryEntryToData函数地址
-	HMODULE hNtDll = LoadLibrary( _T("ntdll.dll") );
-	PRTLIMAGEDIRECTORYENTRYTODATA pRtlImageDirectoryEntryToData = (PRTLIMAGEDIRECTORYENTRYTODATA)GetProcAddress( hNtDll, "RtlImageDirectoryEntryToData" );
-	if( pRtlImageDirectoryEntryToData == NULL )
-	{
-		TRACE("获取RtlImageDirectoryEntryToData函数地址失败\n");
-		FreeLibrary( hNtDll );
-		return false;
-	}
-	DWORD dwImportSize = 0;
-	PIMAGE_IMPORT_DESCRIPTOR pImportDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)pRtlImageDirectoryEntryToData( lpNewImgBase, true, IMAGE_DIRECTORY_ENTRY_IMPORT, &dwImportSize );
-	if( pImportDescriptor == NULL )
-	{
-		TRACE("获取输表信息出错\n");
-		FreeLibrary( hNtDll );
-		return false;
-	}
+	//HMODULE hNtDll = LoadLibrary( _T("ntdll.dll") );
+	//FreeLibrary( hNtDll );
 
-	FreeLibrary( hNtDll );
+	DWORD dwDataStartRVA=pNtHeader->OptionalHeader.DataDirectory[1].VirtualAddress;
+	DWORD dwImportSize=dwDataStartRVA+pNtHeader->OptionalHeader.DataDirectory[1].Size;
+	if ( dwDataStartRVA==0 ){
+		return NULL;
+	}
+	PIMAGE_IMPORT_DESCRIPTOR pImportDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)((PBYTE)lpNewImgBase+dwDataStartRVA);
 
 
 	while( pImportDescriptor->Name != 0 )
 	{
-		PIMAGE_THUNK_DATA32 pFirstThunkData = (PIMAGE_THUNK_DATA32)( (ULONG)lpNewImgBase + pImportDescriptor->FirstThunk);
-		PIMAGE_THUNK_DATA32 pOriginalThunkData = (PIMAGE_THUNK_DATA32)( (ULONG)lpNewImgBase + pImportDescriptor->OriginalFirstThunk);
+		PIMAGE_THUNK_DATA32 pFirstThunkData = (PIMAGE_THUNK_DATA32)( (PBYTE)lpNewImgBase + pImportDescriptor->FirstThunk);
+		PIMAGE_THUNK_DATA32 pOriginalThunkData = (PIMAGE_THUNK_DATA32)( (PBYTE)lpNewImgBase + pImportDescriptor->OriginalFirstThunk);
 
 		//获取dll名
-		char *pDllName = (char*)( (ULONG)lpNewImgBase + pImportDescriptor->Name );
+		char *pDllName = (char*)( (PBYTE)lpNewImgBase + pImportDescriptor->Name );
 		//TRACE("处理输入表，DLL：%s\n",pDllName);
 
 		//循环处理该dll中的每个输入表函数
 		while( (pOriginalThunkData->u1.Ordinal != 0 ) && !( pOriginalThunkData->u1.Ordinal&0x80000000) )
 		{
-			PIMAGE_IMPORT_BY_NAME pImageImportByName = (PIMAGE_IMPORT_BY_NAME)( (ULONG)lpNewImgBase + (ULONG)(pOriginalThunkData->u1.AddressOfData) );
+			PIMAGE_IMPORT_BY_NAME pImageImportByName = (PIMAGE_IMPORT_BY_NAME)( (PBYTE)lpNewImgBase + (ULONG)(pOriginalThunkData->u1.AddressOfData) );
 			char *pFuncName = (char*)(&pImageImportByName->Name);
-			if ( stricmp(pDllName,"SHLWAPI.DLL")==0 ){
-				int a=0;
-			}
-			DWORD dwFuncAddr = GetFuncAddrFromModule( pDllName, pFuncName );
+			DWORD dwFuncAddr = (DWORD)GetFuncAddrFromModule( pDllName, pFuncName );
 			//TRACE("函数名：%s  函数地址：%08X\n",pFuncName,dwFuncAddr);
 
 			if( dwFuncAddr == 0 )
@@ -76,48 +64,42 @@ pFuncName:需要获取地址的函数名
 返回值：
 返回函数地址
 */
-DWORD GetFuncAddrFromModule( char *pDllName, char *pFuncName )
+PVOID GetFuncAddrFromModule( char *pDllName, char *pFuncName )
 {
-	//首先获取模块基地址,这里pDllName必须是系统已经加载的模块，如果ReloadAndRun的目标文件含有自己的dll，那么就会失败
+	PVOID pFuncAddr=NULL;
 
-
-	DWORD dwModuleBase = (DWORD)GetModuleHandleA( pDllName );
-	if ( dwModuleBase==NULL ){
-		dwModuleBase = (DWORD)LoadLibraryA( pDllName );
+	//如果代码中没有GetModuleHandleA函数，则会crash
+	HMODULE hModule = GetModuleHandleA( pDllName );
+	if ( hModule==NULL ){
+		hModule = LoadLibraryA( pDllName );
+		if ( hModule==NULL ){
+			return NULL;
+		}
 	}
+	PBYTE lpImageBase=(PBYTE)hModule;
 
 	//查找到模块基址后，解析其导出表获取指定函数地址
-	//再次获取RtlImageDirectoryEntryToData函数地址
-	//获取RtlImageDirectoryEntryToData函数地址
-	HMODULE hNtDll = LoadLibrary( _T("ntdll.dll") );
-	PRTLIMAGEDIRECTORYENTRYTODATA pRtlImageDirectoryEntryToData = (PRTLIMAGEDIRECTORYENTRYTODATA)GetProcAddress( hNtDll, "RtlImageDirectoryEntryToData" );
-	if( pRtlImageDirectoryEntryToData == NULL )
-	{
-		//TRACE("获取RtlImageDirectoryEntryToData函数地址失败\n");
-		FreeLibrary( hNtDll );
-		return 0;
+	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)lpImageBase;
+	PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)( (PBYTE)pDosHeader + pDosHeader->e_lfanew );
+	DWORD dwDataStartRVA=pNtHeader->OptionalHeader.DataDirectory[0].VirtualAddress;
+	DWORD dwDataEndRVA=dwDataStartRVA+pNtHeader->OptionalHeader.DataDirectory[0].Size;
+	if ( dwDataStartRVA==0 ){
+		return NULL;
 	}
-	DWORD dwExportSize = 0;
-	PIMAGE_EXPORT_DIRECTORY pExportDescriptor = (PIMAGE_EXPORT_DIRECTORY)pRtlImageDirectoryEntryToData( (PVOID)dwModuleBase, true, IMAGE_DIRECTORY_ENTRY_EXPORT, &dwExportSize );
-	if( pExportDescriptor == NULL )
-	{
-		//TRACE("获取导出表结构失败\n");
-		FreeLibrary( hNtDll );
-		return 0;
-	}
-	FreeLibrary( hNtDll );
+
+	PIMAGE_EXPORT_DIRECTORY pExportDir=(PIMAGE_EXPORT_DIRECTORY)((LPBYTE)lpImageBase+dwDataStartRVA);
 
 	//采用而分查找法查找函数地址
-	PULONG pNameTableBase = (PULONG)(dwModuleBase + pExportDescriptor->AddressOfNames);
-	PUSHORT pNameOrdinalTableBase = (PUSHORT)(dwModuleBase + pExportDescriptor->AddressOfNameOrdinals);
+	PULONG pNameTableBase = (PULONG)(lpImageBase + pExportDir->AddressOfNames);
+	PUSHORT pNameOrdinalTableBase = (PUSHORT)(lpImageBase + pExportDir->AddressOfNameOrdinals);
 
 	DWORD dwLow = 0;
-	DWORD dwHigh = pExportDescriptor->NumberOfNames - 1;
+	DWORD dwHigh = pExportDir->NumberOfNames - 1;
 	DWORD dwMid = 0;
 	while( dwLow <= dwHigh )
 	{
 		dwMid = (dwLow + dwHigh) >> 1;
-		LONG lRes = strcmp( (char*)(dwModuleBase+pNameTableBase[dwMid]), pFuncName );
+		LONG lRes = strcmp( (char*)(lpImageBase+pNameTableBase[dwMid]), pFuncName );
 		if( lRes > 0 )
 			dwHigh = dwMid - 1;
 		else if(lRes < 0 )
@@ -131,36 +113,38 @@ DWORD GetFuncAddrFromModule( char *pDllName, char *pFuncName )
 		return 0;
 	}
 	DWORD dwOridinalName = pNameOrdinalTableBase[dwMid];
-	if( dwOridinalName > pExportDescriptor->NumberOfFunctions )
+	if( dwOridinalName > pExportDir->NumberOfFunctions )
 	{
 		//TRACE("获取的函数序号错误\n");
 		return 0;
 	}
-	PULONG pAddressTableBase = (PULONG)(dwModuleBase + pExportDescriptor->AddressOfFunctions);
-	DWORD dwFuncAddr = dwModuleBase + pAddressTableBase[dwOridinalName];
+	PULONG pAddressTableBase = (PULONG)(lpImageBase + pExportDir->AddressOfFunctions);
+	DWORD dwFuncAddrRva = pAddressTableBase[dwOridinalName];
 
-	//////////////////////////////////////////////////////////////////////////
-	//这里简单处理下转向问题
-	if ( IsCharAlphaNumeric(*(PCHAR)dwFuncAddr) && IsCharAlphaNumeric(*(PCHAR)(dwFuncAddr+1))
-		&& IsCharAlphaNumeric(*(PCHAR)(dwFuncAddr+2)) && IsCharAlphaNumeric(*(PCHAR)(dwFuncAddr+3)) ){
-			char szDllName[50]={0};
-			char szFuncName[50]={0};
-			char*p=strchr((char*)dwFuncAddr,'.');
-			if ( p!=NULL ){
-				memcpy(szDllName,(char*)dwFuncAddr,(DWORD)p-dwFuncAddr);
-				strcat(szDllName,".dll");
-				strcpy(szFuncName,p+1);
+	//判断这个地址是不是在导出表所在的节中，如果是说明是转向函数
+	if ( dwFuncAddrRva>=dwDataStartRVA && dwFuncAddrRva<dwDataEndRVA ){
+		//是一个字符串
+		PCHAR szDllFuncName=(PCHAR)lpImageBase+dwFuncAddrRva;
+		//int nLen=(int)strlen(szDllFuncName);
+		char szDllName[50]={0};
+		char szFuncName[50]={0};
+		char*p=strchr(szDllFuncName,'.');
+		if ( p!=NULL ){
+			memcpy(szDllName,szDllFuncName,(DWORD)(p-szDllFuncName));
+			strcat_s(szDllName,".dll");
+			strcpy_s(szFuncName,p+1);
 
-				dwModuleBase = (DWORD)GetModuleHandle( szDllName );
-				if ( dwModuleBase==NULL ){
-					dwModuleBase = (DWORD)LoadLibrary( szDllName );
-				}
-				dwFuncAddr=(DWORD)GetProcAddress((HMODULE)dwModuleBase,szFuncName);
+			hModule = GetModuleHandle(szDllName);
+			if ( hModule==NULL ){
+				hModule = LoadLibrary(szDllName);
 			}
+			pFuncAddr=GetProcAddress(hModule,szFuncName);
+		}
+	}else{
+		pFuncAddr = (PVOID)(lpImageBase+dwFuncAddrRva);
 	}
-	//////////////////////////////////////////////////////////////////////////
-	return dwFuncAddr;
 
+	return pFuncAddr;
 }
 
 
@@ -179,8 +163,8 @@ PVOID AlignFileToMem(PVOID pImageBuffer,DWORD dwImageSize,PVOID pFileBuffer,DWOR
 	memset( pImageBuffer, 0, dwImageSize );
 
 	//复制PE头信息
-	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (ULONG)pFileBuffer + ((PIMAGE_DOS_HEADER)pFileBuffer)->e_lfanew );
-	PIMAGE_SECTION_HEADER pSectionHeader = (PIMAGE_SECTION_HEADER)( (ULONG)pNtHeaders + sizeof(IMAGE_NT_HEADERS) );
+	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (PBYTE)pFileBuffer + ((PIMAGE_DOS_HEADER)pFileBuffer)->e_lfanew );
+	PIMAGE_SECTION_HEADER pSectionHeader = (PIMAGE_SECTION_HEADER)( (PBYTE)pNtHeaders + sizeof(IMAGE_NT_HEADERS) );
 	DWORD dwCpySize = pNtHeaders->OptionalHeader.SizeOfHeaders;
 	for( DWORD dwIndex = 0; dwIndex < pNtHeaders->FileHeader.NumberOfSections; dwIndex++ )
 	{
@@ -188,22 +172,22 @@ PVOID AlignFileToMem(PVOID pImageBuffer,DWORD dwImageSize,PVOID pFileBuffer,DWOR
 			dwCpySize = pSectionHeader[dwIndex].PointerToRawData;
 	}
 	memcpy( pImageBuffer, pFileBuffer, dwCpySize );
-	PVOID pt = (PVOID)((ULONG)pImageBuffer + GetAlignSize( pNtHeaders->OptionalHeader.SizeOfHeaders, pNtHeaders->OptionalHeader.SectionAlignment ));
+	PVOID pt = (PVOID)((PBYTE)pImageBuffer + GetAlignSize( pNtHeaders->OptionalHeader.SizeOfHeaders, pNtHeaders->OptionalHeader.SectionAlignment ));
 	for( DWORD dwIndex = 0; dwIndex < pNtHeaders->FileHeader.NumberOfSections; dwIndex++ )
 	{
 		if( pSectionHeader[dwIndex].VirtualAddress != 0 )
-			pt = (PVOID)( (DWORD)pImageBuffer + pSectionHeader[dwIndex].VirtualAddress);
+			pt = (PVOID)( (PBYTE)pImageBuffer + pSectionHeader[dwIndex].VirtualAddress);
 		if( pSectionHeader[dwIndex].SizeOfRawData != 0 )
 		{
-			memcpy( pt, (PVOID)( (DWORD)pFileBuffer + pSectionHeader[dwIndex].PointerToRawData), pSectionHeader[dwIndex].SizeOfRawData );
+			memcpy( pt, (PVOID)( (PBYTE)pFileBuffer + pSectionHeader[dwIndex].PointerToRawData), pSectionHeader[dwIndex].SizeOfRawData );
 			if( pSectionHeader[dwIndex].SizeOfRawData > pSectionHeader[dwIndex].Misc.VirtualSize )
-				pt = (PVOID)( (ULONG)pt + GetAlignSize(pSectionHeader[dwIndex].SizeOfRawData, pNtHeaders->OptionalHeader.SectionAlignment ) );
+				pt = (PVOID)( (PBYTE)pt + GetAlignSize(pSectionHeader[dwIndex].SizeOfRawData, pNtHeaders->OptionalHeader.SectionAlignment ) );
 			else
-				pt = (PVOID)( (ULONG)pt + GetAlignSize(pSectionHeader[dwIndex].Misc.VirtualSize, pNtHeaders->OptionalHeader.SectionAlignment ) );
+				pt = (PVOID)( (PBYTE)pt + GetAlignSize(pSectionHeader[dwIndex].Misc.VirtualSize, pNtHeaders->OptionalHeader.SectionAlignment ) );
 
 		}
 		else
-			pt = (PVOID)( (ULONG)pt + GetAlignSize(pSectionHeader[dwIndex].Misc.VirtualSize, pNtHeaders->OptionalHeader.SectionAlignment ) );
+			pt = (PVOID)( (PBYTE)pt + GetAlignSize(pSectionHeader[dwIndex].Misc.VirtualSize, pNtHeaders->OptionalHeader.SectionAlignment ) );
 	}
 	return pImageBuffer;
 }
@@ -218,11 +202,11 @@ pFileBuffer:文件内容起始地址
 DWORD GetTotalImageSize( PVOID pFileBuffer, DWORD dwFileSize )
 {
 	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)pFileBuffer;
-	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (ULONG)pFileBuffer + pDosHeader->e_lfanew );
+	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (PBYTE)pFileBuffer + pDosHeader->e_lfanew );
 
 	DWORD dwTotalSize = GetAlignSize( pNtHeaders->OptionalHeader.SizeOfHeaders, pNtHeaders->OptionalHeader.SectionAlignment );
 
-	PIMAGE_SECTION_HEADER pSectionHeader = (PIMAGE_SECTION_HEADER)( (ULONG)pNtHeaders + sizeof(IMAGE_NT_HEADERS) );
+	PIMAGE_SECTION_HEADER pSectionHeader = (PIMAGE_SECTION_HEADER)( (PBYTE)pNtHeaders + sizeof(IMAGE_NT_HEADERS) );
 
 	DWORD dwSectionCnt = pNtHeaders->FileHeader.NumberOfSections;
 	for( DWORD dwIndex = 0; dwIndex < dwSectionCnt; dwIndex++ )
@@ -264,7 +248,7 @@ bool ProcessRelocTable( PVOID pImageBuffer, PVOID lpNewImgBase )
 {
 
 	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)pImageBuffer;
-	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (ULONG)pDosHeader + pDosHeader->e_lfanew );
+	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)( (PBYTE)pDosHeader + pDosHeader->e_lfanew );
 
 	//获取RtlImageDirectoryEntryToData函数地址
 	HMODULE hNtDll = LoadLibrary( _T("ntdll.dll") );
@@ -289,21 +273,21 @@ bool ProcessRelocTable( PVOID pImageBuffer, PVOID lpNewImgBase )
 	DWORD dwDelta = (DWORD)lpNewImgBase - pNtHeaders->OptionalHeader.ImageBase;
 	while( dwRelocaSize > 0 )
 	{
-		PUSHORT pFixup = (PUSHORT)((ULONG)pRelocDescriptor + sizeof(IMAGE_BASE_RELOCATION));
+		PUSHORT pFixup = (PUSHORT)((PBYTE)pRelocDescriptor + sizeof(IMAGE_BASE_RELOCATION));
 		for( DWORD dwIndex = 0; dwIndex< ( (pRelocDescriptor->SizeOfBlock-sizeof(IMAGE_BASE_RELOCATION))/2 ); dwIndex++ )
 		{
 
 			if( (pFixup[dwIndex]>>12) == IMAGE_REL_BASED_HIGHLOW )
 			{
-				DWORD dwAddr = (DWORD)pImageBuffer + pRelocDescriptor->VirtualAddress + (pFixup[dwIndex]&0xfff);
-				*(PULONG)dwAddr += dwDelta;
+				PDWORD dwAddr = (PDWORD)( (PBYTE)pImageBuffer+pRelocDescriptor->VirtualAddress+(pFixup[dwIndex]&0xfff) );
+				*dwAddr += dwDelta;
 			}
 
 			//DWORD dwAddr = (DWORD)pImageBuffer + pRelocDescriptor->VirtualAddress + (pFixup[dwIndex]&0xfff);
 			//	*(PULONG)dwAddr += dwDelta;
 		}
 		dwRelocaSize -= pRelocDescriptor->SizeOfBlock;
-		pRelocDescriptor = (PIMAGE_BASE_RELOCATION)((ULONG)pRelocDescriptor + pRelocDescriptor->SizeOfBlock);
+		pRelocDescriptor = (PIMAGE_BASE_RELOCATION)((PBYTE)pRelocDescriptor + pRelocDescriptor->SizeOfBlock);
 	}
 	return true;
 
