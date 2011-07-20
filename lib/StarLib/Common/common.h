@@ -112,7 +112,7 @@ namespace Star
 		BOOL SetShutdownRights();
 		//Ä¬ÈÏ¹Ø»ú
 		BOOL ShutDownComputer(UINT ShutdownFlags=EWX_POWEROFF);
-
-
+		
+		CString GetCurrentTimeStr();
 	}
 }
