@@ -411,11 +411,11 @@
 			Name="Global"
 			>
 			<File
-				RelativePath="..\Global\Global.cpp"
+				RelativePath="..\Common\Common.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Global\Global.h"
+				RelativePath="..\Common\Common.h"
 				>
 			</File>
 		</Filter>
