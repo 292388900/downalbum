@@ -1,3 +1,6 @@
+luaedit:
+http://luaedit.luaforge.net/
+
 LuaSocket: 
 http://luaforge.net/frs/?group_id=23
 http://w3.impa.br/~diego/software/luasocket/installation.html
