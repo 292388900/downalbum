@@ -2,8 +2,8 @@
     <soft>
         <name>HiAlbum</name>
         <version>2.25</version>
-        <downurl>http://www.linystar.com/soft/HiAlbum/HiAlbum.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/HiAlbum/HiAlbum2.exe</downurl2>
+        <downurl>http://softhao.googlecode.com/svn/trunk/HiAlbum/HiAlbum.exe</downurl>
+        <downurl2>http://softhao.googlecode.com/svn/trunk/HiAlbum/HiAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=7816818503</regurl>
         <help>http://item.taobao.com/item.htm?id=7816818503</help>
         <bbs>www.linystar.com</bbs>

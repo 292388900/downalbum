@@ -2,13 +2,13 @@
     <soft>
         <name>yupooAlbum</name>
         <version>2.17</version>
-        <downurl>http://www.linystar.com/soft/yupooAlbum/yupooAlbum.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/yupooAlbum/yupooAlbum2.exe</downurl2>
+        <downurl>http://softhao.googlecode.com/svn/trunk/yupooAlbum/yupooAlbum.exe</downurl>
+        <downurl2>http://softhao.googlecode.com/svn/trunk/yupooAlbum/yupooAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=7816898671</regurl>
         <help>http://item.taobao.com/item.htm?id=7816898671</help>
         <bbs>www.linystar.com</bbs>
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
-        <news>ĞÂ°æ±¾ĞŞ¸´ÁË²»ÄÜÏÂÔØµÄbug£¬½¨ÒéÊ¹ÓÃÈí¼ş×Ô¶¯¸üĞÂ! &#x0D; »òÕßµ½¹Ù·½ÍøÕ¾Ñ¡Ôñ×îĞÂ°æÏÂÔØ!</news>
+        <news>æ–°ç‰ˆæœ¬ä¿®å¤äº†ä¸èƒ½ä¸‹è½½çš„bugï¼Œå»ºè®®ä½¿ç”¨è½¯ä»¶è‡ªåŠ¨æ›´æ–°! &#x0D; æˆ–è€…åˆ°å®˜æ–¹ç½‘ç«™é€‰æ‹©æœ€æ–°ç‰ˆä¸‹è½½!</news>
 	<urgent>9</urgent>
     </soft>
 </data>

@@ -2,8 +2,8 @@
     <soft>
         <name>163Album</name>
         <version>2.14</version>
-        <downurl>http://www.linystar.com/soft/163Album/163Album.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/163Album/163Album2.exe</downurl2>
+        <downurl>http://softhao.googlecode.com/svn/trunk/163Album/163Album.exe</downurl>
+        <downurl2>http://softhao.googlecode.com/svn/trunk/163Album/163Album2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=7817093569</regurl>
         <help>http://item.taobao.com/item.htm?id=7817093569</help>
         <bbs>www.linystar.com</bbs>

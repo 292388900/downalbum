@@ -2,8 +2,8 @@
     <soft>
         <name>picasaAlbum</name>
         <version>2.14</version>
-        <downurl>http://www.linystar.com/soft/picasaAlbum/picasaAlbum.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/picasaAlbum/picasaAlbum2.exe</downurl2>
+        <downurl>http://softhao.googlecode.com/svn/trunk/picasaAlbum/picasaAlbum.exe</downurl>
+        <downurl2>http://softhao.googlecode.com/svn/trunk/picasaAlbum/picasaAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=8178372653</regurl>
         <help>http://item.taobao.com/item.htm?id=8178372653</help>
         <bbs>www.linystar.com</bbs>
