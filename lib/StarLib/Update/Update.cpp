@@ -41,33 +41,55 @@ BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo)
 				strText.Trim();
 				if ( strText.CompareNoCase(strAppName)==0 ){
 					stUpdateInfo.strName=strText;
+
 					pNodeTemp=pSoft->FirstChild("version");
 					if ( pNodeTemp!=NULL ){
 						stUpdateInfo.strVersion=pNodeTemp->ToElement()->GetText();
 						stUpdateInfo.strVersion.Trim();
 					}	
-					pNodeTemp=pSoft->FirstChild("news");
-					if ( pNodeTemp!=NULL ){
-						stUpdateInfo.strNews=pNodeTemp->ToElement()->GetText();
-					}	
+					
 					pNodeTemp=pSoft->FirstChild("downurl");
 					if ( pNodeTemp!=NULL ){
 						stUpdateInfo.strDownUrl=pNodeTemp->ToElement()->GetText();
 						stUpdateInfo.strDownUrl.Trim();
 					}
+
 					pNodeTemp=pSoft->FirstChild("downurl2");
 					if ( pNodeTemp!=NULL ){
 						stUpdateInfo.strDownUrl2=pNodeTemp->ToElement()->GetText();
 						stUpdateInfo.strDownUrl2.Trim();
 					}
+
 					pNodeTemp=pSoft->FirstChild("regurl");
 					if ( pNodeTemp!=NULL ){
 						stUpdateInfo.strRegUrl=pNodeTemp->ToElement()->GetText();
 					}
+
 					pNodeTemp=pSoft->FirstChild("help");
 					if ( pNodeTemp!=NULL ){
 						stUpdateInfo.strHelpUrl=pNodeTemp->ToElement()->GetText();
 					}
+
+					pNodeTemp=pSoft->FirstChild("bbs");
+					if ( pNodeTemp!=NULL ){
+						stUpdateInfo.strBBS=pNodeTemp->ToElement()->GetText();
+					}
+
+					pNodeTemp=pSoft->FirstChild("pswd");
+					if ( pNodeTemp!=NULL ){
+						stUpdateInfo.strPswdUrl=pNodeTemp->ToElement()->GetText();
+
+					}
+
+					pNodeTemp=pSoft->FirstChild("news");
+					if ( pNodeTemp!=NULL ){
+						stUpdateInfo.strNews=pNodeTemp->ToElement()->GetText();
+					}	
+
+					pNodeTemp=pSoft->FirstChild("urgent");
+					if ( pNodeTemp!=NULL ){
+						stUpdateInfo.strUrgent=pNodeTemp->ToElement()->GetText();
+					}	
 
 					bSucceed=TRUE;
 					break;
