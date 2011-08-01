@@ -15,6 +15,7 @@ typedef struct UPDATEINFO
 	CString strHome;		//官方网站
 	CString strBBS;			//官方论坛
 	CString strPswdUrl;		//用户密码修改页面
+	CString strUrgent;		//
 }*PUPDATEINFO;
 
 BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo);
