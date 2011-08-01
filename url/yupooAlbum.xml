@@ -9,5 +9,6 @@
         <bbs>http://www.linystar.com</bbs>
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
         <news>新版本修复了不能下载的bug，建议使用软件自动更新! &#x0D; 或者到官方网站选择最新版下载!</news>
+	<urgent>9</urgent>
     </soft>
 </data>
