@@ -2,13 +2,13 @@
     <soft>
         <name>yupooAlbum</name>
         <version>2.17</version>
-        <downurl>http://softhao.googlecode.com/svn/trunk/yupooAlbum/yupooAlbum.exe</downurl>
-        <downurl2>http://softhao.googlecode.com/svn/trunk/yupooAlbum/yupooAlbum2.exe</downurl2>
+        <downurl>http://softsing.googlecode.com/svn/trunk/yupooAlbum/yupooAlbum.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/yupooAlbum/yupooAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=7816898671</regurl>
         <help>http://item.taobao.com/item.htm?id=7816898671</help>
         <bbs>www.linystar.com</bbs>
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
-        <news>新版本修复了不能下载的bug，建议使用软件自动更新! &#x0D; 或者到官方网站选择最新版下载!</news>
+        <news>鏂扮増鏈慨澶嶄簡涓嶈兘涓嬭浇鐨刡ug锛屽缓璁娇鐢ㄨ蒋浠惰嚜鍔ㄦ洿鏂? &#x0D; 鎴栬€呭埌瀹樻柟缃戠珯閫夋嫨鏈€鏂扮増涓嬭浇!</news>
 	<urgent>9</urgent>
     </soft>
 </data>
