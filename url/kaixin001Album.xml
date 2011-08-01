@@ -2,8 +2,8 @@
     <soft>
         <name>kaixin001Album</name>
         <version>2.11</version>
-        <downurl>http://www.linystar.com/soft/kaixin001Album/kaixin001Album.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/kaixin001Album/kaixin001Album2.exe</downurl2>
+        <downurl>http://softhao.googlecode.com/svn/trunk/kaixin001Album/kaixin001Album.exe</downurl>
+        <downurl2>http://softhao.googlecode.com/svn/trunk/kaixin001Album/kaixin001Album2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=7816641147</regurl>
         <help>http://item.taobao.com/item.htm?id=7816641147</help>
         <bbs>www.linystar.com</bbs>

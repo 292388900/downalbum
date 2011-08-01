@@ -2,8 +2,8 @@
     <soft>
         <name>pocoAlbum</name>
         <version>1.4</version>
-        <downurl>http://www.linystar.com/soft/pocoAlbum/pocoAlbum.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/pocoAlbum/pocoAlbum2.exe</downurl2>
+        <downurl>http://softhao.googlecode.com/svn/trunk/pocoAlbum/pocoAlbum.exe</downurl>
+        <downurl2>http://softhao.googlecode.com/svn/trunk/pocoAlbum/pocoAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=8608594589</regurl>
         <help>http://item.taobao.com/item.htm?id=8608594589</help>
         <bbs>www.linystar.com</bbs>
