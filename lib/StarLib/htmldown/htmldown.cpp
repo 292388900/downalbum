@@ -397,12 +397,14 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 			delete pHttpFile;
 			dwHttpStatus=0;
 		}  
-	}catch(CInternetException&e){ 
+	}catch(CInternetException*e){ 
 		CString s;
 		TCHAR szCause[MAX_PATH];
-		e.GetErrorMessage(szCause,MAX_PATH);
-		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e.m_dwError,e.m_dwContext);
+		e->GetErrorMessage(szCause,MAX_PATH);
+		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e->m_dwError,e->m_dwContext);
 		//AfxMessageBox(s);
+		//e->ReportError();
+		e->Delete();  
 		//可能是超时引起的
 		dwHttpStatus=0x80000000;
 	}
