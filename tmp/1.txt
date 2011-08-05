@@ -2,7 +2,7 @@ C:\DOCUME~1\user\LOCALS~1\Temp\Rar$EX83.704\
 
 C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\test.zip ╣даый╠д©б╪ 1\
 
-{
+soft={
 name='',
 ver='',
 zippswd='',
