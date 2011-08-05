@@ -1,0 +1,37 @@
+C:\DOCUME~1\user\LOCALS~1\Temp\Rar$EX83.704\
+
+C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\test.zip µÄÁÙÊ±Ä¿Â¼ 1\
+
+{
+name='',
+ver='',
+zippswd='',
+zip1=[[]],
+zip2=[[]],
+regurl=[[]],
+help=[[]],
+bbs='',
+bbspswd=[[]],
+news=[[]],
+urgent='',
+votes=
+	{
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+	},
+
+products=
+	{
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+	},
+
+}
