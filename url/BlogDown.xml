@@ -1,13 +1,33 @@
-<data>
-    <soft>
-        <name>BlogDown</name>
-        <version>1.1</version>
-        <downurl></downurl>
-        <downurl2></downurl2>
-        <regurl></regurl>
-        <help>http://www.linystar.com/rw/pocoalbum.html</help>
-        <bbs></bbs>
-        <pswd></pswd>
-        <news>新版本修复了一些bug, 请下载最新版! &#x0D;或者到官方网站选择最新版下载!</news>
-    </soft>
-</data>
+soft={
+name='BlogDown',
+ver='1.0',
+zippswd='',
+zip1=[[]],
+zip2=[[]],
+regurl=[[]],
+help=[[]],
+bbs='',
+bbspswd=[[]],
+news=[[新版本修复了一些bug, 请下载最新版! \n或者到官方网站选择最新版下载!]],
+urgent='',
+votes=
+	{
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+	},
+
+products=
+	{
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+		[[]],
+	},
+
+}
