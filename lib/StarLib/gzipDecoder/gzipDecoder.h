@@ -1,5 +1,4 @@
-#ifndef __CONTENT_DECODER_H__
-#define __CONTENT_DECODER_H__
+#pragma once
 
 #include <string>
 
@@ -17,8 +16,3 @@ private:
     const size_t uncompress_buff_len_;
     unsigned char* uncompress_buff_;
 };
-
-#endif
-
-
-
