@@ -3,10 +3,8 @@
 #include <stdlib.h>
 #include <StarLib/Zip/zlib.h>
 
-//目录下专用的zlib.lib库，一般的解密的数据不全
 #ifdef _DEBUG
 #pragma comment(lib,"zlibD.lib")
-//#pragma comment(linker,"/NODEFAULTLIB:libcmt.lib")
 #else
 #pragma comment(lib,"zlib.lib")
 #endif
