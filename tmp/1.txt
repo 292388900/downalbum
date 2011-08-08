@@ -27,3 +27,26 @@ votes=
 products=[[]],
 
 }
+
+
+
+http://www.duote.com/soft_pj.php?st=1&id=25976&dt=1312794387259
+
+http://digg.newhua.com/ajax_top.php
+
+POST /ajax_top.php HTTP/1.0
+Accept: */*
+Accept-Language: zh-cn
+Referer: http://digg.newhua.com/topinfo.php?id=104474
+Content-Type: application/x-www-form-urlencoded
+Connection: Keep-Alive
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; InfoPath.2; .NET4.0C)
+Host: digg.newhua.com
+Content-Length: 26
+Pragma: no-cache
+
+do=digg&action=1&id=104474
+
+
+
+http://123.103.68.178:81/web/softeval.php?et=1&id=59457
