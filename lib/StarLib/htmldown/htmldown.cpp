@@ -385,17 +385,17 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 		if ( pHttpFile!=NULL && pHttpFile->QueryInfoStatusCode(dwHttpStatus)!=0 ){  
 			if ( dwHttpStatus>=200 && dwHttpStatus<300 ){
 				//Success
+				dwHttpStatus=0;
 #ifdef _UNICODE
 #error Unicode 模式下CHttpFile::ReadString读入乱码
 #endif
 				while( pHttpFile->ReadString(strText)!=0 ){  
 					strHtml=strHtml+strText+_T("\n");   
 				}
-			}  
+			}
 
 			pHttpFile->Close();
 			delete pHttpFile;
-			dwHttpStatus=0;
 		}  
 	}catch(CInternetException*e){ 
 		CString s;
