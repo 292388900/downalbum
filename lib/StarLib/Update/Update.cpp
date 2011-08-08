@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Update.h"
+#include <Shlwapi.h>
 #include "../../../lib/tinyxml/tinyxml.h"
 #include "../htmldown/htmldown.h"
 
@@ -110,6 +111,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	CString strText;
 	int nPos1=0;
 	int nPos2=0;
+	int nEnd=0;
 
 	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
 	if ( dwHttpStatus!=0 ){
@@ -197,7 +199,49 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 			stUpdateInfo.strUrgent=strHtml.Mid(nPos1+8,nPos2-nPos1-8);
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<allsoft>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+9);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strAllsoft=strHtml.Mid(nPos1+9,nPos2-nPos1-9);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<votes>");
+	if ( nPos1!=-1 ){
+		stUpdateInfo.vtVotes.clear();
+		nEnd=strHtml.Find("</",nPos1);
+		if ( nEnd==-1 ){
+			nEnd=strHtml.GetLength();
+		}
 
+		VOTEINFO stVote;
+		nPos2=nPos1+7;
+		while ( TRUE ){
+			nPos1=strHtml.Find("s=",nPos2);
+			if ( nPos1==-1 ){
+				break;
+			}
+			nPos2=strHtml.Find(',',nPos1+2);
+			strText=strHtml.Mid(nPos1+2,nPos2-nPos1-2).Trim();
+			stVote.nSiteNo=StrToInt(strText);
+			if ( stVote.nSiteNo==0 ){
+				continue;
+			}
+
+			nPos1=strHtml.Find("p=",nPos2);
+			if ( nPos1==-1 ){
+				break;
+			}
+			nPos2=strHtml.Find(',',nPos1+2);
+			stVote.strSoftid=strHtml.Mid(nPos1+2,nPos2-nPos1-2).Trim();
+
+			stUpdateInfo.vtVotes.push_back(stVote);
+		}
+	}
+
+	bSucceed=TRUE;
 	//////////////////////////////////////////////////////////////////////////
 	return bSucceed;
 }
