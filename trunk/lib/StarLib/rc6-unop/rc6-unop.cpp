@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include "rc6-unop.h"
 using namespace Star::Encrypt;
 

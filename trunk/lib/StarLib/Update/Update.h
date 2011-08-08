@@ -19,5 +19,5 @@ typedef struct UPDATEINFO
 }*PUPDATEINFO;
 
 BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo);
-BOOL CheckUpdateInfo2(const CString&strUrl,UPDATEINFO&stUpdateInfo);
+BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo);
 void StartNewVersionApp(CString strNewApp);

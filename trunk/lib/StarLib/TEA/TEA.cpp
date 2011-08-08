@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include "TEA.h"
 using namespace Star::Encrypt;
 

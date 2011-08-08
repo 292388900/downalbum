@@ -37,6 +37,7 @@
        for when a command line was not use. lack of editing  
        features made this buggy, so i axed it. */ 
  
+#include "stdafx.h"
 #include "idea.h" 
 
 namespace Idea

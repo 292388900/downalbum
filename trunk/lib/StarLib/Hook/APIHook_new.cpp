@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include "APIHook_new.h"
 #include <Tlhelp32.h>
 #include <ImageHlp.h>

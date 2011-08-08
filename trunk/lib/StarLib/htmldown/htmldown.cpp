@@ -519,7 +519,7 @@ BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 
 	CFile file;
 	if ( file.Open(strTempFile,CFile::modeReadWrite) ){
-		nFileSize=file.GetLength();
+		nFileSize=(int)file.GetLength();
 		char*pBuf=strHtml.GetBuffer(nFileSize+1);
 		file.Read(pBuf,nFileSize);
 		pBuf[nFileSize]=0;

@@ -7,6 +7,7 @@ Blowfish::BlowFishEncrypt((BYTE*)szBuff,9,true);
 Blowfish::BlowFishEncrypt((BYTE*)szBuff,9,false);
 */
 
+#include "stdafx.h"
 #include "Blowfish.h"
 using namespace Star::Encrypt;
 
