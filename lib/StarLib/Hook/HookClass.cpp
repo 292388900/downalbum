@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "HookClass.h"
 
 void EnablePrivilege(char*lpPriv,BOOL bFlags)

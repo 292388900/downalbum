@@ -1,6 +1,7 @@
 
 //Rijndael.cpp
 
+#include "stdafx.h"
 #include "Rijndael.h"
 using namespace Star::Encrypt;
 

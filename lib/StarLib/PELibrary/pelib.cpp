@@ -31,6 +31,7 @@
    <ashkbiz@yahoo.com>
 */
 
+#include "stdafx.h"
 #include "pelib.h"
 #include <imagehlp.h>//#include <Dbghelp.h>
 using namespace Star;

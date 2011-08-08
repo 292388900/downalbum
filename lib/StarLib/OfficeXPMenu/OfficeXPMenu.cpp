@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include "officexpmenu.h"        // COfficeXPMenu class declaration
 #include <afxpriv.h>       //SK: makes A2W and other spiffy AFX macros work
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Window.h"
 
 void Star::Window::CenterAndTopMost(CWnd*pWnd)

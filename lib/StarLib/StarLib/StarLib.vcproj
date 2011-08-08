@@ -48,7 +48,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
@@ -620,6 +620,30 @@
 			</File>
 			<File
 				RelativePath="..\SignMatch\SignMatch.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Update"
+			>
+			<File
+				RelativePath="..\Update\Update.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Update\Update.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="htmldown"
+			>
+			<File
+				RelativePath="..\htmldown\htmldown.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\htmldown\htmldown.h"
 				>
 			</File>
 		</Filter>

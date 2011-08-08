@@ -103,12 +103,15 @@ BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo)
 	return bSucceed;
 }
 
-BOOL CheckUpdateInfo2(const CString&strUrl,UPDATEINFO&stUpdateInfo)
+BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 {
 	BOOL bSucceed=FALSE;
 	CString strHtml;
 	CString strText;
-	DWORD	dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
+	int nPos1=0;
+	int nPos2=0;
+
+	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
 	if ( dwHttpStatus==0x80000000 ){
 		return bSucceed;
 	}

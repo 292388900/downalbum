@@ -1,4 +1,5 @@
 
+#include "stdafx.h"
 #include "AES.h"
 #include <stdio.h>
 #include "stdlib.h"
