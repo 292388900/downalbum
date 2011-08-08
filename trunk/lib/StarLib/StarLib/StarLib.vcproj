@@ -19,7 +19,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="1"
 			UseOfMFC="1"
 			CharacterSet="2"
 			>
@@ -66,11 +66,14 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="../../bin/starlibd.lib"
+				Name="VCLinkerTool"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -80,6 +83,12 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -596,18 +605,6 @@
 			</File>
 			<File
 				RelativePath="..\Hook\HookClass.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="SqliteDB"
-			>
-			<File
-				RelativePath="..\SqliteDB\SqliteDB.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\SqliteDB\SqliteDB.h"
 				>
 			</File>
 		</Filter>

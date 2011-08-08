@@ -112,11 +112,93 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	int nPos2=0;
 
 	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
-	if ( dwHttpStatus==0x80000000 ){
+	if ( dwHttpStatus!=0 ){
 		return bSucceed;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<name>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+6);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strName=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<version>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+9);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strVersion=strHtml.Mid(nPos1+9,nPos2-nPos1-9);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<downurl>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+9);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strDownUrl=strHtml.Mid(nPos1+9,nPos2-nPos1-9);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<downurl2>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+10);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strDownUrl2=strHtml.Mid(nPos1+10,nPos2-nPos1-10);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<regurl>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+8);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strRegUrl=strHtml.Mid(nPos1+8,nPos2-nPos1-8);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<help>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+6);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strHelpUrl=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<bbs>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+5);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strBBS=strHtml.Mid(nPos1+5,nPos2-nPos1-5);
+			stUpdateInfo.strHome=stUpdateInfo.strBBS;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<pswd>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+6);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strPswdUrl=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<news>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+6);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strNews=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<urgent>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+8);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strUrgent=strHtml.Mid(nPos1+8,nPos2-nPos1-8);
+		}
+	}
 
+	//////////////////////////////////////////////////////////////////////////
 	return bSucceed;
 }
 
