@@ -10,5 +10,12 @@
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
         <news>新版本修复了一些bug! 加快了图片下载速度，建议更新下载！&#x0D;</news>
 	<urgent>9</urgent>
+<!--
+<votes>
+s=1,p=104475,
+s=2,p=57830,
+s=3,p=25882,
+</votes>
+-->
     </soft>
 </data>
