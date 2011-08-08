@@ -12,6 +12,7 @@ CSignMatch::CSignMatch()
 	m_dwSearchBegin=0;
 	m_dwSearchEnd=0;
 	m_dwMatchPos=0;
+	m_bFuzzy=false;
 }
 
 CSignMatch::CSignMatch(PBYTE pBase,DWORD dwStartRva,DWORD dwEndRva,char*szOrigSign)
@@ -20,6 +21,10 @@ CSignMatch::CSignMatch(PBYTE pBase,DWORD dwStartRva,DWORD dwEndRva,char*szOrigSi
 	m_pPureSign=NULL;
 	m_pMaskSign=NULL;
 	m_nSignLen=0;
+	m_dwSearchBegin=0;
+	m_dwSearchEnd=0;
+	m_dwMatchPos=0;
+	m_bFuzzy=false;
 
 	SetOrigSign(pBase,dwStartRva,dwEndRva,szOrigSign);
 }
@@ -38,6 +43,7 @@ CSignMatch::CSignMatch(const CSignMatch&obj)
 	m_dwSearchEnd=obj.m_dwSearchEnd;
 	m_nRange=obj.m_nRange;
 	m_dwMatchPos=obj.m_dwMatchPos;
+	m_bFuzzy=obj.m_bFuzzy;
 }
 
 CSignMatch::~CSignMatch()
@@ -47,13 +53,12 @@ CSignMatch::~CSignMatch()
 
 void CSignMatch::FreeMemory()
 {
-	if (m_pPureSign)
-	{
+	if (m_pPureSign){
 		delete[] m_pPureSign;
 		m_pPureSign=NULL;
 	}
-	if (m_pMaskSign)
-	{
+	
+	if (m_pMaskSign){
 		delete[] m_pMaskSign;
 		m_pMaskSign=NULL;
 	}
@@ -61,30 +66,12 @@ void CSignMatch::FreeMemory()
 
 BYTE CSignMatch::HexCharToBin(BYTE chHex)
 {
-	if ( chHex>='0' && chHex<='9' )
-	{
+	if ( chHex>='0' && chHex<='9' ){
 		return chHex-'0';
-	}
-	else
-	{
+	}else{
 		return chHex-'a'+10;
 	}
-
-/*
-	if ( chHex>='0' && chHex<='9' )
-	{
-		return chHex-'0';
-	}
-	else if( (chHex>='a'&&chHex<='f') || (chHex>='A'&&chHex<='F') )
-	{
-		return chHex-'a'+10;
-	}
-	else
-	{
-		MessageBox(NULL,"错误的十六进制字符",NULL,MB_OK);
-		return 0;
-	}*/
-
+	return 0;
 }
 
 /*------------------------------------------------------------------------
@@ -92,6 +79,7 @@ BYTE CSignMatch::HexCharToBin(BYTE chHex)
 ------------------------------------------------------------------------*/
 BOOL CSignMatch::SetOrigSign(PBYTE pBase,DWORD dwStartRva,DWORD dwEndRva,char*szOrigSign)
 {
+	m_bFuzzy=false;			//默认不通配
 	m_pBase=pBase;
 	m_dwSearchBegin=dwStartRva;
 	m_dwSearchEnd=dwEndRva;
@@ -100,64 +88,54 @@ BOOL CSignMatch::SetOrigSign(PBYTE pBase,DWORD dwStartRva,DWORD dwEndRva,char*sz
 
 	int nStrLen=(int)strlen(szOrigSign);
 	//太短太长都不行
-	if (nStrLen<CSignMatch::MinSignLen || nStrLen>CSignMatch::MaxSignLen)
-	{
+	if ( nStrLen<CSignMatch::MinSignLen || nStrLen>CSignMatch::MaxSignLen ){
 		//MessageBox(NULL,"特征码设置不合理,长度限制在5~100字节.",NULL,MB_OK);
 		return false;
 	}
-	else
-	{
-		if (nStrLen%2!=0)
-		{
-			//奇数长度,则尾补一个?构成一个字节
-			memcpy(m_szOrigSign,szOrigSign,nStrLen);
-			nStrLen++;
-			if ( nStrLen<CSignMatch::MaxSignLen ){
-				m_szOrigSign[nStrLen]='?';
-			}
+
+	if ( nStrLen%2!=0 ){
+		//奇数长度,则尾补一个?构成一个字节
+		memcpy(m_szOrigSign,szOrigSign,nStrLen);
+		nStrLen++;
+		if ( nStrLen<CSignMatch::MaxSignLen ){
+			m_szOrigSign[nStrLen]='?';
 		}
-		else
-		{
-			memcpy(m_szOrigSign,szOrigSign,nStrLen);
-		}
-		m_nSignLen=nStrLen/2;
-
-		FreeMemory();
-		m_pPureSign=new BYTE[m_nSignLen];
-		m_pMaskSign=new BYTE[m_nSignLen];
-		BYTE ch;
-		for (int i=0;i<m_nSignLen;i++)
-		{
-			//一个字符只占4位(半个字节),处理第一个半字节
-			ch=m_szOrigSign[i*2];
-			if (ch=='?')
-			{
-				m_pPureSign[i]=0xf0;
-				m_pMaskSign[i]=0xf0;
-			}
-			else
-			{
-				m_pPureSign[i]=(HexCharToBin(ch)<<4)&0xf0;
-				m_pMaskSign[i]=0;
-			}
-
-			//处理第二个半字节
-			ch=m_szOrigSign[i*2+1];
-			if (ch=='?')
-			{
-				m_pPureSign[i]|=0x0f;
-				m_pMaskSign[i]|=0x0f;
-			}
-			else
-			{
-				m_pPureSign[i]|= HexCharToBin(ch)&0x0f;
-				m_pMaskSign[i]&=0xf0;
-			}
-
-		}
-
-		return true;
+	}else{
+		memcpy(m_szOrigSign,szOrigSign,nStrLen);
 	}
+	m_nSignLen=nStrLen/2;	//字节长度
+
+	FreeMemory();
+
+	m_pPureSign=new BYTE[m_nSignLen];
+	m_pMaskSign=new BYTE[m_nSignLen];
+
+	BYTE ch;
+	for ( int i=0; i<m_nSignLen; ++i ){
+		//一个字符只占4位(半个字节),处理第一个半字节
+		ch=m_szOrigSign[i*2];
+		if ( ch=='?' ){
+			m_pPureSign[i]=0xf0;
+			m_pMaskSign[i]=0xf0;
+			m_bFuzzy=true;		//含有?表示通配
+		}else{
+			m_pPureSign[i]=(HexCharToBin(ch)<<4)&0xf0;
+			m_pMaskSign[i]=0;
+		}
+
+		//处理第二个半字节
+		ch=m_szOrigSign[i*2+1];
+		if ( ch=='?' ){
+			m_pPureSign[i]|=0x0f;
+			m_pMaskSign[i]|=0x0f;
+			m_bFuzzy=true;		//含有?表示通配
+		}else{
+			m_pPureSign[i]|= HexCharToBin(ch)&0x0f;
+			m_pMaskSign[i]&=0xf0;
+		}
+	}//end for
+
+	return true;
 }
 
 PBYTE CSignMatch::SearchSign(PBYTE pBase/*=NULL*/)
@@ -168,50 +146,44 @@ PBYTE CSignMatch::SearchSign(PBYTE pBase/*=NULL*/)
 
 	PBYTE pMatchAddr=NULL;
 	PBYTE pStart=m_pBase+m_dwSearchBegin;
-	if (m_nRange<m_nSignLen)
-	{
+	if (m_nRange<m_nSignLen){
 		return NULL;
 	}
-	int*p=new int[m_nSignLen+1];
 
 	//TRACE("m_nSignLen:%d m_nRange:%d\n",m_nSignLen,m_nRange);
 	//TRACE("pStart:%d\n",(DWORD)pStart);
 
-	__try
-	{
-		p[1]=0;
-		int i=1,j=0;
-		for (;i<(int)m_nSignLen;i++)
-		{
-			while (j>0 && m_pPureSign[j]!=m_pPureSign[i])
-				j=p[j];
-			if(m_pPureSign[j]==m_pPureSign[i])
-				j++;
-			p[i+1]=j;
+	__try{
+		if ( m_bFuzzy ){
+			for ( int i=0, j=0; i<(int)m_nRange; ++i ){
+				if( m_pPureSign[j]!=(pStart[i]|m_pMaskSign[j]) ){
+					j=0;
+				}else{
+					++j;
+					if ( j==m_nSignLen ){
+						pMatchAddr=pStart+i-m_nSignLen+1;
+						m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
+						break;
+					}
+				}
+				
+			}//end for
+		}else{
+			for ( int i=0, j=0; i<(int)m_nRange; ++i ){
+				if( m_pPureSign[j]==pStart[i] ){
+					j=0;
+				}else{
+					++j;
+					if ( j==m_nSignLen ){
+						pMatchAddr=pStart+i-m_nSignLen+1;
+						m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
+						break;
+					}
+				}
+			}//end for
 		}
 
-		for (i=0,j=0;i<(int)m_nRange;i++)
-		{
-			while( j>0 &&m_pPureSign[j]!=(pStart[i]|m_pMaskSign[j]) )
-				j=p[j];
-			if(m_pPureSign[j]==(pStart[i]|m_pMaskSign[j]))
-				j++;
-			if (j==m_nSignLen)
-			{
-				pMatchAddr=pStart+i-m_nSignLen+1;
-				m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
-				break;
-			}
-		}
-		
-		delete[]p;
-	}
-	__except(1)
-	{
-		if (p)
-		{
-			delete[]p;
-		}
+	}__except(1){
 		pMatchAddr=NULL;
 	}
 
@@ -224,7 +196,6 @@ PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pBase/*=NULL*/)
 	DWORD dwReaded=0;
 	MODULEINFO mi={0};
 	BYTE*pBuffer=NULL;
-	BYTE*pSrc=NULL;
 
 	if ( pBase!=NULL ){
 		m_pBase=pBase;
@@ -234,61 +205,55 @@ PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pBase/*=NULL*/)
 	GetModuleInformation(hProcess,(HMODULE)m_pBase,&mi,sizeof(mi));
 
 	//不能越界
-	if (m_dwSearchBegin>=mi.SizeOfImage || m_dwSearchEnd>=mi.SizeOfImage || m_nRange<m_nSignLen)
-	{
+	if ( m_dwSearchBegin>=mi.SizeOfImage || m_dwSearchEnd>=mi.SizeOfImage || m_nRange<m_nSignLen ){
 		return NULL;
 	}
 
 	//开辟内存
 	pBuffer=new BYTE[m_nRange];
-	if( ReadProcessMemory(hProcess,(LPCVOID)(m_pBase+m_dwSearchBegin),pBuffer,m_nRange,&dwReaded) )
-	{
+	if ( pBuffer==NULL ){
+		return NULL;
+	}
+
+	if( ReadProcessMemory(hProcess,(LPCVOID)(m_pBase+m_dwSearchBegin),pBuffer,m_nRange,&dwReaded) ){
 		PBYTE pStart=pBuffer;
 		
-		int*p=new int[m_nSignLen+1];
-
-		__try
-		{
-			p[1]=0;
-			int i=1,j=0;
-			for (;i<(int)m_nSignLen;i++)
-			{
-				while (j>0 && m_pPureSign[j]!=m_pPureSign[i])
-					j=p[j];
-				if(m_pPureSign[j]==m_pPureSign[i])
-					j++;
-				p[i+1]=j;
+		__try{
+			if ( m_bFuzzy ){
+				for ( int i=0, j=0; i<(int)m_nRange; ++i ){
+					if( m_pPureSign[j]!=(pStart[i]|m_pMaskSign[j]) ){
+						j=0;
+					}else{
+						++j;
+						if ( j==m_nSignLen ){
+							pMatchAddr=m_pBase+m_dwSearchBegin+i-m_nSignLen+1;
+							m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
+							break;
+						}
+					}
+				}//end for
+			}else{
+				for ( int i=0, j=0; i<(int)m_nRange; ++i ){
+					if( m_pPureSign[j]!=pStart[i] ){
+						j=0;
+					}else{
+						++j;
+						if ( j==m_nSignLen ){
+							pMatchAddr=m_pBase+m_dwSearchBegin+i-m_nSignLen+1;
+							m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
+							break;
+						}
+					}
+					
+				}//end for
 			}
 
-			for (i=0,j=0;i<(int)m_nRange;i++)
-			{
-				while(j>0 &&m_pPureSign[j]!=(pStart[i]|m_pMaskSign[j]) )
-					j=p[j];
-				if(m_pPureSign[j]==(pStart[i]|m_pMaskSign[j]))
-					j++;
-				if (j==m_nSignLen)
-				{
-					pMatchAddr=m_pBase+m_dwSearchBegin+i-m_nSignLen+1;
-					m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
-					break;
-				}
-			}
-
-			delete[]p;
-		}
-		__except(1)
-		{
-			if (p)
-			{
-				delete[]p;
-			}
+		}__except(1){
 			pMatchAddr=NULL;
 		}
-
-		
 	}
 
 	delete[] pBuffer;
-	return pMatchAddr;
 
+	return pMatchAddr;
 }

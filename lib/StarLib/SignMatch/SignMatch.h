@@ -25,11 +25,13 @@ public:
 	//搜索的结束rva
 	DWORD	m_dwSearchEnd;
 
-	int	m_nRange;
+	int		m_nRange;
 	DWORD	m_dwMatchPos;
+
 private:
 	void	FreeMemory();
 	BYTE	HexCharToBin(BYTE chHex);
+	bool	m_bFuzzy;	//是否是模糊匹配
 
 public:
 	CSignMatch();
