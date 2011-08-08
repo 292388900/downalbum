@@ -1,6 +1,15 @@
 
 #pragma once
 #include <afx.h>
+#include <vector>
+using namespace std;
+
+//为软件投票
+typedef struct VOTEINFO
+{
+	int nSiteNo;			//网站编号
+	CString strSoftid;		//软件编号
+}*PVOTEINFO;
 
 
 typedef struct UPDATEINFO
@@ -15,8 +24,11 @@ typedef struct UPDATEINFO
 	CString strBBS;			//官方论坛
 	CString strPswdUrl;		//用户密码修改页面
 	CString strNews;		//最新版本信息，可以提示修复的错误，广告，新特征等
-	CString strUrgent;		//
+	CString strUrgent;		//应急措施
+	CString strAllsoft;		//所有软件
+	vector<VOTEINFO>vtVotes;//为软件投票
 }*PUPDATEINFO;
+
 
 BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo);
 BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo);
