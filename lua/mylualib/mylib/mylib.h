@@ -12,3 +12,4 @@ extern "C" {
 int msgbox(lua_State *L);
 int gethtml(lua_State *L);
 int utf8togbk(lua_State *L);
+int getcurluapath(lua_State *L);
