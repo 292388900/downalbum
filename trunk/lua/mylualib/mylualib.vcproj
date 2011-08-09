@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\mylualib.cpp"
+				RelativePath=".\main.cpp"
 				>
 			</File>
 			<File
@@ -217,16 +217,32 @@
 			>
 		</Filter>
 		<Filter
-			Name="msg"
+			Name="mylib"
 			>
 			<File
-				RelativePath=".\msg\msg.cpp"
+				RelativePath=".\msg\mylib.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\msg\msg.h"
+				RelativePath=".\msg\mylib.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="¹«¹²¿â"
+			>
+			<Filter
+				Name="htmldown"
+				>
+				<File
+					RelativePath="..\..\lib\StarLib\htmldown\htmldown.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\lib\StarLib\htmldown\htmldown.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
