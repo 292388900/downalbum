@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "msg/msg.h"
+#include "mylib/mylib.h"
 
 
 //#ifdef _DEBUG
