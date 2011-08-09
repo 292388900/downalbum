@@ -29,6 +29,8 @@
 
 static const struct luaL_reg mylib [] = { 
 	{"msgbox", msgbox},
+	{"gethtml", gethtml},
+	{"utf8togbk", utf8togbk},
 	{NULL, NULL} /* sentinel */ 
 }; 
 

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="mylualib"
+	Name="mylib"
 	ProjectGUID="{A40486F8-380C-4C3F-BED3-E4B179E82733}"
 	RootNamespace="mylualib"
 	Keyword="Win32Proj"

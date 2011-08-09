@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "mylib.h"
+#include <StarLib/Common/common.h>
 #include <StarLib/htmldown/htmldown.h>
 #include <string>
 using namespace std;
@@ -59,5 +60,32 @@ int gethtml(lua_State *L)
 	}
 
 	lua_pushstring(L,(const char *)(LPCTSTR)strHtml);
+	return 1;
+}
+
+//utf8´®×ª»»ÎªgbkµÄ´®
+int utf8togbk(lua_State *L)
+{
+	int n = lua_gettop(L);
+	if ( n==0 ){
+		lua_pushnil(L);
+		return 1;
+	}
+
+	if ( lua_type(L,-1)!=LUA_TSTRING ){
+		lua_pushnil(L);
+		return 1;
+	}
+
+	const char *lpszStr = lua_tostring(L,-1);
+	if ( lpszStr==NULL ){
+		lua_pushnil(L);
+		return 1;
+	}
+
+	CString strText = lpszStr;
+	Star::Common::ConvertUtf8ToGBK(strText);
+
+	lua_pushstring(L,(const char *)(LPCTSTR)strText);
 	return 1;
 }
