@@ -21,7 +21,7 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -220,11 +220,11 @@
 			Name="mylib"
 			>
 			<File
-				RelativePath=".\msg\mylib.cpp"
+				RelativePath=".\mylib\mylib.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\msg\mylib.h"
+				RelativePath=".\mylib\mylib.h"
 				>
 			</File>
 		</Filter>
@@ -240,6 +240,18 @@
 				</File>
 				<File
 					RelativePath="..\..\lib\StarLib\htmldown\htmldown.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Common"
+				>
+				<File
+					RelativePath="..\..\lib\StarLib\Common\common.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\lib\StarLib\Common\common.h"
 					>
 				</File>
 			</Filter>
