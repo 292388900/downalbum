@@ -46,7 +46,7 @@ int gethtml(lua_State *L)
 		return 1;
 	}
 	
-	char *lpszUrl = lua_tostring(L,-1);
+	const char *lpszUrl = lua_tostring(L,-1);
 	if ( lpszUrl==NULL ){
 		lua_pushnil(L);
 		return 1;
