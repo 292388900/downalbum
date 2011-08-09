@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
-#include "msg.h"
+#include "mylib.h"
+#include <StarLib/htmldown/htmldown.h>
 #include <string>
 using namespace std;
 
@@ -31,3 +32,32 @@ int msgbox(lua_State *L) {
 	return 0;
 }
 
+//html gethtml(url) Ê§°Ü·µ»Ønil 
+int gethtml(lua_State *L)
+{
+	int n =  lua_gettop(L);
+	if ( n==0 ){
+		lua_pushnil(L);
+		return 1;
+	}
+
+	if ( lua_type(L,-1)!=LUA_TSTRING ){
+		lua_pushnil(L);
+		return 1;
+	}
+	
+	char *lpszUrl = lua_tostring(L,-1);
+	if ( lpszUrl==NULL ){
+		lua_pushnil(L);
+		return 1;
+	}
+	
+	CString strHtml;
+	if ( GetHttpFileContent(lpszUrl,strHtml)!=0 ){
+		lua_pushnil(L);
+		return 1;
+	}
+
+	lua_pushstring(L,(const char *)(LPCTSTR)strHtml);
+	return 1;
+}
