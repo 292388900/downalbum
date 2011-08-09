@@ -1,3 +1,6 @@
+LuaStudio<SCM>:
+http://luaforge.net/scm/?group_id=384
+
 luaedit:
 http://luaedit.luaforge.net/
 
