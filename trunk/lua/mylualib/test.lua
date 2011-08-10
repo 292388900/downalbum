@@ -1,18 +1,7 @@
 --[[TESTCODE]]
 
-function currDir()
-  os.execute("cd > cd.tmp")
-  local f = io.open("cd.tmp", r)
-  local cwd = f:read("*a")
-  f:close()
-  os.remove("cd.tmp")
-  return cwd
-end
+require "mylib.core"
 
-dir= currDir()
-dir =  string.sub(dir,1,-2) .. '\\'	--最后有一个换行符
-
-assert(package.loadlib(dir .. "debug\\mylib.dll", "luaopen_mylib"))()
 
 a=1
 

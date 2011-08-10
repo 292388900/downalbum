@@ -36,7 +36,7 @@ static const struct luaL_reg mylib [] = {
 }; 
 
 
-extern "C" __declspec(dllexport) int luaopen_mylib (lua_State *L) { 
+extern "C" __declspec(dllexport) int luaopen_mylib_core (lua_State *L) { 
 	// luaL_openlib(L, "mylib", mylib, 0);
 
 	luaL_register(L, "mylib", mylib);
