@@ -1,6 +1,6 @@
 --[[TESTCODE]]
 
-require "mylib.core"
+require "mylib"
 
 
 a=1
