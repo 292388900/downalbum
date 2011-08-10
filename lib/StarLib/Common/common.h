@@ -89,6 +89,7 @@ namespace Star
 
 		//产生一个0-1之间的随机浮点数字符串，小数点后面的位数由nCount定,不得超过MAX_PATH位
 		CString RandFloatNum(int nCount);
+		CString RandNum(int nCount);
 			
 		CString GetLocalMAC();
 		CString GetMacByCmd();
@@ -101,7 +102,9 @@ namespace Star
 		int SplitString(CString strSrc,CString strSep,CStringArray&strArr);
 
 		int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword);   
-		CString Certify(CString strHostServer,CString strPage,CString strName,CString strPswd,CString strAppName);
+		
+		CString PostData_common(const CString&server,const CString&dir,const CString&strHeaders,const CString&strSendData);
+		CString Certify(const CString&strHostServer,const CString&strPage,const CString&strName,const CString&strPswd,CString strAppName);
 
 		//在字符串中查找字符，pSub含有多个字符
 		int StrFindOneOf(char*pMain,char*pSub);
