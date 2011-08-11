@@ -9,6 +9,7 @@ typedef struct VOTEINFO
 {
 	int nSiteNo;			//网站编号
 	CString strSoftid;		//软件编号
+	BOOL bVoted;			//已经投过了
 }*PVOTEINFO;
 
 

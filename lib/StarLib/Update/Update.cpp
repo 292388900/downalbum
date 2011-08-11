@@ -236,6 +236,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 			}
 			nPos2=strHtml.Find(',',nPos1+2);
 			stVote.strSoftid=strHtml.Mid(nPos1+2,nPos2-nPos1-2).Trim();
+			stVote.bVoted = FALSE;
 
 			stUpdateInfo.vtVotes.push_back(stVote);
 		}
