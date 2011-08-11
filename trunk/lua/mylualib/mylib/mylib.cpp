@@ -120,3 +120,51 @@ int getcurluapath(lua_State *L)
 	lua_pushnil(L);
 	return 3;
 }
+
+//参数:url,本地文件路径
+//返回:true/false,errmsg
+int downloadfile(lua_State *L)
+{
+	int n = lua_gettop(L);
+	if ( n<2 ){
+		lua_pushboolean(L,0);
+		lua_pushstring(L,"parameter not enough");
+		return 2;
+	}
+
+	if ( lua_type(L,-1)!=LUA_TSTRING ){
+		lua_pushboolean(L,0);
+		lua_pushstring(L,"invalid parameter 2");
+		return 2;
+	}
+
+	if ( lua_type(L,-2)!=LUA_TSTRING ){
+		lua_pushboolean(L,0);
+		lua_pushstring(L,"invalid parameter 1");
+		return 2;
+	}
+
+	const char *lpszUrl = lua_tostring(L,-2);
+	if ( lpszUrl==NULL ){
+		lua_pushboolean(L,0);
+		lua_pushstring(L,"invalid parameter 1");
+		return 2;
+	}
+
+	const char *lpszFile = lua_tostring(L,-1);
+	if ( lpszUrl==NULL ){
+		lua_pushboolean(L,0);
+		lua_pushstring(L,"invalid parameter 2");
+		return 2;
+	}
+
+	if ( GetHttpFileSaveAs(lpszUrl,lpszFile)==0 ){
+		lua_pushboolean(L,1);
+		lua_pushstring(L,"ok");
+		return 2;
+	}
+
+	lua_pushboolean(L,0);
+	lua_pushstring(L,"failed");
+	return 2;
+}

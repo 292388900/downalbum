@@ -32,13 +32,15 @@ static const struct luaL_reg mylib [] = {
 	{"gethtml", gethtml},
 	{"utf8togbk", utf8togbk},
 	{"getcurluapath", getcurluapath},
+	{"downloadfile", downloadfile},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
 
 extern "C" __declspec(dllexport) int luaopen_mylib (lua_State *L) { 
 	// luaL_openlib(L, "mylib", mylib, 0);
-
+	
+	CoInitialize(NULL);
 	luaL_register(L, "mylib", mylib);
 	return 1; 
 }

@@ -10,8 +10,9 @@ t={}
 f=function()  end
 
 dir , path, name = mylib.getcurluapath()
-mylib.msgbox(dir,path ,name)
-mylib.msgbox(mylib.getcurluapath())
+mylib.msgbox( mylib.downloadfile('http://www.baidu.com',dir .. '1.html') )
+--mylib.msgbox(dir,path ,name)
+--mylib.msgbox(mylib.getcurluapath())
 
 --dir = mylib.getcurluapath()
 --mylib.msgbox(dir)
