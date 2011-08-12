@@ -76,6 +76,9 @@ namespace Star
 		//转义网页中的一些字符
 		void EscapeXmlHtmlChar(CString&strText);
 
+		//解析\u65F6\u5149\u5F71\u50CF\u9986
+		CStringW DecodeUnicodeEscapeSequence(const char *lpszText);
+
 		//转换百度账号中的中文字符，一个中文字符转换为两个%。注意如果是中文和英文的混合则英文不变
 		CString GBKEncodeURI(CString strText);
 		//转换百度账号中的中文字符，一个中文字符转换为三个%。注意如果是中文和英文的混合则英文不变
