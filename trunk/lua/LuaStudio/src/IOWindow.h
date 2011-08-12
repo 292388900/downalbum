@@ -43,7 +43,7 @@ class CIOWindow : public CMiniFrameWnd
   static bool registered_;
   void RegisterWndClass();
   int pos_x_, pos_y_;		// po³o¿enie znaku do wypisania (i kursora)
-  int cursor_count_;		// licznik ukryæ kursora
+  int cursor_count_;		// licznik ukry?kursora
   bool cursor_on_;				// flag: cursor on/off
   bool cursor_visible_;		// flag: cursor currently visible
   UINT timer_;
@@ -77,6 +77,7 @@ public:
 
   // Operations
 private:
+  bool Cls();
   void CalcFontSize();			// obliczenie rozmiaru znaków
   void DrawCursor();			// draw cursor
   void DrawCursor(int x, int y, bool visible);
@@ -102,8 +103,7 @@ public:
   bool SetPosition(int x, int y);	// ustawienie po³o¿enia dla tekstu
   void GetPosition(int &x, int &y);	// odczyt po³o¿enia
   bool ShowCursor(bool visible= TRUE);	// w³¹czenie/wy³¹czenie kursora
-  bool ResetCursor();			// w³¹cza kursor, zeruje licznik ukryæ
-  bool Cls();				// wyczyszczenie okna
+  bool ResetCursor();			// w³¹cza kursor, zeruje licznik ukry?  bool Cls();				// wyczyszczenie okna
   int  Input();				// input
 
   bool IsWaiting() const;
