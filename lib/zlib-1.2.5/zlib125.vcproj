@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\bin\$(ProjectName)D.lib"
+				OutputFile="..\bin\$(ProjectName)D.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
