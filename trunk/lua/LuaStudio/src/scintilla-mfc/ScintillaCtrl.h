@@ -576,11 +576,6 @@ public:
   int GetPropertyExpanded(const char* key, char* buf, BOOL bDirect = TRUE);
   int GetPropertyInt(const char* key, BOOL bDirect = TRUE);
   int GetStyleBitsNeeded(BOOL bDirect = TRUE);
-  /************************************************************************/
-  //[7/7/2009设置是否绘画缩进线
-  void SetIndentGuidesDrawFlag(int iFlag);
-  /************************************************************************/
-
 protected:
   DECLARE_DYNAMIC(CScintillaCtrl)
 
