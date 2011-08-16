@@ -3,6 +3,7 @@
 #include <afx.h>
 #include <afxmt.h>
 #include <afxinet.h>
+#include <winsock2.h>
 
 
 // _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
@@ -120,5 +121,11 @@ namespace Star
 		BOOL ShutDownComputer(UINT ShutdownFlags=EWX_POWEROFF);
 		
 		CString GetCurrentTimeStr();
+
+		//////////////////////////////////////////////////////////////////////////
+		int WaitData(SOCKET hSocket,DWORD dwTime);
+		ULONG GetInternetTime(LPCTSTR lpszHostAddress, UINT nHostPort,int nTimeOut=10000);
+		ULONG GetInternetTime(int nTimeOut=10000);
+		//////////////////////////////////////////////////////////////////////////
 	}
 }
