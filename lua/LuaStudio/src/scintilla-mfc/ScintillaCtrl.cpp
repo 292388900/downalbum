@@ -3185,3 +3185,12 @@ int CScintillaCtrl::GetStyleBitsNeeded(BOOL bDirect)
 {
   return Call(SCI_GETSTYLEBITSNEEDED, 0, 0, bDirect);
 }
+
+/************************************************************************
+[7/7/2009]
+说明: 设置是否绘画缩进线,ivReal:绘画;ivNone:不画.
+************************************************************************/
+void CScintillaCtrl::SetIndentGuidesDrawFlag(int iFlag)
+{
+	Call(SCI_SETINDENTATIONGUIDES,WPARAM(iFlag),0,0);
+}

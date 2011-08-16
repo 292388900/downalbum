@@ -221,6 +221,12 @@ int LuaSrcView::OnCreate(LPCREATESTRUCT create_struct)
 	//ctrl.SetMarginWidthN(2, 10);
 	//ctrl.SetProperty("fold", "1");
 
+	//////////////////////////////////////////////////////////////////////////
+	//添加缩进线
+	//参数意义详见ViewStyle.h文件:enum IndentView {ivNone, ivReal, ivLookForward, ivLookBoth};
+	ctrl.SetIndentGuidesDrawFlag(1);
+	//////////////////////////////////////////////////////////////////////////
+
 	return 0;
 }
 
