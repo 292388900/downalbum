@@ -419,3 +419,20 @@ void LuaSrcView::OnUpdateUI(SCNotification* notification)
 void LuaSrcView::OnDestroy()
 {
 }
+
+
+/************************************************************************
+[7/7/2009]
+说明:复制视图中保存的断点信息到内部数据中
+************************************************************************/
+void LuaSrcView::CopyAllBpsToDebugger(std::auto_ptr<Lua>& lua)
+{	
+	int line=0;
+	BYTE bp=0;
+	POSITION pos=breakpoints_map_.GetStartPosition();
+	while (pos)
+	{
+		breakpoints_map_.GetNextAssoc(pos,line,bp);
+		lua->ToggleBreakpoint(line+1);//视图中的行+1
+	}
+}

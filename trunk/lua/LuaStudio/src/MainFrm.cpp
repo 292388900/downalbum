@@ -805,8 +805,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	if (app->GetProfileInt(REG_ENTRY_MAINFRM, REG_STATE, 0))	// maximize?
 		StudioApp::maximize_ = true;
 	//  StudioApp::file_new_ = app->GetProfileInt(REG_ENTRY_MAINFRM,REG_FILENEW,1);	// new file
-	ConfigSettings(true);		// odczyt ustawieñ
-
+	ConfigSettings(true);		// odczyt ustawie?
 	return CMDIFrameWnd::PreCreateWindow(cs);
 }
 
@@ -916,6 +915,15 @@ void CMainFrame::OnAssemble()
 
 	if (CDocument* doc= view->GetDocument())
 	{
+		//////////////////////////////////////////////////////////////////////////
+		//Õâ¶Î´úÂë¿ÉÒÔ¸ù¾ÝÐèÒªÌí¼Ó
+		//if (doc->IsModified())
+		//{
+		//	//lua½Å±¾±»ÐÞ¸Ä,¶ÏµãËùÔÚµÄÐÐ¿ÉÄÜÒÑ¾­Æ«ÒÆ,·½±ãÆð¼ûÇå³ýÏÈÇ°ËùÓÐ¶Ïµã
+		//	view->ClearAllBreakpoints(true);
+		//}
+		//////////////////////////////////////////////////////////////////////////
+
 		if (!doc->SaveModified())
 			return;
 
@@ -942,12 +950,15 @@ void CMainFrame::OnAssemble()
 
 				StartDebuggerSession();
 
+				//¸´ÖÆÊÓÍ¼ÖÐ±£´æµÄ¶ÏµãÐÅÏ¢µ½debuggerÖÐ
+				view->CopyAllBpsToDebugger(lua);
+
 				GetDebugger().SetNewContext(lua);
 
 				theApp.global_.ClearOutput();
 
 				SetPointer(view, -1, false);	// hide old pointer
-				view->ClearAllBreakpoints();
+				//view->ClearAllBreakpoints();	//²»ÔÙÇå³ý¶Ïµã
 			}
 			else
 			{
@@ -1034,7 +1045,7 @@ void CMainFrame::OnUpdateSymDebug(CCmdUI* cmd_ui)
 
 void CMainFrame::OnSimDebug()		// uruchomienie debuggera
 {
-	if (GetDebugger().IsActive())   // ju¿ uruchomiony?
+	if (GetDebugger().IsActive())   // ju?uruchomiony?
 	{
 		OnSimDebugStop();
 	}
@@ -1465,7 +1476,7 @@ void CMainFrame::OnViewIdents()
 {
 	//if (theApp.global_.IsDebugger()) //InfoPresent())	// jest zasemblowany program?
 	//{
-	//	if (idents_.m_hWnd != 0)	// jest ju¿ okno?
+	//	if (idents_.m_hWnd != 0)	// jest ju?okno?
 	//		idents_.ShowWindow((idents_.GetStyle() & WS_VISIBLE) ? SW_HIDE : SW_NORMAL);
 	//	else
 	//	{
@@ -1494,7 +1505,7 @@ void CMainFrame::OnViewMemory()
 {
 	//if (theApp.global_.IsCodePresent())		// jest program?
 	//{
-	//	if (memory_.m_hWnd != 0)	// jest ju¿ okno?
+	//	if (memory_.m_hWnd != 0)	// jest ju?okno?
 	//		memory_.ShowWindow((memory_.GetStyle() & WS_VISIBLE) ? SW_HIDE : SW_NORMAL);
 	//	else
 	//	{
@@ -1636,7 +1647,7 @@ void CMainFrame::OnViewLog()
 {
 	//if (theApp.global_.IsDebugger())		// is simulator present?
 	//{
-	//	if (log_wnd_.m_hWnd != 0) 	// jest ju¿ okno?
+	//	if (log_wnd_.m_hWnd != 0) 	// jest ju?okno?
 	//		log_wnd_.ShowWindow((log_wnd_.GetStyle() & WS_VISIBLE) ? SW_HIDE : SW_NORMAL);
 	//	else
 	//	{
