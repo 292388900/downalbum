@@ -97,6 +97,14 @@ private:
 
 	void disp_warning(int line, CString &msg);
 	afx_msg LRESULT OnRemoveErrMark(WPARAM wParam, LPARAM lParam);
+
+	/************************************************************************/
+public:
+	//[7/7/2009]
+	//复制视图中保存的断点信息到内部数据中
+	void CopyAllBpsToDebugger(std::auto_ptr<Lua>& lua);
+	/************************************************************************/
+
 };
 
 #ifndef _DEBUG
