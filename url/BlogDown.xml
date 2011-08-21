@@ -1,33 +1,22 @@
-soft={
-name='BlogDown',
-ver='1.0',
-zippswd='',
-zip1=[[]],
-zip2=[[]],
-regurl=[[]],
-help=[[]],
-bbs='',
-bbspswd=[[]],
-news=[[新版本修复了一些bug, 请下载最新版! \n或者到官方网站选择最新版下载!]],
-urgent='',
-votes=
-	{
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-	},
-
-products=
-	{
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-	},
-
-}
+<data>
+    <soft>
+        <name>BlogDown</name>
+        <version>1.0</version>
+        <downurl>http://softsing.googlecode.com/svn/trunk/BlogDown/BlogDown.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/BlogDown/BlogDown2.exe</downurl2>
+        <regurl>http://item.taobao.com/item.htm?id=7816476309</regurl>
+        <help>http://item.taobao.com/item.htm?id=7816476309</help>
+        <bbs>www.linystar.com</bbs>
+        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <news>新版本修复了一些bug! 加快了图片下载速度，建议更新下载!</news>
+	<urgent></urgent>
+	<allsoft>http://shop63016422.taobao.com/</allsoft>
+<!--
+<votes>
+s=1,p=104475,
+s=2,p=57830,
+s=3,p=25882,
+</votes>
+-->
+    </soft>
+</data>
