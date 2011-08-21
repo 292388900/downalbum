@@ -10,5 +10,11 @@
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
         <news>新版本更稳定了，修复了获取宝贝数量不确定的错误!&#x0D; 强烈建议更新下载!</news>
 	<urgent>9</urgent>
+<!--
+<votes>
+s=1,p=104475,
+s=2,p=63113,
+</votes>
+-->
     </soft>
 </data>
