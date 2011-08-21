@@ -63,7 +63,7 @@ namespace Star
 		BOOL ReleaseRes(CString strFileName,WORD wResID,CString strFileType);  
 
 		//删除DirName路径下的所有文件和此文件夹(取决于bDeleteSelf)
-		int DeleteDirectory(CString DirName,BOOL bDeleteSelf=false);
+		int DeleteDirectory(const CString&DirName,BOOL bDeleteSelf=FALSE);
 
 		int GenerateGUID(CString& sGUID);
 		void ConvertUtf8ToGBK(CString& strUtf8);
