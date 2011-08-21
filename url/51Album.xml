@@ -10,5 +10,11 @@
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
         <news>新版本修复了一些bug! &#x0D; 建议更新下载！</news>
 	<urgent>9</urgent>
+<!--
+<votes>
+s=1,p=104188,
+s=2,p=57886,
+</votes>
+-->
     </soft>
 </data>
