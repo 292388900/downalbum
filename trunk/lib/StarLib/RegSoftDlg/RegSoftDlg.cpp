@@ -58,7 +58,7 @@ BOOL CRegSoftDlg::OnInitDialog()
 
 void CRegSoftDlg::InitAllControls()
 {
-	m_stcGetSerial.SetUnderline(CHyperLink::UnderLineOptions::ulAlways);
+	m_stcGetSerial.SetUnderline(CHyperLink::ulAlways);
 	m_stcGetSerial.SetColours(RGB(0,0,204),RGB( 85, 26,139));
 	m_stcGetSerial.SetURL(m_strRegUrl);
 }
