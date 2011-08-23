@@ -1,0 +1,2 @@
+下载地址；http://www.opencv.org.cn/index.php/Download
+编译；先安装OpenCV-2.0.0a-win32.exe，下载cmake-2.8.2-win32-x86.exe并安装，生成vs2005工程文件。
