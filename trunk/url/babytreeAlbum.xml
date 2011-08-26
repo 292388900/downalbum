@@ -1,0 +1,20 @@
+﻿<data>
+    <soft>
+        <name>babytreeAlbum</name>
+        <version>1.0</version>
+        <downurl>http://www.linystar.com/soft/babytreeAlbum/babytreeAlbum.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/babytreeAlbum/babytreeAlbum2.exe</downurl2>
+        <regurl>http://item.taobao.com/item.htm?id=7816898671</regurl>
+        <help>http://item.taobao.com/item.htm?id=7816898671</help>
+        <bbs>www.linystar.com</bbs>
+        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <news>新版本修复了一些bug! &#x0D; 请下载最新版，或者到官方网站选择最新版下载!</news>
+	<urgent>9</urgent>
+<!--
+<votes>
+s=1,p=109025,
+s=2,p=61033,
+</votes>
+-->
+    </soft>
+</data>
