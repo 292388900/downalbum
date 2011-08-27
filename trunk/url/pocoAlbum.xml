@@ -2,13 +2,13 @@
     <soft>
         <name>pocoAlbum</name>
         <version>1.5</version>
-        <downurl>http://www.linystar.com/soft/pocoAlbum/pocoAlbum.exe</downurl>
+        <downurl>http://www.linystar.com/soft/pocoAlbum.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/pocoAlbum/pocoAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=8608594589</regurl>
         <help>http://item.taobao.com/item.htm?id=8608594589</help>
         <bbs>www.linystar.com</bbs>
         <pswd>http://www.linystar.com/logging.php?action=login</pswd>
-        <news>�°汾�޸���һЩbug, ���������°�! &#x0D;���ߵ��ٷ���վѡ�����°�����!</news>
+        <news>新版本修复了一些bug, 请下载最新版! &#x0D;或者到官方网站选择最新版下载!</news>
 	<urgent>9</urgent>
 <!--
 <votes>
