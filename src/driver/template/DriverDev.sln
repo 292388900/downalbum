@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DriverDev", "DriverDev.vcproj", "{A691E63A-9A7B-4974-A5E7-5F07CE34CB2E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Driver Check Edtion|Win32 = Driver Check Edtion|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A691E63A-9A7B-4974-A5E7-5F07CE34CB2E}.Driver Check Edtion|Win32.ActiveCfg = Driver Check Edtion|Win32
+		{A691E63A-9A7B-4974-A5E7-5F07CE34CB2E}.Driver Check Edtion|Win32.Build.0 = Driver Check Edtion|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
