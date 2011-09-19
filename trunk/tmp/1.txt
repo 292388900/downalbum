@@ -1,60 +1,10 @@
 C:\DOCUME~1\user\LOCALS~1\Temp\Rar$EX83.704\
 
-C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\test.zip 的临时目录 1\
+发现Rar$说明未解压缩
+好心的哥哥姐姐请把我解压出来吧!
 
-soft={
-name='',
-ver='',
-zippswd='',
-zip1=[[]],
-zip2=[[]],
-regurl=[[]],
-help=[[]],
-bbs='',
-bbspswd=[[]],
-news=[[]],
-urgent='',
-votes=
-	{
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-		[[]],
-	},
+ts 解锁那个人的
 
-products=[[]],
+拍拍
 
-}
-
----------------------------
-iDown更新提示
----------------------------
-iDown发现可用更新(v1.1.0.106)，是否现在更新？
----------------------------
-确定   取消   
----------------------------
-
-
-
-http://www.duote.com/soft_pj.php?st=1&id=25976&dt=1312794387259
-
-http://digg.newhua.com/ajax_top.php
-
-POST /ajax_top.php HTTP/1.0
-Accept: */*
-Accept-Language: zh-cn
-Referer: http://digg.newhua.com/topinfo.php?id=104474
-Content-Type: application/x-www-form-urlencoded
-Connection: Keep-Alive
-User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; InfoPath.2; .NET4.0C)
-Host: digg.newhua.com
-Content-Length: 26
-Pragma: no-cache
-
-do=digg&action=1&id=104474
-
-
-
-http://123.103.68.178:81/web/softeval.php?et=1&id=59457
+写点文库 上传csdn
