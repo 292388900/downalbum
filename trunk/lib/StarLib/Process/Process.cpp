@@ -12,9 +12,10 @@
 ------------------------------------------------------------------------*/
 ULONG  Star::Process::GetProcessID(char *szProcessName)
 {
+	DWORD dwProcessId = 0;
+
 	PROCESSENTRY32	ProcessEntry32;
 	HANDLE			hSnap;
-	int				ret;
 
 	ProcessEntry32.dwSize = sizeof (PROCESSENTRY32);
 
@@ -22,18 +23,18 @@ ULONG  Star::Process::GetProcessID(char *szProcessName)
 	if(hSnap == 0)
 		return 0;
 
-	ret = Process32First(hSnap,&ProcessEntry32);
-	while (ret)
-	{
-		if (StrStrI(ProcessEntry32.szExeFile,szProcessName) )
-		{
-			return ProcessEntry32.th32ProcessID;
+	int ret = Process32First(hSnap,&ProcessEntry32);
+	while ( ret ){
+		if ( StrStrI(ProcessEntry32.szExeFile,szProcessName) ){
+			dwProcessId = ProcessEntry32.th32ProcessID;
+			break;
 		}
 		ret = Process32Next(hSnap,&ProcessEntry32);
 	}
 
 	CloseHandle(hSnap);
-	return 0;
+
+	return dwProcessId;
 }
 
 /*------------------------------------------------------------------------
