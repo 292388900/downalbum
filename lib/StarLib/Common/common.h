@@ -127,5 +127,6 @@ namespace Star
 		ULONG GetInternetTime(LPCTSTR lpszHostAddress, UINT nHostPort,int nTimeOut=10000);
 		ULONG GetInternetTime(int nTimeOut=10000);
 		//////////////////////////////////////////////////////////////////////////
+		void CopyToClipboard(LPCTSTR szText,int nCbSize=-1);
 	}
 }
