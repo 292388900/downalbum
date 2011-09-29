@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="Res"
+	Name="ResDll"
 	ProjectGUID="{58D58AB4-E22D-4253-BE2A-BF266C86498D}"
 	RootNamespace="ResDll"
 	>
@@ -304,12 +304,12 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\tmp"
-			IntermediateDirectory="$(SolutionDir)\tmp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="../temp"
 			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			BuildLogFile=""
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -329,6 +329,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/ResDll.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -359,15 +360,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				OutputFile="$(SolutionDir)\bin\$(ProjectName).dll"
+				OutputFile="../bin/Res.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(TargetDir)$(TargetName).pdb"
+				ProgramDatabaseFile=".\Debug/Res.pdb"
 				SubSystem="2"
 				ResourceOnlyDLL="true"
-				ImportLibrary=""
+				ImportLibrary=".\Debug/Res.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -382,7 +383,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile="$(OutDir)/$(ProjectName).bsc"
+				OutputFile=".\Debug/ResDll.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

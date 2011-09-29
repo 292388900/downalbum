@@ -77,7 +77,6 @@ public:
 
   // Operations
 private:
-  bool Cls();
   void CalcFontSize();			// obliczenie rozmiaru znaków
   void DrawCursor();			// draw cursor
   void DrawCursor(int x, int y, bool visible);
@@ -89,6 +88,7 @@ public:
   void SetSize(int w, int h, int resize= 1);
   void GetSize(int &w, int &h);
   void Resize();
+  bool Cls();
   void SetWndPos(const POINT &p);
   CPoint GetWndPos();
   void Paste();

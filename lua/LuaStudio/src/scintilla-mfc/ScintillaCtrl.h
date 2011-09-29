@@ -576,6 +576,7 @@ public:
   int GetPropertyExpanded(const char* key, char* buf, BOOL bDirect = TRUE);
   int GetPropertyInt(const char* key, BOOL bDirect = TRUE);
   int GetStyleBitsNeeded(BOOL bDirect = TRUE);
+
 protected:
   DECLARE_DYNAMIC(CScintillaCtrl)
 

@@ -9,6 +9,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <shlwapi.h>
+//在scintilla.mak文件中LIBS=后加入shlwapi.lib即可
+//#pragma lib(comment,"shlwapi.lib")
 
 #include "Platform.h"
 
@@ -56,6 +59,10 @@ ScintillaBase::ScintillaBase() {
 		keyWordLists[wl] = new WordList;
 	keyWordLists[numWordLists] = 0;
 #endif
+
+	/************************************************************************/
+	m_codeKeyWords=NULL;
+	/************************************************************************/
 }
 
 ScintillaBase::~ScintillaBase() {
@@ -63,7 +70,289 @@ ScintillaBase::~ScintillaBase() {
 	for (int wl = 0;wl < numWordLists;wl++)
 		delete keyWordLists[wl];
 #endif
+
+	/************************************************************************/
+	PCODENODE p,q;
+
+	if (m_codeKeyWords)
+	{
+		p=m_codeKeyWords->pCodeHeader;
+		while(p)
+		{
+			q=p;
+			p=p->Next;
+			delete q;
+		}
+	}
+	delete m_codeKeyWords;
+
+	for (MapFunctiontIter iter=m_mapFunction.begin();
+		iter!=m_mapFunction.end();++iter){
+			PFUNCTIONNODE pFuncNode=NULL;
+			PFUNCTIONNODE q=NULL;
+			PFUNCTIONNAMESPACE pNameSpace=NULL;
+
+			pNameSpace=(PFUNCTIONNAMESPACE)iter->second;
+			pFuncNode=pNameSpace->pFuncHeader;
+			while(pFuncNode)
+			{
+				q=pFuncNode;
+				pFuncNode=pFuncNode->Next;
+				//TRACE("%s\n",q->strName);
+				delete q;
+			}
+			//TRACE("%s\n",pNameSpace->strNameSpace);
+			delete pNameSpace;
+	}
+	/************************************************************************/
+
 }
+/************************************************************************
+函数名：InitCodeList
+参 数：keywords:关键字数组以分隔符chSeparate分隔,chSeparate:指示分隔符,默认为空格" "
+返回值：void
+说 明：初始化关键字列表
+日 期：-5-6
+作 者：zhuxingxing
+************************************************************************/
+void ScintillaBase::InitCodeList(const char*keywords,char chSeparate)
+{
+	m_codeKeyWords=new CODELIST;
+	m_codeKeyWords->nType=CODETYPE::KEYWORDS;
+	m_codeKeyWords->pCodeHeader=NULL;
+
+	PCODENODE pCodeNode=NULL;
+	PCODENODE pTail=NULL;
+
+	char *words = new char[strlen(keywords) + 1];
+	if (words) {
+		strcpy(words, keywords);
+		char *startword = words;
+		int i = 0;
+		for (; words && words[i]; i++) {
+			if (words[i] == chSeparate) {
+				words[i] = '\0';
+
+				pCodeNode=new CODENODE;
+				pCodeNode->strName=startword;
+				pCodeNode->Next=NULL;
+				if (pTail==NULL)
+				{
+					m_codeKeyWords->pCodeHeader=pCodeNode;
+					pTail=m_codeKeyWords->pCodeHeader;
+				}
+				else
+				{
+					pTail->Next=pCodeNode;
+					pTail=pCodeNode;
+				}
+
+				startword = words + i + 1;
+			}
+		}
+		if (startword) {
+			pCodeNode=new CODENODE;
+			pCodeNode->strName=startword;
+			pCodeNode->Next=NULL;
+
+			if (pTail==NULL)
+			{
+				m_codeKeyWords->pCodeHeader=pCodeNode;
+				pTail=m_codeKeyWords->pCodeHeader;
+			}
+			else
+			{
+				pTail->Next=pCodeNode;
+				pTail=pCodeNode;
+			}
+		}
+		delete []words;
+	}
+}
+/************************************************************************
+函数名：LoadListFromXMLFile
+参 数：FileName:为一个.xml文件(全路径名)
+返回值：void
+说 明：从xml中读取扩展函数信息
+日 期：-5-8
+作 者：zhuxingxing
+************************************************************************/
+void ScintillaBase::LoadListFromXMLFile(const char*FileName)
+{
+	MSXML2::IXMLDOMDocumentPtr pDoc;
+	HRESULT hr;
+	hr=pDoc.CreateInstance(__uuidof(MSXML2::DOMDocument40));
+	if(FAILED(hr))
+	{  
+		MessageBox(0,"无法创建DOMDocument对象,请检查是否安装了MS XML Parser运行库!",NULL,MB_OK);
+		return ;
+	}
+	//加载文件
+	pDoc->load(FileName);
+
+	BOOL	bNode  =  TRUE; 
+	std::string strNameSpace;
+	std::string strName;
+	std::string strResult;
+	std::string strParam;
+	std::string strDescription;
+	PFUNCTIONNAMESPACE pFuncSpace=NULL;
+	PFUNCTIONNODE pFuncNode=NULL;
+
+	for (int i=1;bNode;i++)  
+	{  
+		IXMLDOMNodePtr  node;  
+		std::string strRoot; 
+		std::string	strItem;
+		char buff[MAX_PATH];
+
+		sprintf_s( buff, MAX_PATH, "/Function/Item[%d]", i );
+		strRoot=buff;
+		node=pDoc->selectSingleNode(_bstr_t(strRoot.c_str()));  
+		if (node)  
+		{  
+			IXMLDOMNodePtr pNode;  
+			VARIANT value;  
+
+			strItem=strRoot+"/NameSpace";  
+			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
+			pNode->get_nodeTypedValue(&value);  
+			strNameSpace=(char *)(_bstr_t)value;
+
+			strItem=strRoot+"/Name";  
+			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
+			pNode->get_nodeTypedValue(&value);  
+			strName=(char *)(_bstr_t)value;
+
+			strItem=strRoot+"/Result";  
+			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
+			pNode->get_nodeTypedValue(&value);  
+			strResult=(char *)(_bstr_t)value;
+
+			strItem=strRoot+"/Param";  
+			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
+			pNode->get_nodeTypedValue(&value);  
+			strParam=(char *)(_bstr_t)value;
+
+			strItem=strRoot+"/Description";  
+			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
+			pNode->get_nodeTypedValue(&value);  
+			strDescription=(char *)(_bstr_t)value;
+
+			pFuncNode=new FUNCTIONNODE;
+			pFuncNode->Next=NULL;
+			pFuncNode->strName=strName;
+			pFuncNode->strResult=strResult;
+			pFuncNode->strParam=strParam;
+			pFuncNode->strDescription=strDescription;
+
+			if (strNameSpace=="")
+			{
+				strNameSpace="Global";
+			}
+			MapFunctiontIter iter=m_mapFunction.find(strNameSpace);
+			if ( iter!=m_mapFunction.end() ){
+				//插入已存在命名空间链表
+				pFuncSpace=(PFUNCTIONNAMESPACE)iter->second;
+				pFuncNode->Next=pFuncSpace->pFuncHeader;
+				pFuncSpace->pFuncHeader=pFuncNode;
+			}
+			else{
+				//新建命名空间链表
+				pFuncSpace=new FUNCTIONNAMESPACE;
+				pFuncSpace->pFuncHeader=NULL;
+				pFuncSpace->strNameSpace=strNameSpace;
+				pFuncNode->Next=pFuncSpace->pFuncHeader;
+				pFuncSpace->pFuncHeader=pFuncNode;
+				m_mapFunction.insert(std::make_pair(strNameSpace,pFuncSpace));
+			}
+		}  
+		else  
+			bNode  =  FALSE;  
+	}
+}
+/************************************************************************
+函数名：AutoCompleteMoveToCurrentWord
+参  数：/
+返回值：void
+说  明：搜索光标左侧的单词和命名空间单词,如果这两个单词都不为空则启用自定完成
+日  期：2009-5-8
+作  者：zhuxingxing
+************************************************************************/
+void ScintillaBase::AutoCompleteMoveToCurrentWord() {
+	char wordCurrent[1000];
+	int j=sizeof(wordCurrent)-1;
+	wordCurrent[sizeof(wordCurrent)-1] = '\0';
+
+	char wordParent[1000];
+	int k=sizeof(wordParent)-1;
+	wordParent[sizeof(wordParent)-1] = '\0';
+
+	int pos;
+	char ch;
+	char chBreak=0;
+	char*pLeftWord=NULL;
+	char*pParentWord=NULL;
+	char ParentPrevChar=0;
+	char WordPrevChar=0;
+
+	//从光标向左寻找一个单词
+	for (pos=currentPos-1;pos>=0;pos--)
+	{
+		ch=pdoc->CharAt(pos);
+		if((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_')  
+		{  		
+			wordCurrent[--j]=ch;
+		}
+		else
+		{
+			break;
+		}
+	}
+	if (j<sizeof(wordCurrent)-1)
+	{
+		pLeftWord=wordCurrent+j;
+		WordPrevChar=wordCurrent[j];
+	}
+	chBreak=ch;
+
+	//再向前寻找一个单词作为命名空间(.号前面的单词)
+	if (ch=='.')
+	{
+		for(--pos;pos>=0;pos--)
+		{
+			ch=pdoc->CharAt(pos);
+			if((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_'||ch=='.')  
+			{  		
+				wordParent[--k]=ch;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	if(k<sizeof(wordParent)-1)
+	{
+		pParentWord=wordParent+k;
+		ParentPrevChar=wordParent[k];
+	}
+
+	if ((WordPrevChar>='0'&&WordPrevChar<='9')||(ParentPrevChar>='0'&&ParentPrevChar<='9')||(pLeftWord==NULL&&pParentWord==NULL))
+	{
+		//单词为数字开头的
+		ac.Cancel();
+	}
+	else
+	{
+		if(pParentWord==NULL&&chBreak=='.')
+			ac.Cancel();
+		else
+			AutoCompleteStart(pLeftWord,pParentWord);
+	}
+}
+
+/************************************************************************/
 
 void ScintillaBase::Finalise() {
 	Editor::Finalise();
@@ -76,6 +365,7 @@ void ScintillaBase::RefreshColourPalette(Palette &pal, bool want) {
 }
 
 void ScintillaBase::AddCharUTF(char *s, unsigned int len, bool treatAsDBCS) {
+/*
 	bool isFillUp = ac.Active() && ac.IsFillUpChar(*s);
 	if (!isFillUp) {
 		Editor::AddCharUTF(s, len, treatAsDBCS);
@@ -87,8 +377,132 @@ void ScintillaBase::AddCharUTF(char *s, unsigned int len, bool treatAsDBCS) {
 		if (isFillUp) {
 			Editor::AddCharUTF(s, len, treatAsDBCS);
 		}
+	}*/
+	bool acActiveBeforeCharAdded = ac.Active();
+	if (!acActiveBeforeCharAdded || !ac.IsFillUpChar(*s))
+		Editor::AddCharUTF(s, len, treatAsDBCS);
+	if(s[0]=='(')
+		CallTipStart();
+	else if (s[0]==')')
+	{
+		ct.CallTipCancel();
+	}
+
+	AutoCompleteChanged(s[0]);
+}
+
+/************************************************************************/
+//说 明：启动calltip窗口
+/*
+void ScintillaBase::CallTipStart()
+{
+	char wordCurrent[1000];
+	int j=sizeof(wordCurrent)-1;
+	wordCurrent[sizeof(wordCurrent)-1] = '\0';
+
+	char wordParent[1000];
+	int k=sizeof(wordParent)-1;
+	wordParent[sizeof(wordParent)-1] = '\0';
+
+	int pos;
+	char ch;
+	char chBreak=0;
+	char*pLeftWord=NULL;
+	char*pParentWord=NULL;
+	char ParentPrevChar=0;
+	char WordPrevChar=0;
+
+	//从光标向左寻找一个单词
+	for (pos=currentPos-1-1;pos>=0;pos--)
+	{
+		ch=pdoc->CharAt(pos);
+		if((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_')  
+		{  		
+			wordCurrent[--j]=ch;
+		}
+		else
+		{
+			break;
+		}
+	}
+	if (j<sizeof(wordCurrent)-1)
+	{
+		pLeftWord=wordCurrent+j;
+		WordPrevChar=wordCurrent[j];
+	}
+	chBreak=ch;
+
+	//再向前寻找一个单词作为命名空间(.号前面的单词)
+	if (ch=='.')
+	{
+		for(--pos;pos>=0;pos--)
+		{
+			ch=pdoc->CharAt(pos);
+			if((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_'||ch=='.')  
+			{  		
+				wordParent[--k]=ch;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	if(k<sizeof(wordParent)-1)
+	{
+		pParentWord=wordParent+k;
+		ParentPrevChar=wordParent[k];
+	}
+
+	if ((WordPrevChar>='0'&&WordPrevChar<='9')||(ParentPrevChar>='0'&&ParentPrevChar<='9')||pLeftWord==NULL)
+	{
+		return;
+	}
+
+	MapFunctiontIter iter=m_mapFunction.end();
+	if(pParentWord==NULL)
+		iter=m_mapFunction.find("Global");
+	else
+		iter=m_mapFunction.find(pParentWord);
+	if ( iter==m_mapFunction.end() )
+		return;
+	PFUNCTIONNAMESPACE pNameSpace=(PFUNCTIONNAMESPACE)iter->second;
+	PFUNCTIONNODE pFuncNode=pNameSpace->pFuncHeader;
+	std::string strInfo="";
+	while (pFuncNode){
+		if ( strcmp( pLeftWord, pFuncNode->strName.c_str() )==0 ){
+			strInfo="参数: "+pFuncNode->strParam+"\n"+"说明: "+pFuncNode->strDescription;
+			break;
+		}
+		pFuncNode=pFuncNode->Next;
+	}
+
+	AutoCompleteCancel();
+	if (!ct.wCallTip.Created()) {
+		Point pt = LocationFromPosition(currentPos);
+		pt.y += vs.lineHeight;
+		PRectangle rc = ct.CallTipStart(currentPos, pt,strInfo.c_str(),
+			vs.styles[STYLE_DEFAULT].fontName,
+			vs.styles[STYLE_DEFAULT].sizeZoomed,
+			CodePage(),
+			0,
+			wMain);
+		// If the call-tip window would be out of the client
+		// space, adjust so it displays above the text.
+		PRectangle rcClient = GetClientRectangle();
+		if (rc.bottom > rcClient.bottom) {
+			int offset = vs.lineHeight + rc.Height();
+			rc.top -= offset;
+			rc.bottom -= offset;
+		}
+		// Now display the window.
+		CreateCallTipWindow(rc);
+		ct.wCallTip.SetPositionRelative(rc, wMain);
+		ct.wCallTip.Show();
 	}
 }
+*/
+
 
 void ScintillaBase::Command(int cmdId) {
 
@@ -134,6 +548,15 @@ void ScintillaBase::Command(int cmdId) {
 
 int ScintillaBase::KeyCommand(unsigned int iMessage) {
 	// Most key commands cancel autocompletion mode
+	if (iMessage==SCI_DELETEBACK)
+	{
+		DelCharBack(true);
+		//AutoCompleteCharacterDeleted();
+		AutoCompleteChanged();
+		EnsureCaretVisible();
+		return 0;
+	}
+
 	if (ac.Active()) {
 		switch (iMessage) {
 			// Except for these
@@ -155,14 +578,15 @@ int ScintillaBase::KeyCommand(unsigned int iMessage) {
 		case SCI_LINEEND:
 			AutoCompleteMove(5000);
 			return 0;
-		case SCI_DELETEBACK:
-			DelCharBack(true);
-			AutoCompleteCharacterDeleted();
-			EnsureCaretVisible();
-			return 0;
+// 		case SCI_DELETEBACK:
+// 			DelCharBack(true);
+// 			AutoCompleteCharacterDeleted();
+// 			EnsureCaretVisible();
+// 			return 0;
 		case SCI_DELETEBACKNOTLINE:
 			DelCharBack(false);
-			AutoCompleteCharacterDeleted();
+			//AutoCompleteCharacterDeleted();
+			AutoCompleteChanged();
 			EnsureCaretVisible();
 			return 0;
 		case SCI_TAB:
@@ -294,6 +718,9 @@ void ScintillaBase::AutoCompleteMove(int delta) {
 	ac.Move(delta);
 }
 
+/************************************************************************
+为实现自动完成，修改了AutoCompleteMoveToCurrentWord
+
 void ScintillaBase::AutoCompleteMoveToCurrentWord() {
 	char wordCurrent[1000];
 	int i;
@@ -303,10 +730,13 @@ void ScintillaBase::AutoCompleteMoveToCurrentWord() {
 	wordCurrent[Platform::Minimum(i - startWord, 999)] = '\0';
 	ac.Select(wordCurrent);
 }
+*/
+
+/************************************************************************/
 
 void ScintillaBase::AutoCompleteCharacterAdded(char ch) {
 	if (ac.IsFillUpChar(ch)) {
-		AutoCompleteCompleted();
+		AutoCompleteCompleted(ch);
 	} else if (ac.IsStopChar(ch)) {
 		ac.Cancel();
 	} else {
@@ -324,6 +754,25 @@ void ScintillaBase::AutoCompleteCharacterDeleted() {
 	}
 }
 
+void ScintillaBase::AutoCompleteChanged(char ch) {
+	if (ac.IsFillUpChar(ch)) 
+	{
+		AutoCompleteCompleted(ch);
+	} 
+	else if (ac.IsStopChar(ch)) 
+	{
+		ac.Cancel();
+	} 
+	else 
+	{
+		AutoCompleteMoveToCurrentWord();
+	}
+}
+
+
+/************************************************************************/
+
+/*
 void ScintillaBase::AutoCompleteCompleted() {
 	int item = ac.lb->GetSelection();
 	char selected[1000];
@@ -371,6 +820,325 @@ void ScintillaBase::AutoCompleteCompleted() {
 		SetEmptySelection(firstPos + static_cast<int>(piece.length()));
 	}
 	pdoc->EndUndoAction();
+}*/
+
+
+//重载函数AutoCompleteCompleted实现：
+//用户选择自动完成窗口中的项目,把文本插入到编辑器中
+void ScintillaBase::AutoCompleteCompleted(char fillUp) {
+	int item = ac.lb->GetSelection();
+	char selected[1000];
+	if (item != -1) {
+		ac.lb->GetValue(item, selected, sizeof(selected));
+	}
+	ac.Cancel();
+
+	if (listType > 0) {
+		listSelected = selected;
+		SCNotification scn;
+		scn.nmhdr.code = SCN_USERLISTSELECTION;
+		scn.message = 0;
+		scn.wParam = listType;
+		scn.lParam = 0;
+		scn.text = listSelected.c_str();
+		NotifyParent(scn);
+		return;
+	}
+
+	Position firstPos = ac.posStart - ac.startLen;
+	Position endPos = currentPos;
+
+	//按照查询光标左侧单词的方法去确定firstPos
+	/************************************************************************/
+	char ch;
+	for (firstPos=currentPos;firstPos>=0;firstPos--)
+	{
+		ch=pdoc->CharAt(firstPos-1);
+		if( !((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_') )
+		{
+			break;
+		}
+	}
+	/************************************************************************/
+
+	if (ac.dropRestOfWord)
+		endPos = pdoc->ExtendWordSelect(endPos, 1, true);
+	if (endPos < firstPos)
+		return;
+	pdoc->BeginUndoAction();
+	if (endPos != firstPos) {
+		pdoc->DeleteChars(firstPos, endPos - firstPos);
+	}
+	SetEmptySelection(ac.posStart);
+	if (item != -1) {
+		SString piece = selected;
+		if (fillUp)
+			piece += fillUp;
+		pdoc->InsertCString(firstPos, piece.c_str());
+		SetEmptySelection(firstPos + piece.length());
+	}
+	pdoc->EndUndoAction();
+}
+/************************************************************************/
+
+/************************************************************************
+函数名：AutoCompleteStart
+参  数：LeftWord,ParentWord
+返回值：void
+说  明：启动自动完成窗口,匹配lua关键字,匹配命名空间,匹配全局函数
+如果ParentWord不为空则则再匹配其命名空间下的函数
+日  期：2009-5-6
+作  者：zhuxingxing
+************************************************************************/
+void ScintillaBase::AutoCompleteStart(const char *LeftWord,const char*ParentWord)
+{
+	int lenEntered=0;
+	//Platform::DebugPrintf("AutoComplete %s\n", list);
+	ct.CallTipCancel();
+
+	ac.Start(wMain, idAutoComplete, currentPos, LocationFromPosition(currentPos),
+		lenEntered, vs.lineHeight, IsUnicodeMode());
+
+	PRectangle rcClient = GetClientRectangle();
+	Point pt = LocationFromPosition(currentPos - lenEntered);
+
+	int heightLB = 100;
+	int widthLB = 100;
+	if (pt.x >= rcClient.right - widthLB) {
+		HorizontalScrollTo(xOffset + pt.x - rcClient.right + widthLB);
+		Redraw();
+		pt = LocationFromPosition(currentPos);
+	}
+	PRectangle rcac;
+	rcac.left = pt.x - 5;
+	if (pt.y >= rcClient.bottom - heightLB &&  // Wont fit below.
+		pt.y >= (rcClient.bottom + rcClient.top) / 2) { // and there is more room above.
+			rcac.top = pt.y - heightLB;
+			if (rcac.top < 0) {
+				heightLB += rcac.top;
+				rcac.top = 0;
+			}
+	} else {
+		rcac.top = pt.y + vs.lineHeight;
+	}
+	rcac.right = rcac.left + widthLB;
+	rcac.bottom = Platform::Minimum(rcac.top + heightLB, rcClient.bottom);
+	ac.lb->SetPositionRelative(rcac, wMain);
+	ac.lb->SetFont(vs.styles[STYLE_DEFAULT].font);
+	ac.lb->SetAverageCharWidth(vs.styles[STYLE_DEFAULT].aveCharWidth);
+	ac.lb->SetDoubleClickAction(AutoCompleteDoubleClick, this);
+
+	/************************************************************************/
+	if (ParentWord==NULL)
+	{
+		//先匹配Lua关键字
+		PCODENODE pCodeNode=m_codeKeyWords->pCodeHeader;
+		while(pCodeNode)
+		{
+			if(StrStrI(pCodeNode->strName.c_str(),LeftWord))
+				ac.lb->Append((char*)pCodeNode->strName.c_str());
+			pCodeNode=pCodeNode->Next;
+		}
+
+		//再匹配命名空间
+		for ( MapFunctiontIter iter=m_mapFunction.begin();
+			iter!=m_mapFunction.end();++iter ){
+				if(StrStrI(iter->first.c_str(),LeftWord))
+					ac.lb->Append((char*)iter->first.c_str());
+		}
+
+		//再匹配全局函数
+		MapFunctiontIter iter=m_mapFunction.find("Global");
+		if (iter!=m_mapFunction.end())
+		{
+			PFUNCTIONNAMESPACE pNameSpace=PFUNCTIONNAMESPACE(iter->second);
+			PFUNCTIONNODE pFuncNode=pNameSpace->pFuncHeader;
+			while(pFuncNode)
+			{
+				if(StrStrI(pFuncNode->strName.c_str(),LeftWord))
+					ac.lb->Append((char*)pFuncNode->strName.c_str());
+				pFuncNode=pFuncNode->Next;
+			}
+		}
+
+	}
+	else
+	{
+		//说明不是全局函数,而是在某个命名空间中
+		PFUNCTIONNAMESPACE pNameSpace=NULL;
+		PFUNCTIONNODE pFuncNode=NULL;
+		//先从Hash表中查找这个命名空间
+		MapFunctiontIter iter=m_mapFunction.find(ParentWord);
+		if (iter!=m_mapFunction.end())
+		{
+			pNameSpace=PFUNCTIONNAMESPACE(iter->second);
+			pFuncNode=pNameSpace->pFuncHeader;
+
+			if (LeftWord==NULL){
+				//将这个命名空间的所有函数列出来
+				while(pFuncNode){
+					ac.lb->Append((char*)pFuncNode->strName.c_str());
+					pFuncNode=pFuncNode->Next;
+				}
+			}
+			else{
+				//需要匹配
+				while(pFuncNode){
+					if(StrStrI(pFuncNode->strName.c_str(),LeftWord))
+						ac.lb->Append((char*)pFuncNode->strName.c_str());
+					pFuncNode=pFuncNode->Next;
+				}
+			}
+		}
+	}
+
+	/************************************************************************/
+
+	// Fiddle the position of the list so it is right next to the target and wide enough for all its strings
+	PRectangle rcList = ac.lb->GetDesiredRect();
+	int heightAlloced = rcList.bottom - rcList.top;
+	widthLB = Platform::Maximum(widthLB, rcList.right - rcList.left);
+	// Make an allowance for large strings in list
+	rcList.left = pt.x - 5;
+	rcList.right = rcList.left + widthLB;
+	if (pt.y >= rcClient.bottom - heightLB &&  // Wont fit below.
+		pt.y >= (rcClient.bottom + rcClient.top) / 2) { // and there is more room above.
+			rcList.top = pt.y - heightAlloced;
+	} else {
+		rcList.top = pt.y + vs.lineHeight;
+	}
+	rcList.bottom = rcList.top + heightAlloced;
+	ac.lb->SetPositionRelative(rcList, wMain);
+	if(ac.lb->Length())
+		ac.Show(true);
+	else
+		ac.Cancel();
+}
+
+/************************************************************************
+函数名：
+参  数：
+返回值：
+说  明：启动calltip窗口
+日  期：2009-5-8
+作  者：zhuxingxing
+************************************************************************/
+void ScintillaBase::CallTipStart()
+{
+	char wordCurrent[1000];
+	int j=sizeof(wordCurrent)-1;
+	wordCurrent[sizeof(wordCurrent)-1] = '\0';
+
+	char wordParent[1000];
+	int k=sizeof(wordParent)-1;
+	wordParent[sizeof(wordParent)-1] = '\0';
+
+	int pos;
+	char ch;
+	char chBreak=0;
+	char*pLeftWord=NULL;
+	char*pParentWord=NULL;
+	char ParentPrevChar=0;
+	char WordPrevChar=0;
+
+	//从光标向左寻找一个单词
+	for (pos=currentPos-1-1;pos>=0;pos--)
+	{
+		ch=pdoc->CharAt(pos);
+		if((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_')  
+		{  		
+			wordCurrent[--j]=ch;
+		}
+		else
+		{
+			break;
+		}
+	}
+	if (j<sizeof(wordCurrent)-1)
+	{
+		pLeftWord=wordCurrent+j;
+		WordPrevChar=wordCurrent[j];
+	}
+	chBreak=ch;
+
+	//再向前寻找一个单词作为命名空间(.号前面的单词)
+	if (ch=='.')
+	{
+		for(--pos;pos>=0;pos--)
+		{
+			ch=pdoc->CharAt(pos);
+			if((ch>='a'&&ch<='z')||(ch>='A'&&ch<='Z')||(ch>='0'&&ch<='9')||ch=='_'||ch=='.')  
+			{  		
+				wordParent[--k]=ch;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	if(k<sizeof(wordParent)-1)
+	{
+		pParentWord=wordParent+k;
+		ParentPrevChar=wordParent[k];
+	}
+
+	if ((WordPrevChar>='0'&&WordPrevChar<='9')||(ParentPrevChar>='0'&&ParentPrevChar<='9')||pLeftWord==NULL)
+	{
+		return;
+	}
+
+	MapFunctiontIter iter=m_mapFunction.end();
+	if(pParentWord==NULL)
+		iter=m_mapFunction.find("Global");
+	else
+		iter=m_mapFunction.find(pParentWord);
+	if ( iter==m_mapFunction.end() ){
+		return;
+	}
+
+	PFUNCTIONNAMESPACE pNameSpace=(PFUNCTIONNAMESPACE)iter->second;
+	PFUNCTIONNODE pFuncNode=pNameSpace->pFuncHeader;
+	std::string strInfo="";
+	BOOL bHited=FALSE;
+	while (pFuncNode)
+	{
+		if (strcmp(pLeftWord,pFuncNode->strName.c_str())==0)
+		{
+			strInfo="参数: "+pFuncNode->strParam+"\n返回: "+pFuncNode->strResult+"\n说明: "+pFuncNode->strDescription;
+			bHited=TRUE;
+			break;
+		}
+		pFuncNode=pFuncNode->Next;
+	}
+
+	if (bHited==FALSE)
+		return;
+
+	AutoCompleteCancel();
+	if (!ct.wCallTip.Created()) {
+		Point pt = LocationFromPosition(currentPos);
+		pt.y += vs.lineHeight;
+		PRectangle rc = ct.CallTipStart(currentPos, pt,
+			strInfo.c_str(),
+			vs.styles[STYLE_DEFAULT].fontName,
+			vs.styles[STYLE_DEFAULT].sizeZoomed,
+			CodePage(),
+			0,
+			wMain);
+		// If the call-tip window would be out of the client
+		// space, adjust so it displays above the text.
+		PRectangle rcClient = GetClientRectangle();
+		if (rc.bottom > rcClient.bottom) {
+			int offset = vs.lineHeight + rc.Height();
+			rc.top -= offset;
+			rc.bottom -= offset;
+		}
+		// Now display the window.
+		CreateCallTipWindow(rc);
+		ct.wCallTip.SetPositionRelative(rc, wMain);
+		ct.wCallTip.Show();
+	}
 }
 
 int ScintillaBase::AutoCompleteGetCurrent() {
@@ -449,6 +1217,16 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 	lexCurrent = LexerModule::Find(lexLanguage);
 	if (!lexCurrent)
 		lexCurrent = LexerModule::Find(SCLEX_NULL);
+
+	//加入对关键字链表和函数链表的初始化代码:
+	/************************************************************************/
+	InitCodeList("and break do else elseif end false for function global if in local nil not or repeat return then true until while");
+	char szLuaXML[MAX_PATH*2];
+	GetModuleFileName(NULL,szLuaXML,sizeof(szLuaXML));
+	strcpy(&strrchr(szLuaXML,'\\')[1],"Lua.xml");
+	LoadListFromXMLFile(szLuaXML);
+	/************************************************************************/
+
 }
 
 void ScintillaBase::SetLexerLanguage(const char *languageName) {
