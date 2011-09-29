@@ -526,6 +526,8 @@ BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 		strHtml.ReleaseBuffer();
 		file.Close();
 		::DeleteFile(strTempFile);
+
+		bOK = TRUE;
 	}
 
 	return bOK;  
