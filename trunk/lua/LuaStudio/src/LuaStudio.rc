@@ -12,15 +12,6 @@
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
-
-
-//add begin
-//ÓÉÓÚ³ÌÐòµÄ×ÊÔ´È«²¿·ÅÔÚres.dllÖÐ,Ö÷³ÌÐò²¢Ã»ÓÃÕâÐ©×ÊÔ´
-//¼ÓÉÏÕâ¸öÖ÷ÒªÊÇÒªÖ÷³ÌÐòÎÄ¼þÓÐ¸öÍ¼±ê
-IDR_MAINFRAME           ICON                    "res\\lua-studio.ico"
-//add end
-
-
 /////////////////////////////////////////////////////////////////////////////
 // Polish resources
 
@@ -466,7 +457,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CTEXT           "Lua Studio",IDC_TITLE,12,6,136,14,SS_NOPREFIX
     LTEXT           "version...",IDC_ABOUT_VER,14,22,134,8,SS_NOPREFIX
-    LTEXT           "Copyright ?1996-2008 Michal Kowalski",IDC_STATIC,14,36,127,8
+    LTEXT           "Copyright © 1996-2008 Michal Kowalski",IDC_STATIC,14,36,127,8
     LTEXT           "lua-studio.luaforge.net",IDC_LINK,14,47,70,8
     LTEXT           "Integrated editor and debugger for Lua",IDC_STATIC,14,62,122,8
     LTEXT           "www.lua.org",IDC_LINK_LUA,14,73,40,8
@@ -498,7 +489,7 @@ BEGIN
     PUSHBUTTON      "",IDC_OPT_ED_COLOR,39,98,32,14
     CONTROL         "&Bold",IDC_OPT_ED_BOLD_FONT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,116,30,10
     CONTROL         "",IDC_OPT_ED_EXAMPLE,"Button",BS_OWNERDRAW | WS_DISABLED | WS_TABSTOP,80,64,147,66
-END 
+END
 
 IDD_PROPPAGE_GENERAL DIALOG  0, 0, 240, 140
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
@@ -843,7 +834,7 @@ BEGIN
             VALUE "FileDescription", "resources"
             VALUE "FileVersion", "1, 0, 0, 1"
             VALUE "InternalName", "res.dll"
-            VALUE "LegalCopyright", "Copyright ?1996-2008 Michal Kowalski"
+            VALUE "LegalCopyright", "Copyright © 1996-2008 Michal Kowalski"
             VALUE "OriginalFilename", "res.dll"
             VALUE "ProductName", "res"
             VALUE "ProductVersion", "0, 1, 0, 10"
@@ -929,8 +920,8 @@ BEGIN
     IDS_OPT_VIEW_EXAMPLE_1  "; Sample text\n\tLDY #0\n\t; copy\n.loop:\tLDA (src),Y\n\tSTA (dest),Y\n\tINY\n\tBPL .loop\n\tRTS"
     IDS_OPT_VIEW_EXAMPLE_2  "Simulator window\n\n12 34 56 78 90 AB CD EF"
     IDS_OPT_VIEW_EXAMPLE_3  "E897  58        CLI\nE898  20 90 E8  JSR E890\nE89B  A5 F2     LDA $F2\nE89D  C5 A0     CMP $A0\nE89F  F0 09     BEQ E8AA\nE8A1  A8        TAY\nE8A2  B1 80     LDA ($80),Y"
-    IDS_OPT_VIEW_EXAMPLE_4  "1000  20 01 EA  > \001?\n1003  BF 20 04  >?\004<\n1006  0F 41 F7  >\017A?\n1009  EA 97 70  >ê—p<\n100C  77 71 D8  >wq?\n100F  A2 66 A0  >¢f?\n1012  33 18 A9  >3\030?\n1015  FF 85 80  >ÿ?<\n"
-    IDS_OPT_VIEW_EXAMPLE_5  "81  00 ' '  2F00  00 00 00 00 00\n82  2F '/'  052F  00 00 00 00 00\n83  05 '.'  C505  00 00 00 00 00\n84  C5 '?  58C5  FF 00 BF C6 58\n85  58 'X'  0058  00 00 00 00 00\n86  00 ' '  0000  00 00 00 00 00\n87  00 ' '  0000  00 00 00 00 00\n88  00 ' '  0000  00 00 00 00 00"
+    IDS_OPT_VIEW_EXAMPLE_4  "1000  20 01 EA  > \001ê<\n1003  BF 20 04  >¿ \004<\n1006  0F 41 F7  >\017A÷<\n1009  EA 97 70  >ê—p<\n100C  77 71 D8  >wqØ<\n100F  A2 66 A0  >¢f <\n1012  33 18 A9  >3\030©<\n1015  FF 85 80  >ÿ… <\n"
+    IDS_OPT_VIEW_EXAMPLE_5  "81  00 ' '  2F00  00 00 00 00 00\n82  2F '/'  052F  00 00 00 00 00\n83  05 '.'  C505  00 00 00 00 00\n84  C5 'Å'  58C5  FF 00 BF C6 58\n85  58 'X'  0058  00 00 00 00 00\n86  00 ' '  0000  00 00 00 00 00\n87  00 ' '  0000  00 00 00 00 00\n88  00 ' '  0000  00 00 00 00 00"
     IDS_OPT_VIEW_EXAMPLE_6  "1FF  06 '.'  0006  00 00 00 00\n1FE  04 '.'  0604  06 00 00 20\n1FD  06 '.'  0406  00 00 00 00\n1FC  09 '.'  0609  06 60 EA 85\n1FB  06 '.'  0906  00 00 00 00\n1FA  11 '.'  0611  06 98 60 A0\n1F9  00 ' '  1100  00 00 00 00\n"
     IDS_OPT_VIEW_LIST       "Editor;Simulator I/O;Disassembler;6502 µP Memory;Zero Page Memory;6502 µP Stack;"
 END

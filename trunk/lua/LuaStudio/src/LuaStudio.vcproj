@@ -116,8 +116,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\tmp"
-			IntermediateDirectory="$(SolutionDir)\tmp\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="../temp"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="2"
@@ -148,7 +148,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./CtrlBar,../scintilla/include"
+				AdditionalIncludeDirectories="./CtrlBar;../scintilla/include;../../boost_1_40_0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;USE_SCINTILLA;_CRT_SECURE_NO_WARNINGS;_SCB_REPLACE_MINIFRAME;LUA_USE_APICHECK"
 				MinimalRebuild="true"
 				RuntimeLibrary="3"
@@ -173,7 +173,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Shlwapi.lib"
-				OutputFile="$(SolutionDir)\bin\$(ProjectName).exe"
+				OutputFile="../bin/$(ProjectName)D.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"

@@ -179,15 +179,15 @@ int LuaSrcView::OnCreate(LPCREATESTRUCT create_struct)
 	COLORREF comment= RGB(0,128,128);
 	COLORREF string= RGB(128,128,0);
 
-	ctrl.StyleSetFore(SCE_LUA_COMMENT, comment);
-	ctrl.StyleSetFore(SCE_LUA_COMMENTLINE, comment);
-	ctrl.StyleSetFore(SCE_LUA_COMMENTDOC, comment);
-	ctrl.StyleSetFore(SCE_LUA_NUMBER, RGB(0,0,255));
-	ctrl.StyleSetFore(SCE_LUA_WORD, RGB(34,78,160));
-	ctrl.StyleSetFore(SCE_LUA_STRING, string);
-	ctrl.StyleSetFore(SCE_LUA_CHARACTER, string);
-	ctrl.StyleSetFore(SCE_LUA_LITERALSTRING, string);
-	ctrl.StyleSetFore(SCE_LUA_WORD2, RGB(53,113,202));
+	ctrl.StyleSetFore(SCE_LUA_COMMENT, RGB(0,160,0));
+	ctrl.StyleSetFore(SCE_LUA_COMMENTLINE, RGB(0,160,0));
+	ctrl.StyleSetFore(SCE_LUA_COMMENTDOC, RGB(0,160,0));
+	ctrl.StyleSetFore(SCE_LUA_NUMBER, RGB(255,0,0));
+	ctrl.StyleSetFore(SCE_LUA_WORD, RGB(0,0,128));
+	ctrl.StyleSetFore(SCE_LUA_STRING, RGB(0,144,144));
+	ctrl.StyleSetFore(SCE_LUA_CHARACTER, RGB(0,144,144));
+	ctrl.StyleSetFore(SCE_LUA_LITERALSTRING, RGB(0,144,144));
+	ctrl.StyleSetFore(SCE_LUA_WORD2, RGB(144,0,144));
 
 	ctrl.StyleSetFont(SCE_LUA_WORD, "Verdana");
 	ctrl.StyleSetSize(SCE_LUA_WORD, 10);
@@ -220,12 +220,6 @@ int LuaSrcView::OnCreate(LPCREATESTRUCT create_struct)
 
 	//ctrl.SetMarginWidthN(2, 10);
 	//ctrl.SetProperty("fold", "1");
-
-	//////////////////////////////////////////////////////////////////////////
-	//添加缩进线
-	//参数意义详见ViewStyle.h文件:enum IndentView {ivNone, ivReal, ivLookForward, ivLookBoth};
-	ctrl.SetIndentationGuides(1);
-	//////////////////////////////////////////////////////////////////////////
 
 	return 0;
 }
@@ -418,21 +412,4 @@ void LuaSrcView::OnUpdateUI(SCNotification* notification)
 
 void LuaSrcView::OnDestroy()
 {
-}
-
-
-/************************************************************************
-[7/7/2009]
-说明:复制视图中保存的断点信息到内部数据中
-************************************************************************/
-void LuaSrcView::CopyAllBpsToDebugger(std::auto_ptr<Lua>& lua)
-{	
-	int line=0;
-	BYTE bp=0;
-	POSITION pos=breakpoints_map_.GetStartPosition();
-	while (pos)
-	{
-		breakpoints_map_.GetNextAssoc(pos,line,bp);
-		lua->ToggleBreakpoint(line+1);//视图中的行+1
-	}
 }
