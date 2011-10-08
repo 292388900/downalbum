@@ -81,14 +81,17 @@ UINT GetHttpFileSaveAs2(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 	//label used to jump to if we need to resend the request
 resend:
 
-	//Issue the request
-	BOOL bSend = ::HttpSendRequest(hHttpFile, NULL, 0, NULL, 0);
-	if (!bSend)
-	{
-		//如果时间超时了会执行此处
-		TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
-		return dwHttpStatus;
-	}
+	//////////////////////////////////////////////////////////////////////////
+	//这段没用，只会卡死
+	////Issue the request
+	//BOOL bSend = ::HttpSendRequest(hHttpFile, NULL, 0, NULL, 0);
+	//if (!bSend)
+	//{
+	//	TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
+	//	return dwHttpStatus;
+	//}
+	//////////////////////////////////////////////////////////////////////////
+
 
 	//Check the HTTP status code
 	TCHAR szStatusCode[32];
@@ -286,13 +289,16 @@ UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 	//label used to jump to if we need to resend the request
 resend:
 
-	//Issue the request
-	BOOL bSend = ::HttpSendRequest(hHttpFile, NULL, 0, NULL, 0);
-	if (!bSend)
-	{
-		TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
-		return dwHttpStatus;
-	}
+	//////////////////////////////////////////////////////////////////////////
+	//这段没用，只会卡死
+	////Issue the request
+	//BOOL bSend = ::HttpSendRequest(hHttpFile, NULL, 0, NULL, 0);
+	//if (!bSend)
+	//{
+	//	TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
+	//	return dwHttpStatus;
+	//}
+	//////////////////////////////////////////////////////////////////////////
 
 	//Check the HTTP status code
 	TCHAR szStatusCode[32];
@@ -346,14 +352,14 @@ resend:
 	DWORD dwStartTicks = ::GetTickCount();
 	DWORD dwCurrentTicks = dwStartTicks;
 	DWORD dwBytesRead = 0;
-	DWORD dwBytesToRead = 1024*10;
+	DWORD dwBytesToRead = 1024;
 	DWORD dwTotalLen=0;
 	BOOL bRet = TRUE;
 	DWORD dwMaxDataLength =1024*1024;
 	char*pBuf=strHtml.GetBuffer(dwMaxDataLength);
 	do
 	{
-		bRet = InternetReadFile(hHttpFile,pBuf,dwMaxDataLength-1,&dwBytesRead);
+		bRet = InternetReadFile(hHttpFile,pBuf,dwBytesToRead,&dwBytesRead);
 		pBuf[dwBytesRead]=0;
 		strHtml.ReleaseBuffer();
 		if ( bRet==FALSE || dwBytesRead==0 ){
