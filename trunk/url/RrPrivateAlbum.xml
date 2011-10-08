@@ -2,12 +2,12 @@
     <soft>
         <name>RrPrivateAlbum</name>
         <version>1.13</version>
-        <downurl>http://www.linystar.com/soft/RrPrivateAlbum.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/RrPrivateAlbum.exe</downurl2>
+        <downurl>>http://softsing.googlecode.com/svn/trunk/flashAlbum/RrPrivateAlbum.exe</downurl>
+        <downurl2>>http://softsing.googlecode.com/svn/trunk/flashAlbum/RrPrivateAlbum.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=7817047441</regurl>
-        <help>http://item.taobao.com/item.htm?id=7817047441</help>
-        <bbs>http://www.linystar.com</bbs>
-        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <help3>http://item.taobao.com/item.htm?id=7817047441</help3>
+        <bbs>http://shop63016422.taobao.com</bbs>
+        <pswd></pswd>
       <news></news>
     </soft>
 </data>

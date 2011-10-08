@@ -2,20 +2,20 @@
     <soft>
         <name>alibabaAlbum</name>
         <version>2.18</version>
-        <downurl>http://www.linystar.com/soft/alibabaAlbum.exe</downurl>
+        <downurl>http://softsing.googlecode.com/svn/trunk/alibabaAlbum/alibabaAlbum.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/alibabaAlbum/alibabaAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=12479563519</regurl>
-        <help>http://www.linystar.com/rw/alibabaalbum.html</help>
-                <help>http://www.linystar.com/rw/alibabaalbum.html</help2>
-        <bbs>www.linystar.com</bbs>
-        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <help3>http://www.linystar.com/rw/alibabaalbum.html</help3>
+                <help3>http://www.linystar.com/rw/alibabaalbum.html</help>
+        <bbs></bbs>
+        <pswd></pswd>
       <news></news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
 <!--
-<votes>
+<votes2>
 s=1,p=109588,
 s=2,p=61348,
-</votes>
+</votes2>
 -->
     </soft>
 </data>
