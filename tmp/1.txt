@@ -2,4 +2,25 @@
 http://www.cnblogs.com/analyzer/archive/2008/08/28/1278908.html
 http://www.cnblogs.com/analyzer/archive/2008/08/28/1278909.html
 添加a记录
+人人网增加人人站点的图片下载：
+ http://zhan.renren.com/colours
+ http://zhan.renren.com/bandshangyuan?from=req
+
+米兰之恋polo ：
+人人网现在下载不了【头像相册】和【快速上传】里面的照片了。下载完毕后看，只有个文件夹，里面是空的
+
+
+博客批量下载可以增加：
+ http://tianya.8684.cn/
+
+
+诚信购销 (11:33:00): 
+ http://weibo.com/mylamiu
+显示输入有误  下载不了
+
+tonyosment (14:46:32): 
+ http://www.douban.com/people/jssb/
+豆瓣软件：软件上显示1000多少  下载却只有792张
+
+
 写点文库 上传csdn
