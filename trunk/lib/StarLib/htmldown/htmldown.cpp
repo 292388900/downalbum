@@ -82,14 +82,14 @@ UINT GetHttpFileSaveAs2(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 resend:
 
 	//////////////////////////////////////////////////////////////////////////
-	//这段没用，只会卡死
-	////Issue the request
-	//BOOL bSend = ::HttpSendRequest(hHttpFile, NULL, 0, NULL, 0);
-	//if (!bSend)
-	//{
-	//	TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
-	//	return dwHttpStatus;
-	//}
+	//Issue the request
+	BOOL bSend = ::HttpSendRequestEx(hHttpFile, NULL, NULL, 0, 0);
+	if (!bSend)
+	{
+		TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
+		return dwHttpStatus;
+	}
+	HttpEndRequest(hHttpFile,NULL,0,0);
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -290,14 +290,14 @@ UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 resend:
 
 	//////////////////////////////////////////////////////////////////////////
-	//这段没用，只会卡死
-	////Issue the request
-	//BOOL bSend = ::HttpSendRequest(hHttpFile, NULL, 0, NULL, 0);
-	//if (!bSend)
-	//{
-	//	TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
-	//	return dwHttpStatus;
-	//}
+	//Issue the request
+	BOOL bSend = ::HttpSendRequestEx(hHttpFile, NULL, NULL, 0, 0);
+	if (!bSend)
+	{
+		TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
+		return dwHttpStatus;
+	}
+	HttpEndRequest(hHttpFile,NULL,0,0);
 	//////////////////////////////////////////////////////////////////////////
 
 	//Check the HTTP status code
