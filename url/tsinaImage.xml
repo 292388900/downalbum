@@ -2,20 +2,20 @@
     <soft>
         <name>tsinaImage</name>
         <version>1.7</version>
-        <downurl>http://www.linystar.com/soft/tsinaImage.exe</downurl>
-        <downurl2>http://www.linystar.com/soft/tsinaImage2.exe</downurl2>
+        <downurl>http://softsing.googlecode.com/svn/trunk/tsinaImage/tsinaImage.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/tsinaImage/tsinaImage2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=10215168647</regurl>
-        <help>http://www.linystar.com/rw/tsinaimage.html</help>
-        <help2>http://item.taobao.com/item.htm?id=10215168647</help2>
-        <bbs>www.linystar.com</bbs>
-        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <help3>http://www.linystar.com/rw/tsinaimage.html</help3>
+        <help>http://item.taobao.com/item.htm?id=10215168647</help>
+        <bbs></bbs>
+        <pswd></pswd>
       <news></news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
 <!--
-<votes>
+<votes2>
 s=1,p=114594,
 s=2,p=57830,
-</votes>
+</votes2>
 -->
     </soft>
 </data>

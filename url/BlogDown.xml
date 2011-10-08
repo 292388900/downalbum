@@ -2,21 +2,21 @@
     <soft>
         <name>BlogDown</name>
         <version>1.1</version>
-        <downurl>http://www.linystar.com/soft/BlogDown.exe</downurl>
+        <downurl>http://softsing.googlecode.com/svn/trunk/BlogDown/BlogDown.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/BlogDown/BlogDown2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=12648095206</regurl>
-        <help>http://www.linystar.com/rw/blogdown.html</help>
-        <help2>http://item.taobao.com/item.htm?id=12648095206</help2>
-        <bbs>www.linystar.com</bbs>
-        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <help3>http://www.linystar.com/rw/blogdown.html</help3>
+        <help>http://item.taobao.com/item.htm?id=12648095206</help>
+        <bbs></bbs>
+        <pswd></pswd>
       <news></news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
 <!--
-<votes>
+<votes2>
 s=1,p=104475,
 s=2,p=57830,
 s=3,p=25882,
-</votes>
+</votes2>
 -->
     </soft>
 </data>

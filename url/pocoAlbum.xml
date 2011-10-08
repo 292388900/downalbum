@@ -2,20 +2,20 @@
     <soft>
         <name>pocoAlbum</name>
         <version>1.5</version>
-        <downurl>http://www.linystar.com/soft/pocoAlbum.exe</downurl>
+        <downurl>http://softsing.googlecode.com/svn/trunk/pocoAlbum/pocoAlbum.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/pocoAlbum/pocoAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=8608594589</regurl>
-        <help>http://www.linystar.com/rw/pocoalbum.html</help>
-        <help2>http://item.taobao.com/item.htm?id=8608594589</help2>
-        <bbs>www.linystar.com</bbs>
-        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <help3>http://www.linystar.com/rw/pocoalbum.html</help3>
+        <help>http://item.taobao.com/item.htm?id=8608594589</help>
+        <bbs></bbs>
+        <pswd></pswd>
       <news></news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
 <!--
-<votes>
+<votes2>
 s=1,p=114598,
 s=2,p=57830,
-</votes>
+</votes2>
 -->
     </soft>
 </data>

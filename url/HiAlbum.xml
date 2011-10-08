@@ -2,21 +2,21 @@
     <soft>
         <name>HiAlbum</name>
         <version>2.26</version>
-        <downurl>http://www.linystar.com/soft/HiAlbum.exe</downurl>
+        <downurl>http://softsing.googlecode.com/svn/trunk/HiAlbum/HiAlbum.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/HiAlbum/HiAlbum2.exe</downurl2>
         <regurl>http://shop63016422.taobao.com</regurl>
-        <help>http://www.linystar.com/rw/hialbum.html</help>
-        <help2>http://item.taobao.com/item.htm?id=7816818503</help2>
-        <bbs>www.linystar.com</bbs>
-        <pswd>http://www.linystar.com/logging.php?action=login</pswd>
+        <help3>http://www.linystar.com/rw/hialbum.html</help3>
+        <help>http://item.taobao.com/item.htm?id=7816818503</help>
+        <bbs></bbs>
+        <pswd></pswd>
       <news></news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
 <!--
-<votes>
+<votes2>
 s=1,p=104189,
 s=1,p=104910,
 s=2,p=57829,
-</votes>
+</votes2>
 -->
     </soft>
 </data>
