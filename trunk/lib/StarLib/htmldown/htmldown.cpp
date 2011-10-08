@@ -84,14 +84,16 @@ resend:
 	//////////////////////////////////////////////////////////////////////////
 	//Issue the request
 	BOOL bSend = ::HttpSendRequestEx(hHttpFile, NULL, NULL, 0, 0);
-	if (!bSend)
-	{
-		TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
+	if (!bSend){
+		TRACE(_T("Failed in call to HttpSendRequestEx, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
-	HttpEndRequest(hHttpFile,NULL,0,0);
+	bSend = HttpEndRequest(hHttpFile,NULL,0,0);
+	if (!bSend){
+		TRACE(_T("Failed in call to HttpEndRequest, Error:%d\n"), ::GetLastError());
+		return dwHttpStatus;
+	}
 	//////////////////////////////////////////////////////////////////////////
-
 
 	//Check the HTTP status code
 	TCHAR szStatusCode[32];
@@ -292,12 +294,15 @@ resend:
 	//////////////////////////////////////////////////////////////////////////
 	//Issue the request
 	BOOL bSend = ::HttpSendRequestEx(hHttpFile, NULL, NULL, 0, 0);
-	if (!bSend)
-	{
-		TRACE(_T("Failed in call to HttpSendRequest, Error:%d\n"), ::GetLastError());
+	if (!bSend){
+		TRACE(_T("Failed in call to HttpSendRequestEx, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
-	HttpEndRequest(hHttpFile,NULL,0,0);
+	bSend = HttpEndRequest(hHttpFile,NULL,0,0);
+	if (!bSend){
+		TRACE(_T("Failed in call to HttpEndRequest, Error:%d\n"), ::GetLastError());
+		return dwHttpStatus;
+	}
 	//////////////////////////////////////////////////////////////////////////
 
 	//Check the HTTP status code
