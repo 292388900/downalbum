@@ -3,6 +3,7 @@
 #include <Shlwapi.h>
 #include "../../../lib/tinyxml/tinyxml.h"
 #include "../htmldown/htmldown.h"
+#include "../Common/common.h"
 
 
 #ifdef _DEBUG
@@ -114,6 +115,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	int nEnd=0;
 
 	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
+	Star::Common::ConvertUtf8ToGBK(strHtml);
 	if ( dwHttpStatus!=0 ){
 		return bSucceed;
 	}
