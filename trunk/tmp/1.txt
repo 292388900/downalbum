@@ -1,4 +1,4 @@
-http://enjoynicebags.v.yupoo.com/
+http://api.taobao.com/apitools/ajax_props.do?act=props&cid=50008901&restBool=false
 
 myxiangce.cn
   xiangcewang.cn 
