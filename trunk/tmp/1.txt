@@ -1,4 +1,4 @@
-
+宝贝基本信息上传成功，因宝贝主图上传失败，已经被下架，请修改宝贝后重新上传，很抱歉给您造成不便
 http://beian.my81.cn:18080/beian/index.jsp
 pushebp
 Singer
