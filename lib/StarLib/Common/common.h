@@ -60,7 +60,7 @@ namespace Star
 		LONG SetRegValueDWord(HKEY key, LPCTSTR subkey, LPCTSTR szValue,DWORD dwData,BOOL bForce=TRUE);
 
 		//释放资源中某类型的文件 
-		BOOL ReleaseRes(CString strFileName,WORD wResID,CString strFileType);  
+		BOOL ReleaseRes(CString strFileName,WORD wResID,LPCSTR lpType);  
 
 		//删除DirName路径下的所有文件和此文件夹(取决于bDeleteSelf)
 		int DeleteDirectory(const CString&DirName,BOOL bDeleteSelf=FALSE);
