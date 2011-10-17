@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>tsinaImage</name>
-        <version>1.7</version>
+        <version>1.8</version>
         <downurl>http://softsing.googlecode.com/svn/trunk/tsinaImage/tsinaImage.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/tsinaImage/tsinaImage2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=10215168647</regurl>
@@ -9,7 +9,7 @@
         <help>http://item.taobao.com/item.htm?id=10215168647</help>
         <bbs></bbs>
         <pswd></pswd>
-      <news></news>
+      	<news>要下载新浪微博文章中图片请在软件第一个页面登陆您的微博，a.weibo.com微博类型图片暂不支持下载</news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
 <!--
 <votes2>
