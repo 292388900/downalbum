@@ -1,12 +1,5 @@
-http://photo.21cn.com/user/photoOtherHomeFolder.do?uudId=51004867
-281081232@qq.com
-
-http://hi.baidu.com/shangpin2/album
 
 http://417444010.qzone.qq.com
-http://softsing.googlecode.com/svn/trunk/BlogDown/BlogDown2.exe
-宝贝基本信息上传成功，因宝贝主图上传失败，已经被下架，请修改宝贝后重新上传，很抱歉给您造成不便
-
 
 http://api.taobao.com/apitools/ajax_props.do?act=props&cid=50008901&restBool=false
 
