@@ -5,6 +5,19 @@
 // Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+//////////////////////////////////////////////////////////////////////////
+
+extern "C" {
+#include "../../lua/src/lua.h"
+#include "../../lua/src/lauxlib.h"
+#include "../../lua/src/lualib.h"
+}
+
+#pragma comment(lib,"lua.lib")
+//////////////////////////////////////////////////////////////////////////
+
+
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -169,107 +182,66 @@ void ScintillaBase::InitCodeList(const char*keywords,char chSeparate)
 		delete []words;
 	}
 }
+
+extern map<std::string,PVOID> *g_pMapFunction = NULL;
+int LS_InsertFunction(lua_State *L)
+{
+	std::string strNameSpace;
+	std::string strName;
+	std::string strDescription;
+	PFUNCTIONNAMESPACE pFuncSpace=NULL;
+	PFUNCTIONNODE pFuncNode=NULL;
+
+	int n = lua_gettop(L);
+	if ( n>2 ){
+		if ( strNameSpace.empty()==true ){
+			strNameSpace = "Global";
+		}
+
+		pFuncNode=new FUNCTIONNODE;
+		pFuncNode->Next=NULL;
+		pFuncNode->strName = lua_tostring(L,2);
+		pFuncNode->strDescription = lua_tostring(L,3);
+
+		MapFunctiontIter iter=g_pMapFunction->find(strNameSpace);
+		if ( iter!=g_pMapFunction->end() ){
+			//插入已存在命名空间链表
+			pFuncSpace=(PFUNCTIONNAMESPACE)iter->second;
+			pFuncNode->Next=pFuncSpace->pFuncHeader;
+			pFuncSpace->pFuncHeader=pFuncNode;
+		}else{
+			//新建命名空间链表
+			pFuncSpace=new FUNCTIONNAMESPACE;
+			pFuncSpace->pFuncHeader=NULL;
+			pFuncSpace->strNameSpace=strNameSpace;
+			pFuncNode->Next=pFuncSpace->pFuncHeader;
+			pFuncSpace->pFuncHeader=pFuncNode;
+			g_pMapFunction->insert(std::make_pair(strNameSpace,pFuncSpace));
+		}
+	}
+	
+	return 0;
+}
 /************************************************************************
-函数名：LoadListFromXMLFile
+函数名：LoadFunctionsFromFile
 参 数：FileName:为一个.xml文件(全路径名)
 返回值：void
 说 明：从xml中读取扩展函数信息
 日 期：-5-8
 作 者：zhuxingxing
 ************************************************************************/
-void ScintillaBase::LoadListFromXMLFile(const char*FileName)
+void ScintillaBase::LoadFunctionsFromFile(const char*FileName)
 {
-	MSXML2::IXMLDOMDocumentPtr pDoc;
-	HRESULT hr;
-	hr=pDoc.CreateInstance(__uuidof(MSXML2::DOMDocument40));
-	if(FAILED(hr))
-	{  
-		MessageBox(0,"无法创建DOMDocument对象,请检查是否安装了MS XML Parser运行库!",NULL,MB_OK);
-		return ;
+	g_pMapFunction = &m_mapFunction;
+	lua_State* L = lua_open();
+	luaL_openlibs(L);
+	lua_register(L,"LS_InsertFunction",LS_InsertFunction);
+	if ( luaL_loadfile(L,FileName) || lua_pcall(L, 0, 0, 0) ){
+		const char* szError = lua_tostring(L, -1);
+		MessageBox(NULL,szError,"加载函数列表出现错误",MB_ICONERROR);
+		lua_pop(L, 1);
 	}
-	//加载文件
-	pDoc->load(FileName);
-
-	BOOL	bNode  =  TRUE; 
-	std::string strNameSpace;
-	std::string strName;
-	std::string strResult;
-	std::string strParam;
-	std::string strDescription;
-	PFUNCTIONNAMESPACE pFuncSpace=NULL;
-	PFUNCTIONNODE pFuncNode=NULL;
-
-	for (int i=1;bNode;i++)  
-	{  
-		IXMLDOMNodePtr  node;  
-		std::string strRoot; 
-		std::string	strItem;
-		char buff[MAX_PATH];
-
-		sprintf_s( buff, MAX_PATH, "/Function/Item[%d]", i );
-		strRoot=buff;
-		node=pDoc->selectSingleNode(_bstr_t(strRoot.c_str()));  
-		if (node)  
-		{  
-			IXMLDOMNodePtr pNode;  
-			VARIANT value;  
-
-			strItem=strRoot+"/NameSpace";  
-			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
-			pNode->get_nodeTypedValue(&value);  
-			strNameSpace=(char *)(_bstr_t)value;
-
-			strItem=strRoot+"/Name";  
-			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
-			pNode->get_nodeTypedValue(&value);  
-			strName=(char *)(_bstr_t)value;
-
-			strItem=strRoot+"/Result";  
-			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
-			pNode->get_nodeTypedValue(&value);  
-			strResult=(char *)(_bstr_t)value;
-
-			strItem=strRoot+"/Param";  
-			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
-			pNode->get_nodeTypedValue(&value);  
-			strParam=(char *)(_bstr_t)value;
-
-			strItem=strRoot+"/Description";  
-			pNode=pDoc->selectSingleNode(_bstr_t(strItem.c_str()));  
-			pNode->get_nodeTypedValue(&value);  
-			strDescription=(char *)(_bstr_t)value;
-
-			pFuncNode=new FUNCTIONNODE;
-			pFuncNode->Next=NULL;
-			pFuncNode->strName=strName;
-			pFuncNode->strResult=strResult;
-			pFuncNode->strParam=strParam;
-			pFuncNode->strDescription=strDescription;
-
-			if (strNameSpace=="")
-			{
-				strNameSpace="Global";
-			}
-			MapFunctiontIter iter=m_mapFunction.find(strNameSpace);
-			if ( iter!=m_mapFunction.end() ){
-				//插入已存在命名空间链表
-				pFuncSpace=(PFUNCTIONNAMESPACE)iter->second;
-				pFuncNode->Next=pFuncSpace->pFuncHeader;
-				pFuncSpace->pFuncHeader=pFuncNode;
-			}
-			else{
-				//新建命名空间链表
-				pFuncSpace=new FUNCTIONNAMESPACE;
-				pFuncSpace->pFuncHeader=NULL;
-				pFuncSpace->strNameSpace=strNameSpace;
-				pFuncNode->Next=pFuncSpace->pFuncHeader;
-				pFuncSpace->pFuncHeader=pFuncNode;
-				m_mapFunction.insert(std::make_pair(strNameSpace,pFuncSpace));
-			}
-		}  
-		else  
-			bNode  =  FALSE;  
-	}
+	lua_close(L);
 }
 /************************************************************************
 函数名：AutoCompleteMoveToCurrentWord
@@ -289,7 +261,7 @@ void ScintillaBase::AutoCompleteMoveToCurrentWord() {
 	wordParent[sizeof(wordParent)-1] = '\0';
 
 	int pos;
-	char ch;
+	char ch = 0;
 	char chBreak=0;
 	char*pLeftWord=NULL;
 	char*pParentWord=NULL;
@@ -1034,7 +1006,7 @@ void ScintillaBase::CallTipStart()
 	wordParent[sizeof(wordParent)-1] = '\0';
 
 	int pos;
-	char ch;
+	char ch = 0;
 	char chBreak=0;
 	char*pLeftWord=NULL;
 	char*pParentWord=NULL;
@@ -1105,7 +1077,7 @@ void ScintillaBase::CallTipStart()
 	{
 		if (strcmp(pLeftWord,pFuncNode->strName.c_str())==0)
 		{
-			strInfo="参数: "+pFuncNode->strParam+"\n返回: "+pFuncNode->strResult+"\n说明: "+pFuncNode->strDescription;
+			strInfo=pFuncNode->strDescription;
 			bHited=TRUE;
 			break;
 		}
@@ -1220,11 +1192,11 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 
 	//加入对关键字链表和函数链表的初始化代码:
 	/************************************************************************/
-	InitCodeList("and break do else elseif end false for function global if in local nil not or repeat return then true until while");
+	InitCodeList("and break do else if elseif end false for function global in local nil not or repeat return then true until while");
 	char szLuaXML[MAX_PATH*2];
 	GetModuleFileName(NULL,szLuaXML,sizeof(szLuaXML));
-	strcpy(&strrchr(szLuaXML,'\\')[1],"Lua.xml");
-	LoadListFromXMLFile(szLuaXML);
+	strcpy(&strrchr(szLuaXML,'\\')[1],"calltip.lua");
+	LoadFunctionsFromFile(szLuaXML);
 	/************************************************************************/
 
 }

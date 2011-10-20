@@ -18,7 +18,6 @@ namespace Scintilla {
 #include <map>
 using namespace std;
 //#include	<afxcoll.h>			//使用CMapStringToPtr需要包含的头文件
-#import		<msxml4.dll>		//使用MSXML解析xml文档
 
 //CODE类型,目前支持关键字,函数
 enum CODETYPE{KEYWORDS=1,FUNCTION=2};	
@@ -26,8 +25,8 @@ enum CODETYPE{KEYWORDS=1,FUNCTION=2};
 //关键字组织形式
 typedef struct _CODENODE 
 {
-	std::string strName;			//关键字(例如:for,while,function,end...)
-	_CODENODE*Next;			//老师说这是后继结点
+	std::string strName;		//关键字(例如:for,while,function,end...)
+	_CODENODE*Next;				//后继结点
 }CODENODE,*PCODENODE;	
 
 typedef struct _CODELIST 
@@ -39,35 +38,37 @@ typedef struct _CODELIST
 //函数组织形式
 typedef struct _FUNCTIONNODE
 {
-	std::string strName;			//函数名
-	std::string strResult;			//函数返回值
-	std::string strParam;			//函数参数信息
-	std::string strDescription;		//函数说明信息
-	_FUNCTIONNODE*Next;		//老师说这是后继结点
+	std::string strName;		//函数名
+	std::string strDescription;	//函数说明信息
+	_FUNCTIONNODE*Next;			//后继结点
 }FUNCTIONNODE,*PFUNCTIONNODE;
 
 typedef struct _FUNCTIONNAMESPACE
 {
-	std::string strNameSpace;		//命名空间名
+	std::string strNameSpace;	//命名空间名
 	PFUNCTIONNODE pFuncHeader;	//指向函数列表
 }FUNCTIONNAMESPACE,*PFUNCTIONNAMESPACE;
 /************************************************************************/
 
+typedef map<std::string,PVOID>::iterator MapFunctiontIter;
+extern map<std::string,PVOID> *g_pMapFunction;
 /**
  */
 class ScintillaBase : public Editor {
 /************************************************************************/
 public:
-	PCODELIST m_codeKeyWords;		//关键字列表
+	PCODELIST m_codeKeyWords;				//关键字列表
 	map<std::string,PVOID> m_mapFunction;	//命名空间
-	typedef map<std::string,PVOID>::iterator MapFunctiontIter;
 
 	//从xml中读取扩展函数信息
-	void LoadListFromXMLFile(const char*FileName);
+	void LoadFunctionsFromFile(const char*FileName);
+
 	//初始化关键字列表
 	void InitCodeList(const char*keywords,char chSeparate=' ');
+
 	//启动自动完成窗口
 	void AutoCompleteStart(const char *LeftWord,const char*ParentWord);
+
 	//启动calltip窗口
 	void CallTipStart();
 /************************************************************************/
