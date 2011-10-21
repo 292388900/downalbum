@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 
 #ifndef _WIN32_WINNT		// 允许使用特定于 Windows XP 或更高版本的功能。
 #define _WIN32_WINNT 0x0501	// 将此值更改为相应的值，以适用于 Windows 的其他版本。
@@ -13,7 +13,7 @@
 #include <winioctl.h>
 #include <tchar.h>
 #include <stdio.h>
-
+#include "diskid.h"
 //
 // IDENTIFY data (from ATAPI driver source)
 //
@@ -160,9 +160,9 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 					char serialNumber [MAX_PATH] = {0};
 					char modelNumber [MAX_PATH] = {0};
 					ConvertToString (diskdata, 10, 19, serialNumber);	//序列号
-					ConvertToString (diskdata, 27, 46, modelNumber);	//模型号
+					//ConvertToString (diskdata, 27, 46, modelNumber);	//模型号
 					lstrcpy(diskid,serialNumber);
-					lstrcat(diskid,modelNumber);
+					//lstrcat(diskid,modelNumber);
 
 					//_snprintf(diskid, len-1, "%s - %s", serialNumber, modelNumber);
 
@@ -178,11 +178,11 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 	return done;
 }
 
-
-void main()
-{
-	char diskid[MAX_PATH] = {0};
-	ReadPhysicalDriveInNTUsingSmart(diskid,MAX_PATH);
-	printf_s("%s\n",diskid);
-	system("pause");
-}
+//
+//void main()
+//{
+//	char diskid[MAX_PATH] = {0};
+//	ReadPhysicalDriveInNTUsingSmart(diskid,MAX_PATH);
+//	printf_s("%s\n",diskid);
+//	system("pause");
+//}
