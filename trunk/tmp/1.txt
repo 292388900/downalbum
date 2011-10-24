@@ -1,3 +1,16 @@
+cylssl 
+做什么就要像什么，对用户负责更要对自己负责：软件的界面就像自己的形象，软件的内容就如自己的内涵，不要给自己丢面子，要想办法充实自己，丰富自己，包装自己，把一个成功的自己推广出去，让大家愿交你这个朋友，软件如人，它会说话的，别人通过软件能了解作者的，所以不能将自己不满意的软件轻易发布，要认真审视软件中的每个细节…… 
+http://www.soukuang.net/
+
+小学数学伴侣 不得不佩服此人做软件的耐心细致，做得很踏实很好。
+
+
+这样的方法得到了被选择文件的路径： "E:\ASP\CD\server.asp "　　（举个例子） 
+用PathStripPath((LPTSTR)(LPCTSTR)pathname)函数可以得到　   "server.asp " 
+用PathStripToRoot((LPTSTR)(LPCTSTR)pathname)函数可以得到   "E:\ " 
+
+
+
 http://linglasses.blog.sohu.com/album/setlist
 http://xmhxx.yupoo.com
 http://417444010.qzone.qq.com
