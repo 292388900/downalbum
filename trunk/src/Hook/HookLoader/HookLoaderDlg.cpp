@@ -22,6 +22,7 @@ CHookLoadDlg::CHookLoadDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CHookLoadDlg::IDD, pParent)
 	, m_szClassName(_T(""))
 	, m_nHandle(0)
+	, m_dwThreadId(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -144,24 +145,20 @@ DWORD GetThreadIdFromPID(DWORD dwProcessId)
 
 void CHookLoadDlg::OnBnClickedButtonHook()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	if (m_nHandle)
-	{
+	if (m_nHandle){
 		DWORD cpid;
 
 		GetWindowThreadProcessId((HWND)m_nHandle,&cpid);
 		m_hProcess=OpenProcess(PROCESS_VM_READ,false,cpid);
 		m_dwThreadId=GetThreadIdFromPID(cpid);
-		if (m_dwThreadId == 0)
-		{
-			::MessageBox(NULL,_T("没有选定目标！"),NULL,MB_OK|MB_ICONERROR);
-		}
-		else
-		{
-			StartHook((HANDLE)m_nHandle,m_dwThreadId);
-			TRACE0("开始HOOK……\n");
-		}
 	}
+
+	if (m_dwThreadId == 0){
+		::MessageBox(NULL,_T("没有选定目标,将使用全局HOOK"),NULL,MB_OK|MB_ICONERROR);
+	}
+
+	StartHook((HANDLE)m_nHandle,m_dwThreadId);
+	TRACE0("开始HOOK……\n");
 }
 
 void CHookLoadDlg::OnLButtonDown(UINT nFlags, CPoint point)

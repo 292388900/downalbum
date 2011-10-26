@@ -160,6 +160,49 @@ int __stdcall NewWSARecv(SOCKET s,LPWSABUF lpBuffers,DWORD dwBufferCount,LPDWORD
 }
 
 
+BOOL __stdcall newCreateProcess(
+						 LPCTSTR lpApplicationName,
+						 LPTSTR lpCommandLine,
+						 LPSECURITY_ATTRIBUTES lpProcessAttributes,
+						 LPSECURITY_ATTRIBUTES lpThreadAttributes,
+						 BOOL bInheritHandles,
+						 DWORD dwCreationFlags,
+						 LPVOID lpEnvironment,
+						 LPCTSTR lpCurrentDirectory,
+						 LPSTARTUPINFO lpStartupInfo,
+						 LPPROCESS_INFORMATION lpProcessInformation
+						)
+{
+	int Result;
+	typedef  int (__stdcall*TCreateProcess)(
+		LPCTSTR lpApplicationName,
+		LPTSTR lpCommandLine,
+		LPSECURITY_ATTRIBUTES lpProcessAttributes,
+		LPSECURITY_ATTRIBUTES lpThreadAttributes,
+		BOOL bInheritHandles,
+		DWORD dwCreationFlags,
+		LPVOID lpEnvironment,
+		LPCTSTR lpCurrentDirectory,
+		LPSTARTUPINFO lpStartupInfo,
+		LPPROCESS_INFORMATION lpProcessInformation
+		);
+	__asm
+	{
+		pushad
+	}
+	MessageBox(NULL,lpCommandLine,lpApplicationName,MB_OK);
+	theApp.m_hkCreateProcess.Restore();
+	__asm
+	{
+		popad
+	}
+	Result=TCreateProcess(theApp.m_hkCreateProcess.OldFunction)(lpApplicationName,lpCommandLine,lpProcessAttributes,lpThreadAttributes,
+		bInheritHandles,dwCreationFlags,lpEnvironment,lpCurrentDirectory,lpStartupInfo,lpProcessInformation);
+
+	theApp.m_hkCreateProcess.Change();
+	return Result;
+}
+
 
 // CHookDllApp construction
 
@@ -192,11 +235,23 @@ BOOL CHookDllApp::InitInstance()
 		GetModuleFileName(this->m_hInstance,szBuff,sizeof(szBuff));
 		StrRChrI(szBuff,NULL,'\\')[1]=0;
 
+		///////////////////////////////////////////////
+		//指定进程才注入
+		//TCHAR szProcessName[MAX_PATH]={0};
+		//GetModuleFileName(NULL,szProcessName,_countof(szProcessName));
+		//if ( StrStrI(szProcessName,_T("HProtect.exe"))==NULL ){
+		//	return FALSE;
+		//}
+		///////////////////////////////////////////////
+
 		TRACE0("成功注入到目标进程!\n");
-		Hook.Create(recv,NewRecv);
-		Hook.Change();
-		Hook2.Create(WSARecv,NewWSARecv);
-		Hook2.Change();
+		//Hook.Create(recv,NewRecv);
+		//Hook.Change();
+		//Hook2.Create(WSARecv,NewWSARecv);
+		//Hook2.Change();
+		m_hkCreateProcess.Create(CreateProcess,newCreateProcess);
+		m_hkCreateProcess.Change();
+
 		m_pdlgMain=new CMainDlg;
 		m_pdlgMain->Create(CMainDlg::IDD,AfxGetMainWnd());
 		m_pdlgMain->ShowWindow(SW_SHOW);
