@@ -29,6 +29,7 @@ class CHookDllApp : public CWinApp
 public:
 	CHookClass	Hook;
 	CHookClass	Hook2;
+	CHookClass	m_hkCreateProcess;
 	CHookDllApp();
 	CMainDlg*m_pdlgMain;
 
