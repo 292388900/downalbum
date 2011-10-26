@@ -17,11 +17,19 @@
 #endif
 
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
+                       DWORD  dwReason,
                        LPVOID lpReserved
 					 )
 {
-	MessageBox(0,L"injected",0,0);
+	switch ( dwReason )
+	{
+	case DLL_PROCESS_ATTACH:
+		MessageBox(0,L"DLL_PROCESS_ATTACH",0,0);
+		break;
+	case DLL_PROCESS_DETACH:
+		MessageBox(0,L"DLL_PROCESS_DETACH",0,0);
+		break;
+	}
     return TRUE;
 }
 
