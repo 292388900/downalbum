@@ -107,7 +107,7 @@ static char *ConvertToString (DWORD diskdata [256], int firstIndex, int lastInde
 
 int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 {
-	int done = 0;
+	int nError = -1;
 
 	//for ( int drive = 0; drive < 16; drive++ )
 	{
@@ -125,6 +125,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 			NULL, OPEN_EXISTING, 0, NULL);
 
 		if (hPhysicalDriveIOCTL == INVALID_HANDLE_VALUE){
+			nError = 1;
 			//strncpy(diskid, "CreateFile err!", len);
 		}else{
 			GETVERSIONINPARAMS GetVersionParams = {0};
@@ -133,6 +134,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 			// Get the version, etc of PhysicalDrive IOCTL
 
 			if ( !DeviceIoControl(hPhysicalDriveIOCTL, SMART_GET_VERSION, NULL, 0, &GetVersionParams, sizeof (GETVERSIONINPARAMS), &cbBytesReturned, NULL) ){         
+				nError = 2;
 				//strncpy(diskid, "SMART_GET_VER err!", len);
 			}else{
 				// Print the SMART version
@@ -146,6 +148,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 				Command -> irDriveRegs.bCommandReg = ID_CMD;
 				DWORD BytesReturned = 0;
 				if ( ! DeviceIoControl (hPhysicalDriveIOCTL, SMART_RCV_DRIVE_DATA, Command, sizeof(SENDCMDINPARAMS), Command, CommandSize, &BytesReturned, NULL) ){
+					nError = 3;
 					//strncpy(diskid, "SMART_RCV err!", len);
 				}else{
 					// Print the IDENTIFY data
@@ -166,7 +169,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 
 					//_snprintf(diskid, len-1, "%s - %s", serialNumber, modelNumber);
 
-					done = 1;
+					nError = 0;
 				}
 				// Done
 				CloseHandle (hPhysicalDriveIOCTL);
@@ -175,7 +178,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 		}
 	}
 
-	return done;
+	return nError;
 }
 
 //
