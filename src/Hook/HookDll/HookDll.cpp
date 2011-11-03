@@ -249,8 +249,8 @@ BOOL CHookDllApp::InitInstance()
 		//Hook.Change();
 		//Hook2.Create(WSARecv,NewWSARecv);
 		//Hook2.Change();
-		m_hkCreateProcess.Create(CreateProcess,newCreateProcess);
-		m_hkCreateProcess.Change();
+		//m_hkCreateProcess.Create(CreateProcess,newCreateProcess);
+		//m_hkCreateProcess.Change();
 
 		m_pdlgMain=new CMainDlg;
 		m_pdlgMain->Create(CMainDlg::IDD,AfxGetMainWnd());
