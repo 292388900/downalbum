@@ -77,7 +77,7 @@ void CRegSoftDlg::OnBnClickedOk()
 		return;
 	}
 	CSerialManager sm(HARDCODEPREFIX);
-	if ( is_under_debug()==false && sm.ValidateSerial(m_strSerial)==TRUE ){
+	if ( sm.ValidateSerial(m_strSerial)==TRUE ){
 		//³É¹¦
 		CString strRegFile;
 		strRegFile.Format( "%s%s.usr", Star::Common::GetStartPath(), APPNAME );
