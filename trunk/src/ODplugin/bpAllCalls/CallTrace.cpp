@@ -57,7 +57,8 @@ CCallTraceApp::CCallTraceApp()
 
 CCallTraceApp theApp;	// 唯一的一个 CCallTraceApp 对象
 
-HWND hwmain;			//保存OD主窗口句柄		
+HWND hwmain;			//保存OD主窗口句柄	
+int nRunFlag = 0;
 /************************************************************************/
 /* 全局变量                                                             */
 /************************************************************************/
@@ -99,10 +100,10 @@ extc int _export cdecl ODBG_Pluginmenu(int origin,char data[4096],void *item)
 	switch (origin)//调用该回调函数的窗口编号 
 	{ 
 	case PM_MAIN:
-		strcpy(data,"0 &查找所有call调用|1 Hex Value(with space split),2 Hex Value,3 C Source|4 &Options");
+		strcpy(data,"0 &查找所有call调用|1 开始执行,2 停止执行,3 C Source|4 &Options");
 		return 1;
 	case PM_DISASM: //子菜单显示在主窗口的插件菜单中,而PM_DISASM表示子菜单显示在反汇编窗口中
-		strcpy(data,"#CallTrace{0 &查找所有call调用|1 Hex Value(with space split),2 Hex Value,3 C Source|4 &Options}");
+		strcpy(data,"#CallTrace{0 &查找所有call调用|1 开始执行,2 停止执行,3 C Source|4 &Options}");
 		return 1;
 	default: 
 		return 0;
@@ -206,7 +207,12 @@ extc void _export cdecl ODBG_Pluginaction(int origin,int action,void *item)
 		BpAllCalls(origin,action,item);
 		break;
 	case 1:
+		nRunFlag = 1;
+		Go(0,0,STEP_RUN,TRUE,0);
+		break;
 	case 2:
+		nRunFlag = 0;
+		break;
 	case 3:
 		break;
 	case 4:
@@ -235,6 +241,7 @@ extc int ODBG_Pluginshortcut(int origin,int ctrl,int alt,int shift,int key,void 
 
 extc void _export cdecl ODBG_Pluginreset(void) 
 {
+	nRunFlag = 0;
 }
 
 extc int _export cdecl ODBG_Pluginclose(void) 
@@ -246,3 +253,13 @@ extc void _export cdecl ODBG_Plugindestroy(void)
 {
 }
 
+extc int _export cdecl ODBG_Paused(int reason, t_reg *reg) 
+{
+	if ( reg!=NULL && nRunFlag ){
+		//Setbreakpoint(reg->ip,TY_DISABLED,0);
+		Manualbreakpoint(reg->ip,VK_F2,0,0,0);
+		Go(0,0,STEP_RUN,TRUE,0);
+	}
+
+	return 1;
+}
