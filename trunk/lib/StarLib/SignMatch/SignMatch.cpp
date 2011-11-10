@@ -145,7 +145,8 @@ PBYTE CSignMatch::SearchSign(PBYTE pBase/*=NULL*/)
 	}
 
 	PBYTE pMatchAddr=NULL;
-	PBYTE pStart=m_pBase+m_dwSearchBegin;
+	DWORD dwSearchBegin = 0;
+	PBYTE pStart=m_pBase+dwSearchBegin;
 	if (m_nRange<m_nSignLen){
 		return NULL;
 	}
@@ -161,25 +162,25 @@ PBYTE CSignMatch::SearchSign(PBYTE pBase/*=NULL*/)
 				}else{
 					++j;
 					if ( j==m_nSignLen ){
-						pMatchAddr=pStart+i-m_nSignLen+1;
-						m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
+						pMatchAddr=m_pBase+dwSearchBegin+i-m_nSignLen+1;
+						m_dwMatchPos=dwSearchBegin+i-m_nSignLen+1;
 						break;
 					}
 				}
-				
 			}//end for
 		}else{
 			for ( int i=0, j=0; i<(int)m_nRange; ++i ){
-				if( m_pPureSign[j]==pStart[i] ){
+				if( m_pPureSign[j]!=pStart[i] ){
 					j=0;
 				}else{
 					++j;
 					if ( j==m_nSignLen ){
-						pMatchAddr=pStart+i-m_nSignLen+1;
-						m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
+						pMatchAddr=m_pBase+dwSearchBegin+i-m_nSignLen+1;
+						m_dwMatchPos=dwSearchBegin+i-m_nSignLen+1;
 						break;
 					}
 				}
+
 			}//end for
 		}
 
