@@ -191,22 +191,21 @@ PBYTE CSignMatch::SearchSign(PBYTE pBase/*=NULL*/)
 	return pMatchAddr;
 }
 
-PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pBase/*=NULL*/)
+//win7下调用GetModuleInformation有问题，这里让外部传入基址和大小
+PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pImageBase,DWORD dwImageSize)
 {
 	PBYTE pMatchAddr=NULL;
 	DWORD dwReaded=0;
 	MODULEINFO mi={0};
 	BYTE*pBuffer=NULL;
+	PBYTE pRealBase = pImageBase;
 
-	if ( pBase!=NULL ){
-		m_pBase=pBase;
+	if ( pRealBase==NULL ){
+		return NULL;
 	}
 
-	//获取模块的大小
-	GetModuleInformation(hProcess,(HMODULE)m_pBase,&mi,sizeof(mi));
-
 	//不能越界
-	if ( m_dwSearchBegin>=mi.SizeOfImage || m_dwSearchEnd>=mi.SizeOfImage || m_nRange<m_nSignLen ){
+	if ( m_dwSearchBegin>=dwImageSize || m_dwSearchEnd>=dwImageSize || m_nRange<m_nSignLen ){
 		return NULL;
 	}
 
@@ -216,7 +215,7 @@ PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pBase/*=NULL*/)
 		return NULL;
 	}
 
-	if( ReadProcessMemory(hProcess,(LPCVOID)(m_pBase+m_dwSearchBegin),pBuffer,m_nRange,&dwReaded) ){
+	if( ReadProcessMemory(hProcess,(LPCVOID)(pRealBase+m_dwSearchBegin),pBuffer,m_nRange,&dwReaded) ){
 		PBYTE pStart=pBuffer;
 		
 		__try{
@@ -227,7 +226,7 @@ PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pBase/*=NULL*/)
 					}else{
 						++j;
 						if ( j==m_nSignLen ){
-							pMatchAddr=m_pBase+m_dwSearchBegin+i-m_nSignLen+1;
+							pMatchAddr=pRealBase+m_dwSearchBegin+i-m_nSignLen+1;
 							m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
 							break;
 						}
@@ -240,7 +239,7 @@ PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pBase/*=NULL*/)
 					}else{
 						++j;
 						if ( j==m_nSignLen ){
-							pMatchAddr=m_pBase+m_dwSearchBegin+i-m_nSignLen+1;
+							pMatchAddr=pRealBase+m_dwSearchBegin+i-m_nSignLen+1;
 							m_dwMatchPos=m_dwSearchBegin+i-m_nSignLen+1;
 							break;
 						}
