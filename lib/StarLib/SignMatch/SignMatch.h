@@ -43,5 +43,5 @@ public:
 
 	//如果pBase为NULL，则使用SetOrigSign设置的pBase，否则使用参数pBase
 	PBYTE	SearchSign(PBYTE pBase=NULL);
-	PBYTE	SearchProcessSign(HANDLE hProcess,PBYTE pBase=NULL);
+	PBYTE	SearchProcessSign(HANDLE hProcess,PBYTE pImageBase,DWORD dwImageSize);
 };
