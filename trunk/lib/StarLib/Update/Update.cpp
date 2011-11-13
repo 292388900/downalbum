@@ -209,6 +209,14 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find("<ads>");
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find("</",nPos1+5);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strAdsUrl=strHtml.Mid(nPos1+5,nPos2-nPos1-5);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	nPos1=strHtml.Find("<votes>");
 	if ( nPos1!=-1 ){
 		stUpdateInfo.vtVotes.clear();
