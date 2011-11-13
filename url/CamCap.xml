@@ -3,15 +3,16 @@
 <soft>
 <name>CamCap</name>
 <version>11.11.11</version>
-<downurl>
-http://softhao.googlecode.com/svn/trunk/CamCap/CamCap.exe
-</downurl>
+<downurl>http://softhao.googlecode.com/svn/trunk/CamCap/CamCap.exe</downurl>
 <regurl>http://www.sharebank.com.cn/soft/SoftBuy_40055.htm</regurl>
 <help>http://www.sharebank.com.cn/soft/SoftView_40055.htm</help>
 <news>
 新版本修复了一些bug! &#x000D;
 建议更新下载！
 </news>
+<bbs>http://shop63016422.taobao.com</bbs>
+<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
+<ads>http://downalbum.googlecode.com/svn/trunk/url/ads.xml</ads>
 </soft>
 
 </data>
