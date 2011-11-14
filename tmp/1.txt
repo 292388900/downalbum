@@ -1,29 +1,3 @@
-pDC->SetBkMode(TRANSPARENT);
-			HBRUSH hBrush = CreateSolidBrush(RGB(202,225,243));
-			::FillRect(pDC->m_hDC,oDrawingArea,hBrush);
-			pDC->DrawText(pTextFrame->m_strText, &oDrawingArea, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
-			DeleteObject(hBrush);
-
-BOOL CHyperlinkScrollerDlg::PreTranslateMessage(MSG* pMsg) 
-{
-	// Get pointer to window that has the current focus
-	CWnd* pFocusedWnd = GetFocus();
-
-	// Check if this is the enter key
-	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
-	{
-		// If focus is in the name or url edit control, simulate Add button pressed
-		if (pFocusedWnd->m_hWnd == GetDlgItem(IDC_EDIT_NAME)->m_hWnd ||
-			pFocusedWnd->m_hWnd == GetDlgItem(IDC_EDIT_URL)->m_hWnd)		
-			OnButtonAdd();
-
-		// Message handled
-		return TRUE;
-	}
-
-	return CDialog::PreTranslateMessage(pMsg);
-}
-
 cylssl 
 做什么就要像什么，对用户负责更要对自己负责：软件的界面就像自己的形象，软件的内容就如自己的内涵，不要给自己丢面子，要想办法充实自己，丰富自己，包装自己，把一个成功的自己推广出去，让大家愿交你这个朋友，软件如人，它会说话的，别人通过软件能了解作者的，所以不能将自己不满意的软件轻易发布，要认真审视软件中的每个细节…… 
 http://www.soukuang.net/
