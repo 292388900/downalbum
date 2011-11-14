@@ -1,3 +1,9 @@
+pDC->SetBkMode(TRANSPARENT);
+			HBRUSH hBrush = CreateSolidBrush(RGB(202,225,243));
+			::FillRect(pDC->m_hDC,oDrawingArea,hBrush);
+			pDC->DrawText(pTextFrame->m_strText, &oDrawingArea, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
+			DeleteObject(hBrush);
+
 BOOL CHyperlinkScrollerDlg::PreTranslateMessage(MSG* pMsg) 
 {
 	// Get pointer to window that has the current focus
