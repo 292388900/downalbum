@@ -52,9 +52,6 @@ public:
     void SetUnderline(int nUnderline = ulHover);
     int  GetUnderline() const;
 
-    void SetAutoSize(BOOL bAutoSize = TRUE);
-    BOOL GetAutoSize() const;
-
 // Overrides
     // ClassWizard generated virtual function overrides
     //{{AFX_VIRTUAL(CHyperLink)
@@ -70,7 +67,6 @@ protected:
     HINSTANCE GotoURL(LPCTSTR url, int showcmd);
     void ReportError(int nError);
     LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
-    void PositionWindow();
     void SetDefaultCursor();
 
 // Protected attributes

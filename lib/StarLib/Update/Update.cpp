@@ -211,9 +211,9 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	//////////////////////////////////////////////////////////////////////////
 	nPos1=strHtml.Find("<ad>");
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+5);
+		nPos2=strHtml.Find("</",nPos1+4);
 		if ( nPos2!=-1 ){
-			stUpdateInfo.strAdsUrl=strHtml.Mid(nPos1+5,nPos2-nPos1-5);
+			stUpdateInfo.strAdsUrl=strHtml.Mid(nPos1+4,nPos2-nPos1-4);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////

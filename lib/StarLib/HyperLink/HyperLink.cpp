@@ -75,19 +75,6 @@ void CHyperLink::PreSubclassWindow()
     DWORD dwStyle = GetStyle();
     ::SetWindowLong(GetSafeHwnd(), GWL_STYLE, dwStyle | SS_NOTIFY);
     
-    // Set the URL as the window text
-    if (m_strURL.IsEmpty())
-        GetWindowText(m_strURL);
-
-    // Check that the window text isn't empty. If it is, set it as the URL.
-    CString strWndText;
-    GetWindowText(strWndText);
-    if (strWndText.IsEmpty()) 
-    {
-        ASSERT(!m_strURL.IsEmpty());    // Window and URL both NULL. DUH!
-        SetWindowText(m_strURL);
-    }
-
 	CFont* pFont = GetFont();
 	if (!pFont)
 	{
@@ -106,7 +93,6 @@ void CHyperLink::PreSubclassWindow()
     lf.lfUnderline = (BYTE) TRUE;
     m_UnderlineFont.CreateFontIndirect(&lf);
 
-    PositionWindow();        // Adjust size of window to fit URL if necessary
     SetDefaultCursor();      // Try and load up a "hand" cursor
     SetUnderline();
 
@@ -226,7 +212,6 @@ void CHyperLink::SetURL(CString strURL)
     m_strURL = strURL;
 
     if (::IsWindow(GetSafeHwnd())) {
-        PositionWindow();
         m_ToolTip.UpdateTipText(strURL, this, TOOLTIP_ID);
     }
 }
@@ -314,81 +299,6 @@ int CHyperLink::GetUnderline() const
     return m_nUnderline; 
 }
 
-void CHyperLink::SetAutoSize(BOOL bAutoSize /* = TRUE */)
-{
-    m_bAdjustToFit = bAutoSize;
-
-    if (::IsWindow(GetSafeHwnd()))
-        PositionWindow();
-}
-
-BOOL CHyperLink::GetAutoSize() const
-{ 
-    return m_bAdjustToFit; 
-}
-
-
-// Move and resize the window so that the window is the same size
-// as the hyperlink text. This stops the hyperlink cursor being active
-// when it is not directly over the text. If the text is left justified
-// then the window is merely shrunk, but if it is centred or right
-// justified then the window will have to be moved as well.
-//
-// Suggested by Pål K. Tønder 
-
-void CHyperLink::PositionWindow()
-{
-    if (!::IsWindow(GetSafeHwnd()) || !m_bAdjustToFit) 
-        return;
-
-    // Get the current window position
-    CRect WndRect, ClientRect;
-    GetWindowRect(WndRect);
-    GetClientRect(ClientRect);
-
-    ClientToScreen(ClientRect);
-
-    CWnd* pParent = GetParent();
-    if (pParent)
-    {
-        pParent->ScreenToClient(WndRect);
-        pParent->ScreenToClient(ClientRect);
-    }
-
-    // Get the size of the window text
-    CString strWndText;
-    GetWindowText(strWndText);
-
-    CDC* pDC = GetDC();
-    CFont* pOldFont = pDC->SelectObject(&m_UnderlineFont);
-    CSize Extent = pDC->GetTextExtent(strWndText);
-    pDC->SelectObject(pOldFont);
-    ReleaseDC(pDC);
-
-    // Adjust for window borders
-    Extent.cx += WndRect.Width() - ClientRect.Width(); 
-    Extent.cy += WndRect.Height() - ClientRect.Height(); 
-
-    // Get the text justification via the window style
-    DWORD dwStyle = GetStyle();
-
-    // Recalc the window size and position based on the text justification
-    if (dwStyle & SS_CENTERIMAGE)
-        WndRect.DeflateRect(0, (WndRect.Height() - Extent.cy)/2);
-    else
-        WndRect.bottom = WndRect.top + Extent.cy;
-
-    if (dwStyle & SS_CENTER)   
-        WndRect.DeflateRect((WndRect.Width() - Extent.cx)/2, 0);
-    else if (dwStyle & SS_RIGHT) 
-        WndRect.left  = WndRect.right - Extent.cx;
-    else // SS_LEFT = 0, so we can't test for it explicitly 
-        WndRect.right = WndRect.left + Extent.cx;
-
-    // Move the window
-    SetWindowPos(NULL, WndRect.left, WndRect.top, WndRect.Width(), WndRect.Height(), SWP_NOZORDER);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // CHyperLink implementation
 
@@ -433,25 +343,6 @@ LONG CHyperLink::GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata)
 
 void CHyperLink::ReportError(int nError)
 {
-    CString str;
-    switch (nError) {
-        case 0:                       str = "The operating system is out\nof memory or resources."; break;
-        case SE_ERR_PNF:              str = "The specified path was not found."; break;
-        case SE_ERR_FNF:              str = "The specified file was not found."; break;
-        case ERROR_BAD_FORMAT:        str = "The .EXE file is invalid\n(non-Win32 .EXE or error in .EXE image)."; break;
-        case SE_ERR_ACCESSDENIED:     str = "The operating system denied\naccess to the specified file."; break;
-        case SE_ERR_ASSOCINCOMPLETE:  str = "The filename association is\nincomplete or invalid."; break;
-        case SE_ERR_DDEBUSY:          str = "The DDE transaction could not\nbe completed because other DDE transactions\nwere being processed."; break;
-        case SE_ERR_DDEFAIL:          str = "The DDE transaction failed."; break;
-        case SE_ERR_DDETIMEOUT:       str = "The DDE transaction could not\nbe completed because the request timed out."; break;
-        case SE_ERR_DLLNOTFOUND:      str = "The specified dynamic-link library was not found."; break;
-        case SE_ERR_NOASSOC:          str = "There is no application associated\nwith the given filename extension."; break;
-        case SE_ERR_OOM:              str = "There was not enough memory to complete the operation."; break;
-        case SE_ERR_SHARE:            str = "A sharing violation occurred. ";
-        default:                      str.Format(_T("Unknown Error (%d) occurred."), nError); break;
-    }
-    str = "Unable to open hyperlink:\n\n" + str;
-    AfxMessageBox(str, MB_ICONEXCLAMATION | MB_OK);
 }
 
 HINSTANCE CHyperLink::GotoURL(LPCTSTR url, int showcmd)
