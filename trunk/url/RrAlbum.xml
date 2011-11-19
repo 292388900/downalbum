@@ -11,7 +11,7 @@
         <pswd></pswd>
       	<news>v2.58版本支持两种人人小站的图片下载，快快体验吧~</news>
 	<urgent></urgent><allsoft>http://shop63016422.taobao.com/</allsoft>
-	<ads>http://downalbum.googlecode.com/svn/trunk/url/ads.xml</ads>
+	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <!--
 <votes2>
 s=1,p=104475,
