@@ -209,7 +209,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<ads>");
+	nPos1=strHtml.Find("<ad>");
 	if ( nPos1!=-1 ){
 		nPos2=strHtml.Find("</",nPos1+5);
 		if ( nPos2!=-1 ){
