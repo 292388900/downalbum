@@ -525,7 +525,11 @@ BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 	HRESULT hRet=URLDownloadToCacheFile(NULL,strUrl,strTempFile.GetBuffer(MAX_PATH),URLOSTRM_GETNEWESTVERSION,0,NULL);
 	strTempFile.ReleaseBuffer();
 	if ( hRet!=S_OK ){
-		return bOK;  
+		strTempFile = Star::Common::GetSysTempFileName();
+		hRet=URLDownloadToFile(NULL,strUrl,strTempFile,0,NULL);
+		if ( hRet!=S_OK ){
+			return bOK;  
+		}
 	}
 
 	CFile file;
