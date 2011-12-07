@@ -125,7 +125,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 			NULL, OPEN_EXISTING, 0, NULL);
 
 		if (hPhysicalDriveIOCTL == INVALID_HANDLE_VALUE){
-			nError = 1;
+			nError = GetLastError();	//1
 			//strncpy(diskid, "CreateFile err!", len);
 		}else{
 			GETVERSIONINPARAMS GetVersionParams = {0};
@@ -134,7 +134,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 			// Get the version, etc of PhysicalDrive IOCTL
 
 			if ( !DeviceIoControl(hPhysicalDriveIOCTL, SMART_GET_VERSION, NULL, 0, &GetVersionParams, sizeof (GETVERSIONINPARAMS), &cbBytesReturned, NULL) ){         
-				nError = 2;
+				nError = GetLastError();	//2
 				//strncpy(diskid, "SMART_GET_VER err!", len);
 			}else{
 				// Print the SMART version
@@ -148,7 +148,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 				Command -> irDriveRegs.bCommandReg = ID_CMD;
 				DWORD BytesReturned = 0;
 				if ( ! DeviceIoControl (hPhysicalDriveIOCTL, SMART_RCV_DRIVE_DATA, Command, sizeof(SENDCMDINPARAMS), Command, CommandSize, &BytesReturned, NULL) ){
-					nError = 3;
+					nError = GetLastError();	//3
 					//strncpy(diskid, "SMART_RCV err!", len);
 				}else{
 					// Print the IDENTIFY data
