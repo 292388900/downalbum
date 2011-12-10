@@ -388,10 +388,10 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 	DWORD	dwHttpStatus=0x80000000;
 	strHtml=_T("");
 
-	CInternetSession session("HttpClient");
+	CInternetSession session("http");
 	session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
 	try{  
-		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl,1);  //使用默认的flag即可 否则肯会卡
+		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl);  //使用默认的flag即可 否则肯会卡
 
 		if ( pHttpFile!=NULL && pHttpFile->QueryInfoStatusCode(dwHttpStatus)!=0 ){  
 			if ( dwHttpStatus>=200 && dwHttpStatus<300 ){
