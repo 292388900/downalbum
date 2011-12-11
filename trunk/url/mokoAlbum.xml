@@ -2,8 +2,8 @@
     <soft>
         <name>mokoAlbum</name>
         <version>1.12</version>
-        <downurl>http://www.xcxzq.com/soft/mokoAlbum.exe</downurl>
-        <downurl2>http://www.xcxzq.com/soft/mokoAlbum2.exe</downurl2>
+        <downurl>http://softsing.googlecode.com/svn/trunk/soft/mokoAlbum.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/soft/mokoAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=9965581441</regurl>
         <help3>http://www.xcxzq.com/help/mokoalbum.html</help3>
         <help>http://item.taobao.com/item.htm?id=9965581441</help>
