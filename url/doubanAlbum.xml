@@ -2,8 +2,8 @@
     <soft>
         <name>doubanAlbum</name>
         <version>1.3</version>
-        <downurl>http://www.xcxzq.com/soft/doubanAlbum.exe</downurl>
-        <downurl2>http://www.xcxzq.com/soft/doubanAlbum2.exe</downurl2>
+        <downurl>http://softsing.googlecode.com/svn/trunk/soft/doubanAlbum.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/soft/doubanAlbum2.exe</downurl2>
         <regurl>http://www.sharebank.com.cn/soft/SoftBuy_42941.htm</regurl>
         <help3>http://www.xcxzq.com/help/doubanalbum.html</help3>
         <help>http://www.sharebank.com.cn/soft/SoftBuy_42941.htm</help>
