@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>flickrAlbum</name>
-        <version>1.9</version>
+        <version>1.10</version>
         <downurl>http://softsing.googlecode.com/svn/trunk/soft/flickrAlbum.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/soft/flickrAlbum2.exe</downurl2>
         <regurl>http://item.taobao.com/item.htm?id=8797786743</regurl>
@@ -9,7 +9,7 @@
         <help>http://item.taobao.com/item.htm?id=8797786743</help>
         <bbs></bbs>
         <pswd></pswd>
-      <news></news>
+      	<news></news>
 	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
 	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <!--
