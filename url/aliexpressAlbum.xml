@@ -1,0 +1,22 @@
+<data>
+    <soft>
+        <name>aliexpressAlbum</name>
+        <version>1.0</version>
+        <downurl>http://softsing.googlecode.com/svn/trunk/soft/aliexpressAlbum.exe</downurl>
+        <downurl2>http://softsing.googlecode.com/svn/trunk/soft/aliexpressAlbum2.exe</downurl2>
+        <regurl>http://www.xcxzq.com</regurl>
+        <help3>http://www.xcxzq.com/help/aliexpressAlbum.html</help3>
+        <help>http://www.xcxzq.com</help>
+        <bbs></bbs>
+        <pswd></pswd>
+      	<news></news>
+	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
+	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<!--
+<votes2>
+s=1,p=104475,
+s=2,p=63113,
+</votes2>
+-->
+    </soft>
+</data>
