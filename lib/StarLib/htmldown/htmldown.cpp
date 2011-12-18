@@ -256,7 +256,7 @@ UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 	}
 
 	//Create the Internet session handle
-	hInternetSession = ::InternetOpen(AfxGetAppName(), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+	hInternetSession = ::InternetOpen(/*AfxGetAppName()+*/Star::Common::RandFloatNum(10), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 	if (hInternetSession == NULL)
 	{
 		TRACE(_T("Failed in call to InternetOpen, Error:%d\n"), ::GetLastError());
@@ -388,7 +388,7 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 	DWORD	dwHttpStatus=0x80000000;
 	strHtml=_T("");
 
-	CInternetSession session("http");
+	CInternetSession session(Star::Common::RandFloatNum(10));
 	session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
 	try{  
 		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl);  //使用默认的flag即可 否则肯会卡
