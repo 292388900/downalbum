@@ -2,6 +2,7 @@
 #include "htmldown.h"
 #include <afxinet.h>
 #include <StarLib/Common/common.h>
+#include <StarLib/gzipDecoder/gzipDecoder.h>
 
 
 UINT GetHttpFileSaveAs(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
@@ -546,4 +547,66 @@ BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 	}
 
 	return bOK;  
+}
+
+//默认使用POST方式，默认不需要解密
+CString SendHttpData(LPCTSTR szHost, LPCTSTR szPath, LPCTSTR szHeaders, LPCTSTR szSendData, int nSendDataSize, 
+					 int nMethod/*=CHttpConnection::HTTP_VERB_POST*/, BOOL bNeedDocode/*=FALSE*/ )
+{
+	CInternetSession m_InetSession("session");
+	CHttpConnection*pServer =NULL;
+	CHttpFile*pFile =NULL;
+	CString strResult;
+
+	try{
+		pServer =m_InetSession.GetHttpConnection(szHost);
+		pFile =pServer->OpenRequest(nMethod,szPath);
+		pFile->AddRequestHeaders(szHeaders);
+
+		pFile->SendRequestEx(nSendDataSize);
+		if ( nSendDataSize>0 ){
+			pFile->WriteString(szSendData);
+		}
+		pFile->EndRequest();
+
+		DWORD dwRet;
+		pFile->QueryInfoStatusCode(dwRet);
+
+		if ( dwRet==HTTP_STATUS_OK ){
+			//int nLen=pFile->GetLength();//不可靠，返回的大小太小了
+			char *buff=new char[1024*1024];
+			int nReaded=0;
+			int nTotalSize=0;
+			while ( TRUE ){
+				nReaded=pFile->Read(&buff[nTotalSize],1024);
+				nTotalSize+=nReaded;
+				if ( nReaded==0 ){
+					break;
+				}
+			}
+			buff[nTotalSize]=0;
+
+			if ( bNeedDocode ){
+				gzip_decoder gzip(nTotalSize*10);
+				std::string str;
+				gzip.ungzip((unsigned char *)buff,nTotalSize,str);
+				strResult=str.c_str();
+			}
+
+			delete[] buff;
+		}
+		delete pFile;
+		delete pServer;
+
+	}catch (CInternetException*e){
+		CString s;
+		TCHAR szCause[MAX_PATH];
+		e->GetErrorMessage(szCause,MAX_PATH);
+		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e->m_dwError,e->m_dwContext);
+		//AfxMessageBox(s);
+		e->Delete();
+		strResult.Empty();
+	}
+
+	return strResult;
 }

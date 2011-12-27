@@ -11,3 +11,5 @@ UINT GetHttpFileContentUseProxy(LPCTSTR lpszUrl,CString&strHtml,const CString&st
 UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds=10);
 BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds=10);
 
+CString SendHttpData(LPCTSTR szHost, LPCTSTR szPath, LPCTSTR szHeaders, LPCTSTR szSendData, int nSendDataSize, 
+					 int nMethod=0, BOOL bNeedDocode=FALSE );
