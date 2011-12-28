@@ -32,10 +32,7 @@ namespace Star
 {
 	namespace Common
 	{
-		void OpenUrl(CString strHtmlFile,bool bShow=true);
-		HINSTANCE GotoURL(LPCTSTR url, int showcmd=SW_SHOWNORMAL);
-		BOOL SleepPumpMsg(IN DWORD dwMillseconds);
-		int MsgBox(TCHAR*szText=NULL,HWND hWnd=NULL,TCHAR*szCaption=NULL,UINT uType=NULL);
+		HINSTANCE OpenUrl(LPCTSTR url, int showcmd=SW_SHOWNORMAL);
 		BOOL WINAPI EnableDebugPrivilege(BOOL bEnable);
 		BOOL WINAPI RemoteLoadLibrary(LPCTSTR pszDllName, DWORD dwProcessId);
 		CString GetStartPath();
@@ -46,13 +43,7 @@ namespace Star
 		CString GetWindowsPath();
 		CString GetSystemPath();
 		CString GetCurrentPath();
-		
-		
-		template <class ToType, class FromType>
-		void GetMemberFuncAddr_VC6(ToType&addr,FromType f);
-
-		DWORD strtolSafely( const char* _str, int _Radix );
-
+	
 		BOOL MsgSleep(IN DWORD dwMillseconds);
 
 		LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
@@ -95,7 +86,6 @@ namespace Star
 		CString RandFloatNum(int nCount);
 		CString RandNum(int nCount);
 			
-		CString GetLocalMAC();
 		CString GetMacByCmd();
 		CString GetMacByAdapter();
 		CString GetCpuId();
@@ -107,9 +97,6 @@ namespace Star
 
 		int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword);   
 		
-		CString PostData_common(const CString&server,const CString&dir,const CString&strHeaders,const CString&strSendData);
-		CString Certify(const CString&strHostServer,const CString&strPage,const CString&strName,const CString&strPswd,CString strAppName);
-
 		//在字符串中查找字符，pSub含有多个字符
 		int StrFindOneOf(char*pMain,char*pSub);
 		//查找直到不是数字的字符
