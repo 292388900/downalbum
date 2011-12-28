@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PEFuncs.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -229,6 +233,10 @@
 			>
 			<File
 				RelativePath=".\ApiTracing.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PEFuncs.h"
 				>
 			</File>
 			<File
