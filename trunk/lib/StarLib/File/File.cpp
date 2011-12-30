@@ -41,9 +41,9 @@ CString	Star::File::BrowseFolder()
 参数：  DirName:目录名(需要后面带\);bDeleteSelf:最终是否把这个目录也删除.
 返回值：该目录下的文件总数
 说明：	删除DirName路径下的所有文件和此文件夹(取决于bDeleteSelf)。
-创建者:	朱星星
+创建者:	
 ************************************************************************/
-int Star::File::DeleteDirectory(CString DirName,BOOL bDeleteSelf) 
+int Star::File::DeleteDirectory(const CString&DirName,BOOL bDeleteSelf/*=FALSE*/) 
 { 
 	int i=0;
 	CString strDir;
@@ -52,26 +52,20 @@ int Star::File::DeleteDirectory(CString DirName,BOOL bDeleteSelf)
 
 	strDir.Format("%s*.*",DirName);
 	BOOL bWorking = finder.FindFile(strDir); 
-	while (bWorking)
-	{
+	while (bWorking){
 		bWorking = finder.FindNextFile(); 
-
 		//skip . and ..,skip if IsDirectory
-		if (finder.IsDots())
+		if (finder.IsDots()){
 			continue;
-		else if (finder.IsDirectory())
-		{
+		}else if (finder.IsDirectory()){
 			DeleteDirectory(finder.GetFilePath()+"\\",true);
-		}
-		else 
-		{ 
+		}else { 
 			i++;
 			DeleteFile(finder.GetFilePath());
 		} 
 	}
 	finder.Close();
-	if (bDeleteSelf)
-	{
+	if (bDeleteSelf){
 		RemoveDirectory(DirName);
 	}
 	return i; 

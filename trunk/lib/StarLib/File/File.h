@@ -6,7 +6,8 @@ namespace Star
 	namespace File
 	{
 		CString	BrowseFolder();
-		int DeleteDirectory(CString DirName,BOOL bDeleteSelf=false);
+		//删除DirName路径下的所有文件和此文件夹(取决于bDeleteSelf)
+		int DeleteDirectory(const CString&DirName,BOOL bDeleteSelf=FALSE);
 		void RarExtactorFile(CString strRarCmd,CString rarFile,CString strFilter,CString currentDir);
 		void RarAddFile(CString strRarCmd,CString rarFile,CString strFileToAdd,CString currentDir);
 		void OpenFile(CString strFileName);
