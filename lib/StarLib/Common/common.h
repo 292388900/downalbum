@@ -1,9 +1,9 @@
  
 #pragma once
-#include <afx.h>
-#include <afxmt.h>
-#include <afxinet.h>
-#include <winsock2.h>
+#include <atlstr.h>
+#include <vector>
+using namespace std;
+
 
 
 // _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
@@ -28,6 +28,11 @@ Star::Common::GetMemberFuncAddr_VC6(dwAddr,&obj::FuncMember);
 // 	__asm{mov FuncAddr, eax};\
 // }
 
+void _Trace(const CHAR* lpszFormat, ...);
+void _TraceW(const CHAR* lpszFormat, ...);
+#define Trace _Trace
+#define TraceW _TraceW
+
 namespace Star
 {
 	namespace Common
@@ -50,9 +55,6 @@ namespace Star
 		//释放资源中某类型的文件 
 		BOOL ReleaseRes(LPCTSTR szFileName, DWORD dwResID, LPCTSTR lpType);  
 
-		//删除DirName路径下的所有文件和此文件夹(取决于bDeleteSelf)
-		int DeleteDirectory(const CString&DirName,BOOL bDeleteSelf=FALSE);
-
 		int GenerateGUID(CString& sGUID);
 		void ConvertUtf8ToGBK(CString& strUtf8);
 		void ConvertGBKToUtf8(CString& strText);
@@ -73,7 +75,7 @@ namespace Star
 		//转换百度账号中的中文字符，一个中文字符转换为三个%。注意如果是中文和英文的混合则英文不变
 		CString UTF8EncodeURI(CString strText);
 
-		BOOL IsSignalToStop(CEvent *pEvent);
+		BOOL IsSignalToStop(HANDLE hEvent);
 
 		void InitializeSeed();
 		//产生一个随机数范围：[Low，High]
@@ -82,17 +84,12 @@ namespace Star
 		//产生一个0-1之间的随机浮点数字符串，小数点后面的位数由nCount定,不得超过MAX_PATH位
 		CString RandFloatNum(int nCount);
 		CString RandNum(int nCount);
-			
-		CString GetMacByCmd();
-		CString GetMacByAdapter();
-		CString GetCpuId();
 
 		void RestartApp();
 
-		int SplitString(CString strSrc,CString strSep,CStringList&strList);
-		int SplitString(CString strSrc,CString strSep,CStringArray&strArr);
+		int SplitString(CString strSrc,CString strSep,vector<CString>&vtStr);
 
-		int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword);   
+		//int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword);   
 		
 		//在字符串中查找字符，pSub含有多个字符
 		int StrFindOneOf(char*pMain,char*pSub);

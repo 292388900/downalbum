@@ -6,7 +6,6 @@
 #include "Tea/TEA.h"
 #include "Idea/Idea.h"
 #include "Rijndael/Rijndael.h"
-#include "Garbage/Garbage.h"
 #include "rc6-unop/rc6-unop.h"
 
 namespace Star

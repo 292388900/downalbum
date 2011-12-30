@@ -369,18 +369,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Window"
-			>
-			<File
-				RelativePath="..\Window\Window.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Window\Window.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="StringMatch"
 			>
 			<File
@@ -417,7 +405,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Global"
+			Name="Common"
 			>
 			<File
 				RelativePath="..\Common\Common.cpp"
@@ -520,18 +508,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Garbage"
-				>
-				<File
-					RelativePath="..\Garbage\Garbage.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Garbage\Garbage.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="Aes"
 				>
 				<File
@@ -565,18 +541,6 @@
 			</File>
 			<File
 				RelativePath="..\File\File.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Control"
-			>
-			<File
-				RelativePath="..\Control\Control.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Control\Control.h"
 				>
 			</File>
 		</Filter>

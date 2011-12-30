@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "htmldown.h"
 #include <afxinet.h>
-#include <StarLib/Common/common.h>
-#include <StarLib/gzipDecoder/gzipDecoder.h>
+#include "../Common/common.h"
+#include "../gzipDecoder/gzipDecoder.h"
 
 
 UINT GetHttpFileSaveAs(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
