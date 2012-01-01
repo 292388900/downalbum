@@ -65,7 +65,7 @@ void CRegSoftDlg::InitAllControls()
 
 void CRegSoftDlg::OnStnClickedStaticGetserial()
 {
-	Star::Common::GotoURL(m_strRegUrl);
+	Star::Common::OpenUrl(m_strRegUrl);
 }
 
 void CRegSoftDlg::OnBnClickedOk()
