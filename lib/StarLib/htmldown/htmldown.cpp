@@ -424,6 +424,47 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 	return   dwHttpStatus;  
 }
 
+//http://zhidao.baidu.com/question/272885337.html
+//设置代理       
+//参数分别为：代理服务器地址，端口号，用户名，密码   
+//用到的变量说明：   
+//sess为CInternetSession变量   
+//pConnect为CHttpConnection变量   
+//pFile   为CHttpFile变量   
+int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword)   
+{   
+	INTERNET_PROXY_INFO   proxyinfo;   
+
+	try   
+	{   
+		proxyinfo.dwAccessType=INTERNET_OPEN_TYPE_PROXY;   
+		proxyinfo.lpszProxy=szproxy;   
+		proxyinfo.lpszProxyBypass=NULL;   
+
+		if   (!   sess.SetOption(INTERNET_OPTION_PROXY,   (LPVOID)&proxyinfo,   sizeof(INTERNET_PROXY_INFO)))   
+		{   
+			return   0;   
+		}   
+
+		if   (!pFile->SetOption(INTERNET_OPTION_PROXY_USERNAME,   proxyUser,   strlen(proxyUser)   +   1))   
+		{   
+			return   0;   
+		}   
+
+		if   (!pFile->SetOption(INTERNET_OPTION_PROXY_PASSWORD,   proxyPassword,   strlen(proxyPassword)   +   1))   
+		{   
+			return   0;   
+		}   
+
+		return   1;   
+	}   
+	catch(...)   
+	{   
+		return   0;   
+	}   
+
+}
+
 UINT GetHttpFileContentUseProxy(LPCTSTR lpszUrl,CString&strHtml,const CString&strProxy,int nTimeOutSeconds)
 {
 	int		nRead=0;  
@@ -435,7 +476,7 @@ UINT GetHttpFileContentUseProxy(LPCTSTR lpszUrl,CString&strHtml,const CString&st
 	session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
 	try{  
 		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl,1);  //使用默认的flag即可 否则肯会卡
-		Star::Common::SetProxy(session,pHttpFile,(char*)(LPCTSTR)strProxy,"","");
+		SetProxy(session,pHttpFile,(char*)(LPCTSTR)strProxy,"","");
 
 		if ( pHttpFile!=NULL && pHttpFile->QueryInfoStatusCode(dwHttpStatus)!=0 ){  
 			if ( dwHttpStatus>=200 && dwHttpStatus<300 ){
