@@ -338,21 +338,7 @@ void CStaticLink::PositionWindow()
 // It loads a "hand" cursor from the winhlp32.exe module
 void CStaticLink::SetDefaultCursor()
 {
-    if (m_hLinkCursor == NULL)                // No cursor handle - load our own
-    {
-        // Get the windows directory
-        CString strWndDir;
-        GetWindowsDirectory(strWndDir.GetBuffer(MAX_PATH), MAX_PATH);
-        strWndDir.ReleaseBuffer();
-
-        strWndDir += _T("\\winhlp32.exe");
-        // This retrieves cursor #106 from winhlp32.exe, which is a hand pointer
-        HMODULE hModule = LoadLibrary(strWndDir);
-        if (hModule) {
-            HCURSOR hHandCursor = ::LoadCursor(hModule, MAKEINTRESOURCE(106));
-            if (hHandCursor)
-                m_hLinkCursor = CopyCursor(hHandCursor);
-        }
-        FreeLibrary(hModule);
+    if (m_hLinkCursor == NULL){
+	m_hLinkCursor = LoadCursor(NULL,IDC_HAND);
     }
 }
