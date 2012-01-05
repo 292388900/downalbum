@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "htmldown.h"
 #include <afxinet.h>
+#include <afxwin.h>
+#include "htmldown.h"
 #include "../Common/common.h"
 #include "../gzipDecoder/gzipDecoder.h"
 
@@ -9,15 +10,14 @@ UINT GetHttpFileSaveAs(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 {
 	DWORD dwHttpStatus=0x80000000;
 
-	HRESULT hRet=URLDownloadToFile(NULL,strUrl,lpszSaveAs,0,NULL);
+	HRESULT hRet = URLDownloadToFile(NULL,strUrl,lpszSaveAs,0,NULL);
 	if ( hRet==S_OK ){
 		dwHttpStatus=0;
 	}else{//INET_E_DOWNLOAD_FAILURE 0x800C0008L
 		CString strText;
-		strText.Format("下载错误：%08x\n图片可能不存在：%s\n，点击确定继续下载",hRet,strUrl);
 		//::AfxMessageBox(strText);
 	}
-	return   dwHttpStatus;  
+	return dwHttpStatus;  
 }
 
 UINT GetHttpFileSaveAs2(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
@@ -28,10 +28,10 @@ UINT GetHttpFileSaveAs2(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 	CString       strObject; 
 	INTERNET_PORT nPort;
 	DWORD         dwServiceType;
-	HINTERNET hInternetSession=NULL;
-	HINTERNET hHttpConnection=NULL;
+	HINTERNET	  hInternetSession=NULL;
+	HINTERNET     hHttpConnection=NULL;
 	HINTERNET     hHttpFile=NULL;
-	CFile		  fileToWrite;
+	HANDLE		  hFile = INVALID_HANDLE_VALUE;
 
 	if (!AfxParseURL(strUrl, dwServiceType, strServer, strObject, nPort))
 	{
@@ -120,15 +120,10 @@ resend:
 				::InternetReadFile(hHttpFile, (LPVOID)szData, 50, &dwSize);
 			}
 			while (dwSize != 0);
-
-			//Bring up the standard authentication dialog
-			if (::InternetErrorDlg(AfxGetMainWnd()->GetSafeHwnd(), hHttpFile, ERROR_INTERNET_INCORRECT_PASSWORD, FLAGS_ERROR_UI_FILTER_FOR_ERRORS |
-				FLAGS_ERROR_UI_FLAGS_GENERATE_DATA | FLAGS_ERROR_UI_FLAGS_CHANGE_OPTIONS, NULL) == ERROR_INTERNET_FORCE_RETRY)
-				goto resend;
 		}
 		else if (nStatusCode != HTTP_STATUS_OK)
 		{
-			TRACE(_T("Failed to retrieve a HTTP 200 status, Status Code:%d\n"), nStatusCode);
+//			TRACE(_T("Failed to retrieve a HTTP 200 status, Status Code:%d\n"), nStatusCode);
 			return dwHttpStatus;
 		}
 	}
@@ -146,13 +141,15 @@ resend:
 	}
 
 	//Now do the actual read of the file
-	if (!fileToWrite.Open(lpszSaveAs, CFile::modeCreate | CFile::modeWrite | CFile::shareDenyWrite)){
-		TRACE(_T("Failed to create file :%s\n"), lpszSaveAs);
+	hFile = CreateFile(lpszSaveAs,GENERIC_READ|GENERIC_WRITE,0,NULL,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,NULL);
+	if ( hFile==INVALID_HANDLE_VALUE ){
+		//TRACE(_T("Failed to create file :%s\n"), lpszSaveAs);
 		return dwHttpStatus;
 	}
 	DWORD dwStartTicks = ::GetTickCount();
 	DWORD dwCurrentTicks = dwStartTicks;
 	DWORD dwBytesRead = 0;
+	DWORD dwWritten = 0;
 	char szReadBuf[1024*10];
 	DWORD dwBytesToRead = 1024*10;
 	DWORD dwTotalBytesRead = 0;
@@ -160,77 +157,24 @@ resend:
 	DWORD dwLastPercentage = 0;
 	do
 	{
-		if (!::InternetReadFile(hHttpFile, szReadBuf, dwBytesToRead, &dwBytesRead))
-		{
-			TRACE(_T("Failed in call to InternetReadFile, Error:%d\n"), ::GetLastError());
+		if (!::InternetReadFile(hHttpFile, szReadBuf, dwBytesToRead, &dwBytesRead)){
+			//TRACE(_T("Failed in call to InternetReadFile, Error:%d\n"), ::GetLastError());
 			return dwHttpStatus;
-		}
-		else if (dwBytesRead)
-		{
+		}else if ( dwBytesRead ){
 			//Write the data to file
-			TRY
-			{
-				fileToWrite.Write(szReadBuf, dwBytesRead);
-			}
-			CATCH(CFileException, e);                                          
-			{
-				TRACE(_T("An exception occured while writing to the download file\n"));
-				e->Delete();
-				return dwHttpStatus;
-			}
-			END_CATCH
+			WriteFile(hFile,szReadBuf,dwBytesRead,&dwWritten,NULL);
 
-				//Increment the total number of bytes read
-				dwTotalBytesRead += dwBytesRead;  
+			//Increment the total number of bytes read
+			dwTotalBytesRead += dwBytesRead;  
 		}
 	}while (dwBytesRead);
 
 	//Delete the file being downloaded to if it is present and the download was aborted
-	fileToWrite.Close();
+	CloseHandle(hFile);
 	dwHttpStatus=0;
 
 	//We're finished
 	return dwHttpStatus;
-}
-
-UINT GetHttpFileSaveAs3(CString lpszUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
-{
-	int		nRead=0;  
-	CString strText;
-	DWORD	dwHttpStatus;  
-	try{  
-		CInternetSession session;
-		session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
-		DWORD dwFlags=INTERNET_FLAG_TRANSFER_ASCII|INTERNET_FLAG_EXISTING_CONNECT|INTERNET_FLAG_RELOAD;  
-		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl,1,dwFlags);  
-
-		if ( pHttpFile!=NULL && pHttpFile->QueryInfoStatusCode(dwHttpStatus)!=0 ){  
-			if ( dwHttpStatus>=200 && dwHttpStatus<300 ){
-				//Success
-				char*pBuff=new char[1024*1024];
-				CFile file(lpszSaveAs,CFile::modeCreate|CFile::modeReadWrite);
-				pHttpFile->SeekToBegin();
-				while ( nRead=pHttpFile->Read(pBuff,1024*1024) ){
-					file.Write(pBuff,nRead);
-				}
-				SetEndOfFile(file.m_hFile);
-				delete[] pBuff;
-			}else{
-				//读取图片失败了，请先看看其他照片吧
-				dwHttpStatus=0x80000000;
-			}
-
-			pHttpFile->Close();
-			delete pHttpFile;
-		}  
-	}catch(CInternetException*e){ 
-		//e->ReportError();
-		e->Delete();  
-		//可能是超时引起的
-		dwHttpStatus=0x80000000;
-	}
-
-	return   dwHttpStatus;  
 }
 
 UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
@@ -260,7 +204,7 @@ UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 	hInternetSession = ::InternetOpen(/*AfxGetAppName()+*/Star::Common::RandFloatNum(10), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 	if (hInternetSession == NULL)
 	{
-		TRACE(_T("Failed in call to InternetOpen, Error:%d\n"), ::GetLastError());
+//		TRACE(_T("Failed in call to InternetOpen, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
 
@@ -269,7 +213,7 @@ UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 		NULL, dwServiceType, 0, NULL);
 	if (hHttpConnection == NULL)
 	{
-		TRACE(_T("Failed in call to InternetConnect, Error:%d\n"), ::GetLastError());
+//		TRACE(_T("Failed in call to InternetConnect, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
 
@@ -280,12 +224,11 @@ UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 	LPCTSTR ppszAcceptTypes[2];
 	ppszAcceptTypes[0] = _T("*/*");  //We support accepting any mime file type since this is a simple download of a file
 	ppszAcceptTypes[1] = NULL;
-	ASSERT(hHttpFile == NULL);
 	hHttpFile = HttpOpenRequest(hHttpConnection, NULL, strObject, NULL, NULL, ppszAcceptTypes, INTERNET_FLAG_RELOAD | 
 		INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_KEEP_CONNECTION, NULL);
 	if (hHttpFile == NULL)
 	{
-		TRACE(_T("Failed in call to HttpOpenRequest, Error:%d\n"), ::GetLastError());
+//		TRACE(_T("Failed in call to HttpOpenRequest, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
 
@@ -296,12 +239,12 @@ resend:
 	//Issue the request
 	BOOL bSend = ::HttpSendRequestEx(hHttpFile, NULL, NULL, 0, 0);
 	if (!bSend){
-		TRACE(_T("Failed in call to HttpSendRequestEx, Error:%d\n"), ::GetLastError());
+//		TRACE(_T("Failed in call to HttpSendRequestEx, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
 	bSend = HttpEndRequest(hHttpFile,NULL,0,0);
 	if (!bSend){
-		TRACE(_T("Failed in call to HttpEndRequest, Error:%d\n"), ::GetLastError());
+//		TRACE(_T("Failed in call to HttpEndRequest, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -311,7 +254,7 @@ resend:
 	DWORD dwInfoSize = 32;
 	if (!HttpQueryInfo(hHttpFile, HTTP_QUERY_STATUS_CODE, szStatusCode, &dwInfoSize, NULL))
 	{
-		TRACE(_T("Failed in call to HttpQueryInfo for HTTP query status code, Error:%d\n"), ::GetLastError());
+//		TRACE(_T("Failed in call to HttpQueryInfo for HTTP query status code, Error:%d\n"), ::GetLastError());
 		return dwHttpStatus;
 	}
 	else
@@ -330,15 +273,10 @@ resend:
 				::InternetReadFile(hHttpFile, (LPVOID)szData, 50, &dwSize);
 			}
 			while (dwSize != 0);
-
-			//Bring up the standard authentication dialog
-			if (::InternetErrorDlg(AfxGetMainWnd()->GetSafeHwnd(), hHttpFile, ERROR_INTERNET_INCORRECT_PASSWORD, FLAGS_ERROR_UI_FILTER_FOR_ERRORS |
-				FLAGS_ERROR_UI_FLAGS_GENERATE_DATA | FLAGS_ERROR_UI_FLAGS_CHANGE_OPTIONS, NULL) == ERROR_INTERNET_FORCE_RETRY)
-				goto resend;
 		}
 		else if (nStatusCode != HTTP_STATUS_OK)
 		{
-			TRACE(_T("Failed to retrieve a HTTP 200 status, Status Code:%d\n"), nStatusCode);
+			//TRACE(_T("Failed to retrieve a HTTP 200 status, Status Code:%d\n"), nStatusCode);
 			return dwHttpStatus;
 		}
 	}
@@ -415,90 +353,6 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds)
 		e->GetErrorMessage(szCause,MAX_PATH);
 		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e->m_dwError,e->m_dwContext);
 		//AfxMessageBox(s);
-		//e->ReportError();
-		e->Delete();  
-		//可能是超时引起的
-		dwHttpStatus=0x80000000;
-	}
-
-	return   dwHttpStatus;  
-}
-
-//http://zhidao.baidu.com/question/272885337.html
-//设置代理       
-//参数分别为：代理服务器地址，端口号，用户名，密码   
-//用到的变量说明：   
-//sess为CInternetSession变量   
-//pConnect为CHttpConnection变量   
-//pFile   为CHttpFile变量   
-int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword)   
-{   
-	INTERNET_PROXY_INFO   proxyinfo;   
-
-	try   
-	{   
-		proxyinfo.dwAccessType=INTERNET_OPEN_TYPE_PROXY;   
-		proxyinfo.lpszProxy=szproxy;   
-		proxyinfo.lpszProxyBypass=NULL;   
-
-		if   (!   sess.SetOption(INTERNET_OPTION_PROXY,   (LPVOID)&proxyinfo,   sizeof(INTERNET_PROXY_INFO)))   
-		{   
-			return   0;   
-		}   
-
-		if   (!pFile->SetOption(INTERNET_OPTION_PROXY_USERNAME,   proxyUser,   strlen(proxyUser)   +   1))   
-		{   
-			return   0;   
-		}   
-
-		if   (!pFile->SetOption(INTERNET_OPTION_PROXY_PASSWORD,   proxyPassword,   strlen(proxyPassword)   +   1))   
-		{   
-			return   0;   
-		}   
-
-		return   1;   
-	}   
-	catch(...)   
-	{   
-		return   0;   
-	}   
-
-}
-
-UINT GetHttpFileContentUseProxy(LPCTSTR lpszUrl,CString&strHtml,const CString&strProxy,int nTimeOutSeconds)
-{
-	int		nRead=0;  
-	CString strText;
-	DWORD	dwHttpStatus=0x80000000;
-	strHtml=_T("");
-
-	CInternetSession session("HttpClient");
-	session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT,nTimeOutSeconds*1000);
-	try{  
-		CHttpFile*pHttpFile=(CHttpFile*)session.OpenURL(lpszUrl,1);  //使用默认的flag即可 否则肯会卡
-		SetProxy(session,pHttpFile,(char*)(LPCTSTR)strProxy,"","");
-
-		if ( pHttpFile!=NULL && pHttpFile->QueryInfoStatusCode(dwHttpStatus)!=0 ){  
-			if ( dwHttpStatus>=200 && dwHttpStatus<300 ){
-				//Success
-#ifdef _UNICODE
-#error Unicode 模式下CHttpFile::ReadString读入乱码
-#endif
-				while( pHttpFile->ReadString(strText)!=0 ){  
-					strHtml=strHtml+strText+_T("\n");   
-				}
-			}  
-
-			pHttpFile->Close();
-			delete pHttpFile;
-			dwHttpStatus=0;
-		}  
-	}catch(CInternetException*e){ 
-		CString s;
-		TCHAR szCause[MAX_PATH];
-		e->GetErrorMessage(szCause,MAX_PATH);
-		s.Format("InternetException：\n%s\n m_dwError%u,m_dwContextError%u",szCause,e->m_dwError,e->m_dwContext);
-		AfxMessageBox(s);
 		//e->ReportError();
 		e->Delete();  
 		//可能是超时引起的
