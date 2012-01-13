@@ -2,6 +2,8 @@
 #include <afx.h>
 #include <afxwin.h>
 #include <ShlObj.h>
+#include <sys/stat.h>
+#include <sys/utime.h>
 #include "File.h"
 
 /*------------------------------------------------------------------------
@@ -502,4 +504,53 @@ BOOL Star::File::LocateFile(CString strFileName)
 	}
 
 	return bSuccess;
+}
+
+
+time_t Star::File::GetLastModified(LPCTSTR szPath)
+{
+	struct _stat st;
+
+	if (!szPath || _tstat64i32(szPath, &st) != 0)
+		return 0;
+
+	// files only
+	if ((st.st_mode & _S_IFDIR) == _S_IFDIR)
+		return 0;
+
+	return st.st_mtime;
+}
+
+BOOL Star::File::GetLastModified(LPCTSTR szPath, SYSTEMTIME& sysTime, BOOL bLocalTime)
+{
+	ZeroMemory(&sysTime, sizeof(SYSTEMTIME));
+
+	DWORD dwAttr = ::GetFileAttributes(szPath);
+
+	// files only
+	if (dwAttr == 0xFFFFFFFF)
+		return false;
+
+	WIN32_FIND_DATA findFileData;
+	HANDLE hFind = FindFirstFile((LPTSTR)szPath, &findFileData);
+
+	if (hFind == INVALID_HANDLE_VALUE)
+		return FALSE;
+
+	FindClose(hFind);
+
+	FILETIME ft = findFileData.ftLastWriteTime;
+
+	if (bLocalTime)
+		FileTimeToLocalFileTime(&findFileData.ftLastWriteTime, &ft);
+
+	FileTimeToSystemTime(&ft, &sysTime);
+	return true;
+}
+
+BOOL Star::File::ResetLastModified(LPCTSTR szPath)
+{
+	::SetFileAttributes(szPath, FILE_ATTRIBUTE_NORMAL);
+
+	return (_tutime(szPath, NULL) == 0);
 }
