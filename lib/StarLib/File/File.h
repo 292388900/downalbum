@@ -76,5 +76,10 @@ namespace Star
 
 		//自动定位一个文件并选中
 		BOOL LocateFile(CString strFileName);
+
+		time_t GetLastModified(LPCTSTR szPath);
+		BOOL GetLastModified(LPCTSTR szPath, SYSTEMTIME& sysTime, BOOL bLocalTime = true); // files only
+		BOOL ResetLastModified(LPCTSTR szPath); // resets to current time
+
 	}
 }
