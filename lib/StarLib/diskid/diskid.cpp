@@ -113,16 +113,13 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 	{
 		HANDLE hPhysicalDriveIOCTL = 0;
 
-		//  Try to get a handle to PhysicalDrive IOCTL, report failure
-		//  and exit if can't.
+		// Try to get a handle to PhysicalDrive IOCTL, report failure
+		// and exit if can't.
 		// 仅取第一块硬盘的编号即可
-		TCHAR driveName[] = _T("\\\\.\\PhysicalDrive0");
-
-		//  Windows NT, Windows 2000, Windows Server 2003, Vista
-		hPhysicalDriveIOCTL = CreateFile (driveName,
-			GENERIC_READ | GENERIC_WRITE, 
-			FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 
-			NULL, OPEN_EXISTING, 0, NULL);
+		// Windows NT, Windows 2000, Windows Server 2003（Vista、win7下要有管理员权限）
+		// 打开权限必须是：GENERIC_READ | GENERIC_WRITE
+		hPhysicalDriveIOCTL = CreateFile(_T("\\\\.\\PhysicalDrive0"), GENERIC_READ | GENERIC_WRITE, 
+				FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 		if (hPhysicalDriveIOCTL == INVALID_HANDLE_VALUE){
 			nError = GetLastError();	//1
@@ -153,8 +150,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 				}else{
 					// Print the IDENTIFY data
 					DWORD diskdata [256];
-					USHORT *pIdSector = (USHORT *)
-						(PIDENTIFY_DATA) ((PSENDCMDOUTPARAMS) Command) -> bBuffer;
+					USHORT *pIdSector = (USHORT *)(PIDENTIFY_DATA)((PSENDCMDOUTPARAMS)Command)->bBuffer;
 
 					for (int ijk = 0; ijk < 256; ijk++)
 						diskdata [ijk] = pIdSector [ijk];
@@ -174,7 +170,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 				// Done
 				CloseHandle (hPhysicalDriveIOCTL);
 				delete []Command;
-		 }
+			}
 		}
 	}
 
