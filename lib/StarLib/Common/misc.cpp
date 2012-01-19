@@ -19,21 +19,20 @@ static char THIS_FILE[]=__FILE__;
 
 //////////////////////////////////////////////////////////////////////
 
-CString Misc::FormatGetLastError(DWORD dwLastErr)
+CString Misc::FormatGetLastError(DWORD dwLastErr/*=-1*/)
 {
 	if (dwLastErr == -1)
 		dwLastErr = GetLastError();
 
-	LPTSTR lpMessage;
-	DWORD dwErrCode = GetLastError();
+	LPTSTR lpMessage = NULL;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				   FORMAT_MESSAGE_FROM_SYSTEM,
-				   NULL,               // no source buffer needed
-				   dwErrCode,          // error code for this message
-				   NULL,               // default language ID
-				   (LPTSTR)&lpMessage, // allocated by fcn
-				   NULL,               // minimum size of buffer
-				   NULL);              // no inserts
+		FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL,               // no source buffer needed
+		dwLastErr,          // error code for this message
+		NULL,               // default language ID
+		(LPTSTR)&lpMessage, // allocated by fcn
+		NULL,               // minimum size of buffer
+		NULL);              // no inserts
 
 
 	CString sError(lpMessage);
