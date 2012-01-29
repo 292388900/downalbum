@@ -110,5 +110,7 @@ namespace Star
 		ULONG GetInternetTime(int nTimeOut=10000);
 		//////////////////////////////////////////////////////////////////////////
 		void CopyToClipboard(LPCTSTR szText,int nCbSize=-1);
+
+		int GetMac(IN OUT TCHAR *szMac,IN int nBuffSize);
 	}
 }
