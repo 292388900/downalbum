@@ -6,8 +6,7 @@
         <downurl2>http://softsing.googlecode.com/svn/trunk/soft/163Album2.exe</downurl2>
         <regurl1>http://item.taobao.com/item.htm?id=7817093569</regurl1>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_38627.htm</regurl>
-        <help3>http://www.xcxzq.com/help/163album.html</help3>
-        <help>http://item.taobao.com/item.htm?id=7817093569</help>
+        <help>http://www.xcxzq.com/help/163album.html</help>
         <bbs></bbs>
         <pswd></pswd>
       	<news>v2.17修复了不能获取相册照片信息的错误，建议更新升级到最新!</news>
