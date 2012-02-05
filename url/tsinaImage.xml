@@ -4,10 +4,8 @@
         <version>1.12</version>
         <downurl>http://softsing.googlecode.com/svn/trunk/soft/tsinaImage.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/soft/tsinaImage2.exe</downurl2>
-        <regurl1>http://www.sharebank.net.cn/soft/SoftBuy_41878.htm</regurl1>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_41878.htm</regurl>
-        <help3>http://www.xcxzq.com/help/tsinaimage.html</help3>
-        <help>http://www.sharebank.com.cn/soft/SoftView_41878.htm</help>
+        <help>http://www.xcxzq.com/help/tsinaimage.html</help>
         <bbs></bbs>
         <pswd></pswd>
       	<news>v1.10版本以上支持升级后的新浪微博相册图片下载，未升级的新浪微博图片不能下载</news>
