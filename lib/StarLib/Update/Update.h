@@ -23,7 +23,6 @@ typedef struct UPDATEINFO
 	CString strHelpUrl;		//帮助网页地址
 	CString strHome;		//官方网站
 	CString strBBS;			//官方论坛
-	CString strPswdUrl;		//用户密码修改页面
 	CString strNews;		//最新版本信息，可以提示修复的错误，广告，新特征等
 	CString strAdsUrl;		//广告配置信息的文件地址
 	CString strUrgent;		//应急措施
