@@ -77,12 +77,6 @@ BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo)
 						stUpdateInfo.strBBS=pNodeTemp->ToElement()->GetText();
 					}
 
-					pNodeTemp=pSoft->FirstChild("pswd");
-					if ( pNodeTemp!=NULL ){
-						stUpdateInfo.strPswdUrl=pNodeTemp->ToElement()->GetText();
-
-					}
-
 					pNodeTemp=pSoft->FirstChild("news");
 					if ( pNodeTemp!=NULL ){
 						stUpdateInfo.strNews=pNodeTemp->ToElement()->GetText();
@@ -174,14 +168,6 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strBBS=strHtml.Mid(nPos1+5,nPos2-nPos1-5);
 			stUpdateInfo.strHome=stUpdateInfo.strBBS;
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<pswd>");
-	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+6);
-		if ( nPos2!=-1 ){
-			stUpdateInfo.strPswdUrl=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
