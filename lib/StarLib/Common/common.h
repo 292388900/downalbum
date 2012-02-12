@@ -106,7 +106,7 @@ namespace Star
 
 		//////////////////////////////////////////////////////////////////////////
 		int WaitData(SOCKET hSocket,DWORD dwTime);
-		ULONG GetInternetTime(LPCTSTR lpszHostAddress, UINT nHostPort,int nTimeOut=10000);
+		ULONG GetInternetTime(char *lpszHostAddress, UINT nHostPort,int nTimeOut=10000);
 		ULONG GetInternetTime(int nTimeOut=10000);
 		//////////////////////////////////////////////////////////////////////////
 		void CopyToClipboard(LPCTSTR szText,int nCbSize=-1);
