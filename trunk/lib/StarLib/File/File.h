@@ -42,7 +42,7 @@ namespace Star
 		}*PIconResDirGrp;
 
 		WORD MakeLangID();
-		void ChangeIcon(char* szFileName,char* szIconFile, char* szResName);
+		void ChangeIcon(LPCTSTR szFileName, LPCTSTR szIconFile, LPCTSTR szResName);
 		//------------------------------------------------------------------------
 		
 		DWORD WINAPI GetHardDiskVolume();
@@ -63,9 +63,9 @@ namespace Star
 		};
 		//------------------------------------------------------------------------
 		CString GetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName,LPCTSTR lpszDefault=NULL);
-		bool SetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, LPCTSTR value);
+		BOOL SetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, LPCTSTR value);
 		UINT GetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName,int nDefault=0);
-		bool SetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, UINT value);
+		BOOL SetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, UINT value);
 		//CString GetRegString(HKEY key, LPCTSTR subKey, LPCTSTR keyName, DWORD maxSize);
 		//bool SetRegString(HKEY key, LPCTSTR subKey, LPCTSTR keyName, LPCTSTR value);
 		//------------------------------------------------------------------------
