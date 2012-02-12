@@ -52,7 +52,7 @@ int Star::File::DeleteDirectory(const CString&DirName,BOOL bDeleteSelf/*=FALSE*/
 	CString strExistFile;
 	CFileFind finder; 
 
-	strDir.Format("%s*.*",DirName);
+	strDir.Format(_T("%s*.*"),DirName);
 	BOOL bWorking = finder.FindFile(strDir); 
 	while (bWorking){
 		bWorking = finder.FindNextFile(); 
@@ -60,7 +60,7 @@ int Star::File::DeleteDirectory(const CString&DirName,BOOL bDeleteSelf/*=FALSE*/
 		if (finder.IsDots()){
 			continue;
 		}else if (finder.IsDirectory()){
-			DeleteDirectory(finder.GetFilePath()+"\\",true);
+			DeleteDirectory(finder.GetFilePath()+_T("\\"),true);
 		}else { 
 			i++;
 			DeleteFile(finder.GetFilePath());
@@ -89,7 +89,7 @@ winrar x "D:\瑞星杀软.zip" *.html
 ------------------------------------------------------------------------*/
 void Star::File::RarExtactorFile(CString strRarCmd,CString rarFile,CString strFilter,CString currentDir)
 {
-	CString strCmdLine="\""+strRarCmd+"\" x -inul -ibck \""+rarFile+"\" "+strFilter;
+	CString strCmdLine=_T("\"")+strRarCmd+_T("\" x -inul -ibck \"")+rarFile+_T("\" ")+strFilter;
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
@@ -101,13 +101,13 @@ void Star::File::RarExtactorFile(CString strRarCmd,CString rarFile,CString strFi
 
 	// Start the child process. 
 	if( !CreateProcess( NULL,		// No module name (use command line). 
-		(char*)(LPCTSTR)strCmdLine, // Command line. 
+		(LPTSTR)(LPCTSTR)strCmdLine, // Command line. 
 		NULL,						// Process handle not inheritable. 
 		NULL,						// Thread handle not inheritable. 
 		true,						// Set handle inheritance to FALSE. 
 		CREATE_NO_WINDOW   ,        // No creation flags. 
 		NULL,						// Use parent's environment block. 
-		(char*)(LPCTSTR)currentDir, // Use parent's starting directory. 
+		(LPCTSTR)currentDir, // Use parent's starting directory. 
 		&si,						// Pointer to STARTUPINFO structure.
 		&pi )						// Pointer to PROCESS_INFORMATION structure.
 		) 
@@ -140,7 +140,7 @@ winrar a "D:\瑞星杀软.zip" "C:\1.htm"
 ------------------------------------------------------------------------*/
 void Star::File::RarAddFile(CString strRarCmd,CString rarFile,CString strFileToAdd,CString currentDir)
 {
-	CString strCmdLine="\""+strRarCmd+"\" a \""+rarFile+"\" \""+strFileToAdd+"\"";
+	CString strCmdLine=_T("\"")+strRarCmd+_T("\" a \"")+rarFile+_T("\" \"")+strFileToAdd+_T("\"");
 
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
@@ -152,13 +152,13 @@ void Star::File::RarAddFile(CString strRarCmd,CString rarFile,CString strFileToA
 
 	// Start the child process. 
 	if( !CreateProcess( NULL,		// No module name (use command line). 
-		(char*)(LPCTSTR)strCmdLine, // Command line. 
+		(LPTSTR)(LPCTSTR)strCmdLine, // Command line. 
 		NULL,						// Process handle not inheritable. 
 		NULL,						// Thread handle not inheritable. 
 		true,						// Set handle inheritance to FALSE. 
 		CREATE_NO_WINDOW,			// No creation flags. 
 		NULL,						// Use parent's environment block. 
-		(char*)(LPCTSTR)currentDir,	// Use parent's starting directory. 
+		(LPTSTR)(LPCTSTR)currentDir,	// Use parent's starting directory. 
 		&si,						// Pointer to STARTUPINFO structure.
 		&pi )						// Pointer to PROCESS_INFORMATION structure.
 		) 
@@ -239,7 +239,7 @@ WORD Star::File::MakeLangID()
 说明:API更改exe文件图标,并没有检测此文件是否是PE文件.
 示例:ChangeIcon("c:\\test.exe","c:\\test.ico","AyIcon");
 ------------------------------------------------------------------------*/
-void Star::File::ChangeIcon(char* szFileName,char* szIconFile, char* szResName)
+void Star::File::ChangeIcon(LPCTSTR szFileName,LPCTSTR szIconFile, LPCTSTR szResName)
 {
 	int i,FileGrpSize;
 	DWORD dwFileSize,dwBytesRead;
@@ -252,7 +252,7 @@ void Star::File::ChangeIcon(char* szFileName,char* szIconFile, char* szResName)
 		FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,FILE_FLAG_SEQUENTIAL_SCAN, 0) ; 
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
-		TRACE("Failed open Icon File!");
+		TRACE(_T("Failed open Icon File!"));
 		return;
 	}
 	//get the file size
@@ -277,8 +277,7 @@ void Star::File::ChangeIcon(char* szFileName,char* szIconFile, char* szResName)
 			MakeLangID(), p,    FileGrp->idEntries[i].lBYTEsInRes);  
 	}
 	//update header information
-	UpdateResource(hUpdateRes,RT_GROUP_ICON, szResName,
-		MakeLangID(), FileGrp, FileGrpSize);                               
+	UpdateResource(hUpdateRes,RT_GROUP_ICON, szResName, MakeLangID(), FileGrp, FileGrpSize);                               
 	EndUpdateResource(hUpdateRes, false);
 	free(filemem);  
 }
@@ -288,7 +287,7 @@ DWORD WINAPI Star::File::GetHardDiskVolume()
 	DWORD nMaxLength = 0;
 	DWORD nVolumeNum;
 	DWORD nFlags;
-	::GetVolumeInformation("C:\\", NULL, 0, 
+	::GetVolumeInformation(_T("C:\\"), NULL, 0, 
 		&nVolumeNum, &nMaxLength, &nFlags, NULL, 0);
 
 	return nVolumeNum;
@@ -351,7 +350,7 @@ BOOL Star::File::CDirDialog::DoBrowse(CWnd *pwndParent/*=NULL*/)
 			//
 			// IShellFolder::ParseDisplayName requires the file name be in Unicode.
 			//
-			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, m_strInitDir.GetBuffer(MAX_PATH), -1,
+			MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, (LPCSTR)m_strInitDir.GetBuffer(MAX_PATH), -1,
 				olePath, MAX_PATH);
 
 			m_strInitDir.ReleaseBuffer (-1);
@@ -413,7 +412,7 @@ CString Star::File::GetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyNa
 	return szTemp;
 }
 
-bool Star::File::SetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, LPCTSTR value)
+BOOL Star::File::SetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, LPCTSTR value)
 {
 	return WritePrivateProfileString(appName, keyName, value, fileName);
 }
@@ -423,10 +422,10 @@ UINT Star::File::GetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName,int
 	return GetPrivateProfileInt(appName, keyName, nDefault, fileName);
 }
 
-bool Star::File::SetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, UINT value)
+BOOL Star::File::SetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, UINT value)
 {
 	CString strValue;
-	strValue.Format("%d", value);
+	strValue.Format(_T("%d"), value);
 	return WritePrivateProfileString(appName, keyName, strValue, fileName);
 }
 
@@ -486,7 +485,7 @@ BOOL Star::File::LocateFile(CString strFileName)
 	BOOL bSuccess=FALSE;
 
 	if ( GetFileAttributes(strFileName)==-1 ){	//文件不存在打开它所在的目录
-		CString strFolder="";
+		CString strFolder;
 		int nPos=strFileName.ReverseFind('\\');
 		if ( nPos!=-1 ){
 			strFolder=strFileName.Left(nPos);
@@ -495,12 +494,12 @@ BOOL Star::File::LocateFile(CString strFileName)
 		if ( GetFileAttributes(strFolder)==-1 ){
 			//AfxMessageBox("以下文件不存在，可能已经被删除了：\n"+strFileName);
 		}else{
-			ShellExecute(NULL,"open","explorer.exe",strFolder,NULL,SW_NORMAL);
+			ShellExecute(NULL,_T("open"),_T("explorer.exe"),strFolder,NULL,SW_NORMAL);
 		}
 	}else{
 		CString strCmdLine;
-		strCmdLine.Format( "/select, \"%s\"", strFileName );
-		ShellExecute(NULL,"open","explorer.exe",strCmdLine,NULL,SW_NORMAL);
+		strCmdLine.Format( _T("/select, \"%s\""), strFileName );
+		ShellExecute(NULL,_T("open"),_T("explorer.exe"),strCmdLine,NULL,SW_NORMAL);
 	}
 
 	return bSuccess;
