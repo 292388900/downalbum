@@ -160,7 +160,7 @@ int ReadPhysicalDriveInNTUsingSmart (char* diskid, int len)
 					char modelNumber [MAX_PATH] = {0};
 					ConvertToString (diskdata, 10, 19, serialNumber);	//ÐòÁÐºÅ
 					//ConvertToString (diskdata, 27, 46, modelNumber);	//Ä£ÐÍºÅ
-					lstrcpy(diskid,serialNumber);
+					strcpy_s(diskid,len,serialNumber);
 					//lstrcat(diskid,modelNumber);
 
 					//_snprintf(diskid, len-1, "%s - %s", serialNumber, modelNumber);
