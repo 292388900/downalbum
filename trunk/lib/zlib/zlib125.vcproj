@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin\$(ProjectName).lib"
+				OutputFile="..\2005bin\$(ProjectName).lib"
 				IgnoreDefaultLibraryNames="LIBC.lib"
 			/>
 			<Tool
