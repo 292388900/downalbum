@@ -1,12 +1,11 @@
 <data>
     <soft>
         <name>BlogDown</name>
-        <version>1.7</version>
+        <version>1.8</version>
         <downurl>http://softsing.googlecode.com/svn/trunk/soft/BlogDown.exe</downurl>
         <downurl2>http://softsing.googlecode.com/svn/trunk/soft/BlogDown2.exe</downurl2>
-        <regurl>http://item.taobao.com/item.htm?id=12648095206</regurl>
-        <help3>http://www.xcxzq.com/help/blogdown.html</help3>
-        <help>http://item.taobao.com/item.htm?id=12648095206</help>
+        <regurl>https://me.alipay.com/xcxzq</regurl>
+        <help>http://www.xcxzq.com/help/blogdown.html</help>
         <bbs>http://www.xcxzq.com</bbs>
         <pswd></pswd>
       	<news>v1.7版本修复新浪博客出现乱码的错误，请大家尽量下载最新版压缩包解压使用!</news>
