@@ -47,7 +47,8 @@ namespace Star
 		CString GetModuleFilePath();
 		CString GetWindowsPath();
 		CString GetSystemPath();
-	
+		CString GetDesktopPath();
+
 		BOOL MsgSleep(IN DWORD dwMillseconds);
 		LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
 		LONG GetRegValueDWord(HKEY key, LPCTSTR subkey, LPCTSTR szValue,DWORD*pData);
