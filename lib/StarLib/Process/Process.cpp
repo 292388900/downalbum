@@ -321,3 +321,67 @@ DWORD Star::Process::GetParentProcessID2(DWORD dwId)
 	return dwppid;
 }
 
+BOOL GetModuleName(LPVOID lpImageBase,CString&strModuleName)
+{
+	BOOL bOK=FALSE;
+
+	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)lpImageBase;
+	if ( pDosHeader->e_magic==IMAGE_DOS_SIGNATURE ){
+		PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)( (PBYTE)pDosHeader + pDosHeader->e_lfanew );
+		if ( pNtHeader->Signature==IMAGE_NT_SIGNATURE ){
+			DWORD dwDataStartRVA=pNtHeader->OptionalHeader.DataDirectory[0].VirtualAddress;
+			if ( dwDataStartRVA!=0 ){
+				PIMAGE_EXPORT_DIRECTORY pExportDir=(PIMAGE_EXPORT_DIRECTORY)((LPBYTE)lpImageBase+dwDataStartRVA);
+				strModuleName = (PCHAR)lpImageBase + pExportDir->Name;
+				bOK=TRUE;
+			}
+		}
+	}
+
+	return bOK;
+}
+
+//进程要有读内存的权限
+BOOL GetModuleName(HANDLE hProcess,LPVOID lpImageBase,DWORD dwImgSize,CString&strModuleName)
+{
+	BOOL bOK=FALSE;
+	const int nPageSize=0x1000;
+	DWORD dwReadWrite;
+	PBYTE pImageBuff=new BYTE[nPageSize];
+	if ( pImageBuff==NULL ){
+		return bOK;
+	}
+
+	//预读一页
+	if ( ::ReadProcessMemory(hProcess,lpImageBase,pImageBuff,nPageSize,&dwReadWrite)==FALSE ){
+		delete []pImageBuff;
+		return bOK;
+	}
+
+	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)pImageBuff;
+	if ( pDosHeader->e_magic==IMAGE_DOS_SIGNATURE ){
+		PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)( (PBYTE)pDosHeader + pDosHeader->e_lfanew );
+		if ( pNtHeader->Signature==IMAGE_NT_SIGNATURE ){
+			DWORD dwDataStartRVA=pNtHeader->OptionalHeader.DataDirectory[0].VirtualAddress;
+			DWORD dwSize=pNtHeader->OptionalHeader.DataDirectory[0].Size;
+			if ( dwDataStartRVA!=0 && dwSize!=0 ){
+				PIMAGE_EXPORT_DIRECTORY pExportDir=(PIMAGE_EXPORT_DIRECTORY)((LPBYTE)lpImageBase+dwDataStartRVA);
+				if ( ::ReadProcessMemory(hProcess,(PCHAR)pExportDir,pImageBuff,sizeof(IMAGE_EXPORT_DIRECTORY),&dwReadWrite) ){
+					pExportDir=(PIMAGE_EXPORT_DIRECTORY)pImageBuff;
+					dwSize=dwImgSize-pExportDir->Name;
+					if ( dwSize>MAX_PATH || (int)dwSize<0 ){
+						dwSize=MAX_PATH;
+					}
+					if ( ::ReadProcessMemory(hProcess,(PCHAR)lpImageBase+pExportDir->Name,pImageBuff,MAX_PATH,&dwReadWrite) ){
+						strModuleName = (PCHAR)pImageBuff;
+						bOK=TRUE;
+					}
+				}
+			}
+		}
+	}
+
+	delete []pImageBuff;
+
+	return bOK;
+}

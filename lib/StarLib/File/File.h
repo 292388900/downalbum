@@ -88,6 +88,9 @@ namespace Star
 		//bool SetRegString(HKEY key, LPCTSTR subKey, LPCTSTR keyName, LPCTSTR value);
 		//------------------------------------------------------------------------
 		UINT64 GetFileSize(LPCTSTR fileName);
+
+		//获得指定文件夹的大小，用了递归调用，返回值在m_Size 
+		BOOL GetDirSize(LPTSTR lpsPath,DWORD&m_Size);
 		//------------------------------------------------------------------------
 		
 		//自动生成一个以数字索引名称的目录名，要求不能重复，递增下去
