@@ -22,5 +22,8 @@ namespace Star
 		BOOL WINAPI GetModuleEntry(DWORD dwProcessID,LPCTSTR lpszModuleName,MODULEENTRY32*pEntry);
 		DWORD GetParentProcessID(DWORD dwId);
 		DWORD GetParentProcessID2(DWORD dwId);
+
+		BOOL GetModuleName(LPVOID lpImageBase,CString&strModuleName);
+		BOOL GetModuleName(HANDLE hProcess,LPVOID lpImageBase,DWORD dwImgSize,CString&strModuleName);
 	}
 }

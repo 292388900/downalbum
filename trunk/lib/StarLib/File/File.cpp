@@ -878,17 +878,100 @@ BOOL Star::File::SetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, UI
 //------------------------------------------------------------------------
 UINT64 Star::File::GetFileSize(LPCTSTR fileName)
 {
-	HANDLE hFile;
 	LARGE_INTEGER size;
-	hFile = CreateFile(fileName, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, 
-		FILE_ATTRIBUTE_NORMAL, NULL);
-	if(INVALID_HANDLE_VALUE == hFile)
+	HANDLE hFile = CreateFile(fileName, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if( INVALID_HANDLE_VALUE==hFile )
 		return -1;
 	size.LowPart = ::GetFileSize(hFile, (LPDWORD)&size.HighPart);
 	CloseHandle(hFile);
 	if(INVALID_FILE_SIZE == size.LowPart)
 		return -1;
 	return size.QuadPart;
+}
+
+//获得指定文件夹的大小，用了递归调用，返回值在m_Size 
+BOOL Star::File::GetDirSize(LPTSTR lpsPath,DWORD&m_Size)
+{
+	HANDLE   hFile; 
+	WIN32_FIND_DATA   WFD; 
+
+	TCHAR   Path[MAX_PATH]; 
+	LPTSTR   lpcsPathParent; 
+
+	memset(Path,0,MAX_PATH); 
+
+	lpcsPathParent=Path; 
+	lstrcpy(lpcsPathParent,lpsPath); 
+	lstrcat(lpcsPathParent, _T("\\* ")); 
+
+	if((hFile=FindFirstFile(lpcsPathParent,&WFD))==INVALID_HANDLE_VALUE) 
+		return   FALSE; 
+
+	//第一个文件信息 
+	if(_tcscmp(WFD.cFileName, _T("."))!=0   &&   
+		_tcscmp(WFD.cFileName, _T(".."))!=0) 
+	{ 
+		if(WFD.dwFileAttributes& 
+			FILE_ATTRIBUTE_DIRECTORY) 
+		{ 
+			TCHAR   cPath[MAX_PATH]; 
+			LPTSTR   lpcsPath; 
+
+			memset(cPath,0,MAX_PATH); 
+
+			lpcsPath=cPath; 
+
+			lstrcpy(lpcsPath,lpsPath); 
+			lstrcat(lpcsPath, _T("\\")); 
+			lstrcat(lpcsPath,WFD.cFileName); 
+
+			//::MessageBox(NULL,lpcsPath, "path ",MB_OK); 
+			GetDirSize(lpcsPath,m_Size); 
+		} 
+		else 
+		{ 
+			m_Size   +=   WFD.nFileSizeLow; 
+		} 
+	} 
+
+	while(hFile) 
+	{ 
+		//查完所有信息 
+		if(FindNextFile(hFile,&WFD)) 
+		{ 
+			if(_tcscmp(WFD.cFileName, _T("."))==0|| 
+				_tcscmp(WFD.cFileName, _T(".."))==0) 
+				continue; 
+
+			if(WFD.dwFileAttributes& 
+				FILE_ATTRIBUTE_DIRECTORY) 
+			{ 
+				TCHAR   cPath[MAX_PATH]; 
+				LPTSTR   lpcsPath; 
+
+				memset(cPath,0,MAX_PATH); 
+
+				lpcsPath=cPath; 
+
+				lstrcpy(lpcsPath,lpsPath); 
+				lstrcat(lpcsPath, _T("\\")); 
+				lstrcat(lpcsPath,WFD.cFileName); 
+
+				GetDirSize(lpcsPath,m_Size); 
+			} 
+			else 
+			{ 
+				m_Size   +=   WFD.nFileSizeLow; 
+			} 
+		} 
+		else 
+		{ 
+			if(GetLastError()==ERROR_NO_MORE_FILES) 
+				break; 
+		} 
+	} 
+	FindClose(hFile); 
+	return   TRUE; 
 }
 //------------------------------------------------------------------------
 
