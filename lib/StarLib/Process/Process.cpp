@@ -2,6 +2,9 @@
 #include "Process.h"
 #include <Shlwapi.h>
 #include <Tlhelp32.h>
+#include <Psapi.h>
+
+#pragma comment(lib,"Psapi.lib")
 
 /*------------------------------------------------------------------------
 [7/24/2009 xiaolin]
@@ -35,6 +38,46 @@ ULONG  Star::Process::GetProcessID(char *szProcessName)
 	CloseHandle(hSnap);
 
 	return dwProcessId;
+}
+
+//通过进程ID获取对应文件名
+CString Star::Process::GetProcessName(DWORD dwProcessId)
+{
+	CString			strName;
+	PROCESSENTRY32	ProcessEntry32;
+	HANDLE			hSnap = INVALID_HANDLE_VALUE;
+	int				ret = 0;
+
+	ProcessEntry32.dwSize = sizeof (PROCESSENTRY32);
+
+	hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if( hSnap!=INVALID_HANDLE_VALUE ){
+		ret = Process32First(hSnap,&ProcessEntry32);
+		while ( ret ){
+			if ( ProcessEntry32.th32ProcessID==dwProcessId ){
+				strName = ProcessEntry32.szExeFile;
+				break;
+			}
+			ret = Process32Next(hSnap,&ProcessEntry32);
+		}
+		CloseHandle(hSnap);
+	}
+
+	return strName;
+}
+
+//获取进程对应的文件全路径名
+CString Star::Process::GetProcessFileName(DWORD dwProcessId)
+{
+	TCHAR szFilePath[MAX_PATH] = {0};
+
+	HANDLE hProcess=OpenProcess(PROCESS_QUERY_INFORMATION|PROCESS_VM_READ,FALSE,dwProcessId);
+	if ( hProcess!=NULL ){
+		GetModuleFileNameEx(hProcess,NULL,szFilePath,MAX_PATH);
+		CloseHandle(hProcess);
+	}
+
+	return szFilePath;
 }
 
 /*------------------------------------------------------------------------
@@ -278,29 +321,3 @@ DWORD Star::Process::GetParentProcessID2(DWORD dwId)
 	return dwppid;
 }
 
-//通过进程ID获取对应文件名
-CString Star::Process::GetProcessNameByPID(DWORD dwId)
-{
-	CString strName;
-	PROCESSENTRY32	ProcessEntry32;
-	HANDLE			hSnap;
-	int				ret;
-
-	ProcessEntry32.dwSize = sizeof (PROCESSENTRY32);
-
-	hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if(hSnap != 0){
-		ret = Process32First(hSnap,&ProcessEntry32);
-		while (ret){
-			if ( ProcessEntry32.th32ProcessID==dwId  ){
-				strName=ProcessEntry32.szExeFile;
-				break;
-			}
-			ret = Process32Next(hSnap,&ProcessEntry32);
-		}
-
-		CloseHandle(hSnap);
-	}
-
-	return strName;
-}
