@@ -25,5 +25,11 @@ namespace Star
 
 		BOOL GetModuleName(LPVOID lpImageBase,CString&strModuleName);
 		BOOL GetModuleName(HANDLE hProcess,LPVOID lpImageBase,DWORD dwImgSize,CString&strModuleName);
+
+
+		BOOL GetProcessCurDir(HANDLE hProcess,CString&strCurDir);
+		BOOL GetProcessCurDir64(HANDLE hProcess,CString&strCurDir);
+		BOOL GetProcessCmdLine(HANDLE hProcess,CString&strCmdLine);
+		BOOL GetProcessCmdLine64(HANDLE hProcess,CString&strCmdLine);
 	}
 }

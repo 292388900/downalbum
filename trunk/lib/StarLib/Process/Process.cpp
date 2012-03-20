@@ -3,8 +3,105 @@
 #include <Shlwapi.h>
 #include <Tlhelp32.h>
 #include <Psapi.h>
+#include <winternl.h>   // for Windows internal declarations.
 
 #pragma comment(lib,"Psapi.lib")
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+
+typedef struct
+{
+	DWORD Filler[4];
+	DWORD ProcessParameters;
+} __PEB;
+
+typedef struct
+{
+	PVOID64 Filler[4];
+	PVOID64 ProcessParameters;
+} __PEB64;
+
+//
+// Current Directory Structures
+//
+typedef struct 
+{
+	UNICODE_STRING DosPath;
+	HANDLE Handle;
+}_CURDIR;
+
+typedef struct _UNICODE_STRING64 {
+	SHORT Length;
+	SHORT MaximumLength;
+	DWORD Fill;
+	PVOID64  Buffer;
+} UNICODE_STRING64;
+
+typedef struct 
+{
+	DWORD MaximumLength;
+	DWORD Length;
+	DWORD Flags;
+	DWORD DebugFlags;
+	PVOID ConsoleHandle;
+	DWORD ConsoleFlags;
+	PVOID StandardInput;
+	PVOID StandardOutput;
+	PVOID StandardError;
+	//////////////////////////
+	UNICODE_STRING DosPath;	//CurrentDirectory
+	HANDLE Handle;
+	//////////////////////////
+	UNICODE_STRING DllPath;
+	UNICODE_STRING ImagePathName;
+	UNICODE_STRING CmdLine;
+	//……
+}MY_RTL_USER_PROCESS_PARAMETERS;
+
+typedef struct 
+{
+	DWORD MaximumLength;
+	DWORD Length;
+	DWORD Flags;
+	DWORD DebugFlags;
+	PVOID64 ConsoleHandle;
+	DWORD ConsoleFlags;
+	PVOID64 StandardInput;
+	PVOID64 StandardOutput;
+	PVOID64 StandardError;
+	//////////////////////////
+	UNICODE_STRING64 DosPath;//CurrentDirectory
+	HANDLE Handle;
+	//////////////////////////
+	UNICODE_STRING64 DllPath;
+	UNICODE_STRING64 ImagePathName;
+	UNICODE_STRING64 CmdLine;
+	//……
+}MY_RTL_USER_PROCESS_PARAMETERS64;
+
+
+
+// end_ntddk end_ntifs 
+typedef struct _PROCESS_BASIC_INFORMATION64 { 
+	PVOID64 Reserved1;
+	PVOID64 PebBaseAddress;
+	PVOID64 Reserved2[2];
+	PVOID64 UniqueProcessId;
+	PVOID64 Reserved3;
+} PROCESS_BASIC_INFORMATION64,*PPROCESS_BASIC_INFORMATION64; 
+
+typedef LONG (WINAPI *TNtQueryInformationProcess)(HANDLE,UINT,PVOID,ULONG,PULONG);
+typedef LONG (WINAPI *TNtReadVirtualMemory)(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, ULONG NumberOfBytesToRead, PULONG NumberOfBytesReaded);
+typedef LONG (WINAPI *TNtReadVirtualMemory64)(HANDLE ProcessHandle, PVOID64 BaseAddress, PVOID Buffer, UINT64 NumberOfBytesToRead, PUINT64 NumberOfBytesReaded);
+//////////////////////////////////////////////////////////////////////////
+
+
+
 
 /*------------------------------------------------------------------------
 [7/24/2009 xiaolin]
@@ -321,7 +418,7 @@ DWORD Star::Process::GetParentProcessID2(DWORD dwId)
 	return dwppid;
 }
 
-BOOL GetModuleName(LPVOID lpImageBase,CString&strModuleName)
+BOOL Star::Process::GetModuleName(LPVOID lpImageBase,CString&strModuleName)
 {
 	BOOL bOK=FALSE;
 
@@ -342,7 +439,7 @@ BOOL GetModuleName(LPVOID lpImageBase,CString&strModuleName)
 }
 
 //进程要有读内存的权限
-BOOL GetModuleName(HANDLE hProcess,LPVOID lpImageBase,DWORD dwImgSize,CString&strModuleName)
+BOOL Star::Process::GetModuleName(HANDLE hProcess,LPVOID lpImageBase,DWORD dwImgSize,CString&strModuleName)
 {
 	BOOL bOK=FALSE;
 	const int nPageSize=0x1000;
@@ -385,3 +482,322 @@ BOOL GetModuleName(HANDLE hProcess,LPVOID lpImageBase,DWORD dwImgSize,CString&st
 
 	return bOK;
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+
+BOOL Star::Process::GetProcessCurDir(HANDLE hProcess,CString&strCurDir)
+{
+	BOOL bSuccess = FALSE;
+
+	//
+	PROCESS_BASIC_INFORMATION pbi;
+	TNtQueryInformationProcess pfnNtQueryInformationProcess = NULL;
+	TNtReadVirtualMemory pfnNtReadVirtualMemory = NULL;
+
+	pfnNtQueryInformationProcess = (TNtQueryInformationProcess)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtQueryInformationProcess");
+	pfnNtReadVirtualMemory = (TNtReadVirtualMemory)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtReadVirtualMemory");
+
+	if ( pfnNtQueryInformationProcess!=NULL ){
+		DWORD dwSize;
+		SIZE_T size;
+		int iReturn;
+		PVOID pAddrPEB = NULL;
+
+		iReturn = pfnNtQueryInformationProcess( hProcess,ProcessBasicInformation,&pbi,sizeof(pbi),&dwSize);
+		pAddrPEB = pbi.PebBaseAddress;
+
+
+		// NtQueryInformationProcess returns a negative value if it fails
+		if (iReturn >= 0) {
+			// 1. Find the Process Environment Block
+			__PEB PEB;
+			size = dwSize;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, pAddrPEB, &PEB, sizeof(PEB), &size) ) {
+				// Call GetLastError() if you need to know why
+				return bSuccess;
+			}
+
+			// 2. From this PEB, get the address of the block containing 
+			// a pointer to the CmdLine
+			MY_RTL_USER_PROCESS_PARAMETERS stBlock;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, (LPVOID)PEB.ProcessParameters, &stBlock, sizeof(stBlock), &size)) {
+				// Call GetLastError() if you need to know why
+				return bSuccess;
+			}
+
+			// 3. Get the CurDir
+			wchar_t wszCurDir[MAX_PATH+1];
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, (LPVOID)stBlock.DosPath.Buffer, 
+				wszCurDir, stBlock.DosPath.Length*sizeof(wchar_t), &size)) {
+					// Call GetLastError() if you need to know why
+					return bSuccess;
+			}
+
+#ifdef UNICODE
+			// Both strings are in UNICODE.
+			strCurDir.assign(wszCurDir);
+#else
+			CHAR szCurDir[MAX_PATH+1];
+			WideCharToMultiByte(CP_ACP,0,wszCurDir,size/sizeof(wchar_t),szCurDir,MAX_PATH,NULL,NULL);
+			strCurDir = szCurDir;
+#endif
+			bSuccess = TRUE;
+		}
+
+	}
+
+	return bSuccess;
+}
+
+BOOL Star::Process::GetProcessCurDir64(HANDLE hProcess,CString&strCurDir)
+{
+	BOOL bSuccess = FALSE;
+
+	//
+	PROCESS_BASIC_INFORMATION64 pbi64;
+	TNtQueryInformationProcess pfnNtQueryInformationProcess = NULL;
+	TNtReadVirtualMemory64 pfnNtReadVirtualMemory = NULL;
+
+	pfnNtQueryInformationProcess = (TNtQueryInformationProcess)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtWow64QueryInformationProcess64");
+	pfnNtReadVirtualMemory = (TNtReadVirtualMemory64)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtWow64ReadVirtualMemory64");
+
+
+	if ( pfnNtQueryInformationProcess!=NULL ){
+		DWORD dwSize;
+		UINT64 size;
+		int iReturn;
+		PVOID64 pAddrPEB = NULL;
+
+
+		iReturn = pfnNtQueryInformationProcess( hProcess,ProcessBasicInformation,&pbi64,sizeof(pbi64),&dwSize);
+		pAddrPEB = pbi64.PebBaseAddress;
+
+		// NtQueryInformationProcess returns a negative value if it fails
+		if (iReturn >= 0) {
+			// 1. Find the Process Environment Block
+			__PEB64 PEB;
+			size = dwSize;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, pAddrPEB, &PEB, sizeof(PEB), &size) ) {
+				// Call GetLastError() if you need to know why
+				return bSuccess;
+			}
+
+			// 2. From this PEB, get the address of the block containing 
+			// a pointer to the CmdLine
+			MY_RTL_USER_PROCESS_PARAMETERS64 stBlock;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, PEB.ProcessParameters, &stBlock, sizeof(stBlock),&size)) {
+				// Call GetLastError() if you need to know why
+				return bSuccess;
+			}
+
+			// 3. Get the CurDir
+			wchar_t wszCurDir[MAX_PATH+1];
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, stBlock.DosPath.Buffer, 
+				wszCurDir, stBlock.DosPath.Length*sizeof(wchar_t), &size)) {
+					// Call GetLastError() if you need to know why
+					return bSuccess;
+			}
+
+#ifdef UNICODE
+			// Both strings are in UNICODE.
+			strCurDir.assign(wszCurDir);
+#else
+			CHAR szCurDir[MAX_PATH+1];
+			WideCharToMultiByte(CP_ACP,0,wszCurDir,size/sizeof(wchar_t),szCurDir,MAX_PATH,NULL,NULL);
+			strCurDir = szCurDir;
+#endif
+			bSuccess = TRUE;
+		}
+
+	}
+
+	return bSuccess;
+}
+
+BOOL Star::Process::GetProcessCmdLine(HANDLE hProcess,CString&strCmdLine)
+{
+	BOOL bSuccess = FALSE;
+
+	//
+	PROCESS_BASIC_INFORMATION pbi;
+	TNtQueryInformationProcess pfnNtQueryInformationProcess = NULL;
+	TNtReadVirtualMemory pfnNtReadVirtualMemory = NULL;
+
+	pfnNtQueryInformationProcess = (TNtQueryInformationProcess)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtQueryInformationProcess");
+	pfnNtReadVirtualMemory = (TNtReadVirtualMemory)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtReadVirtualMemory");
+
+	if ( pfnNtQueryInformationProcess!=NULL ){
+		DWORD dwSize;
+		SIZE_T size;
+		int iReturn;
+		PVOID pAddrPEB = NULL;
+
+		iReturn = pfnNtQueryInformationProcess( hProcess,ProcessBasicInformation,&pbi,sizeof(pbi),&dwSize);
+		pAddrPEB = pbi.PebBaseAddress;
+
+
+		// NtQueryInformationProcess returns a negative value if it fails
+		if (iReturn >= 0) {
+			// 1. Find the Process Environment Block
+			__PEB PEB;
+			size = dwSize;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, pAddrPEB, &PEB, sizeof(PEB), &size) ) {
+				// Call GetLastError() if you need to know why
+				return bSuccess;
+			}
+
+			// 2. From this PEB, get the address of the block containing 
+			// a pointer to the CmdLine
+			MY_RTL_USER_PROCESS_PARAMETERS Block;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, (LPVOID)PEB.ProcessParameters, &Block, sizeof(Block), &size)) {
+				// Call GetLastError() if you need to know why
+				return(FALSE);
+			}
+
+			// 3. Get the CmdLine
+			wchar_t wszCmdLine[MAX_PATH+1] = {0};
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, (LPVOID)Block.CmdLine.Buffer, 
+				wszCmdLine, MAX_PATH*sizeof(wchar_t), &size)) {
+					// Call GetLastError() if you need to know why
+					return(FALSE);
+			}
+
+			// 4. Skip the application pathname
+			//    it can be empty, "c:\...\app.exe" or c:\...\app.exe
+			wchar_t* pPos = wszCmdLine;
+			if (*pPos != L'\0') {
+				if (*pPos == L'"') {
+					// Find the next " character
+					pPos = wcschr(&pPos[1], L'"');
+				} else {
+					// Find the next SPACE character
+					pPos = wcschr(&pPos[1], L' ');
+				}
+
+				// Skip it
+				if (pPos != NULL)
+					pPos++;
+			}
+
+			// Copy it back
+			if (pPos != NULL) {
+
+				if (*pPos != L'\0') {
+#ifdef UNICODE
+					// Both strings are in UNICODE.
+					strCmdLine.assign(wszCmdLine);
+#else
+					CHAR szCmdLine[MAX_PATH+1] = {0};
+					WideCharToMultiByte(CP_ACP,0,wszCmdLine,size/sizeof(wchar_t),szCmdLine,MAX_PATH,NULL,NULL);
+					strCmdLine = szCmdLine;
+
+#endif
+					bSuccess = TRUE;
+				}
+
+			}
+
+
+		}
+
+	}
+
+	return bSuccess;
+}
+
+
+BOOL Star::Process::GetProcessCmdLine64(HANDLE hProcess,CString&strCmdLine)
+{
+	BOOL bSuccess = FALSE;
+
+	//
+	PROCESS_BASIC_INFORMATION64 pbi64;
+	TNtQueryInformationProcess pfnNtQueryInformationProcess = NULL;
+	TNtReadVirtualMemory64 pfnNtReadVirtualMemory = NULL;
+
+	pfnNtQueryInformationProcess = (TNtQueryInformationProcess)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtWow64QueryInformationProcess64");
+	pfnNtReadVirtualMemory = (TNtReadVirtualMemory64)GetProcAddress(GetModuleHandle(_T("ntdll.dll")),"NtWow64ReadVirtualMemory64");
+
+
+	if ( pfnNtQueryInformationProcess!=NULL ){
+		DWORD dwSize;
+		UINT64 size;
+		int iReturn;
+		PVOID64 pAddrPEB = NULL;
+
+
+		iReturn = pfnNtQueryInformationProcess( hProcess,ProcessBasicInformation,&pbi64,sizeof(pbi64),&dwSize);
+		pAddrPEB = pbi64.PebBaseAddress;
+
+		// NtQueryInformationProcess returns a negative value if it fails
+		if (iReturn >= 0) {
+			// 1. Find the Process Environment Block
+			__PEB64 PEB;
+			size = dwSize;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, pAddrPEB, &PEB, sizeof(PEB), &size) ) {
+				// Call GetLastError() if you need to know why
+				return bSuccess;
+			}
+
+			// 2. From this PEB, get the address of the block containing 
+			// a pointer to the CmdLine
+			MY_RTL_USER_PROCESS_PARAMETERS64 stBlock;
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, (LPVOID)PEB.ProcessParameters, &stBlock, sizeof(stBlock), &size)) {
+				// Call GetLastError() if you need to know why
+				return(FALSE);
+			}
+
+			// 3. Get the CmdLine
+			wchar_t wszCmdLine[MAX_PATH+1] = {0};
+			if ( ERROR_SUCCESS != pfnNtReadVirtualMemory(hProcess, (LPVOID)stBlock.CmdLine.Buffer, 
+				wszCmdLine, MAX_PATH*sizeof(wchar_t), &size)) {
+					// Call GetLastError() if you need to know why
+					return(FALSE);
+			}
+
+			// 4. Skip the application pathname
+			//    it can be empty, "c:\...\app.exe" or c:\...\app.exe
+			wchar_t* pPos = wszCmdLine;
+			if (*pPos != L'\0') {
+				if (*pPos == L'"') {
+					// Find the next " character
+					pPos = wcschr(&pPos[1], L'"');
+				} else {
+					// Find the next SPACE character
+					pPos = wcschr(&pPos[1], L' ');
+				}
+
+				// Skip it
+				if (pPos != NULL)
+					pPos++;
+			}
+
+			// Copy it back
+			if (pPos != NULL) {
+
+				if (*pPos != L'\0') {
+#ifdef UNICODE
+					// Both strings are in UNICODE.
+					strCmdLine.assign(wszCmdLine);
+#else
+					CHAR szCmdLine[MAX_PATH+1] = {0};
+					WideCharToMultiByte(CP_ACP,0,wszCmdLine,size/sizeof(wchar_t),szCmdLine,MAX_PATH,NULL,NULL);
+					strCmdLine = szCmdLine;
+
+#endif
+					bSuccess = TRUE;
+				}
+
+			}
+
+
+		}
+
+	}
+
+	return bSuccess;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
