@@ -226,6 +226,77 @@ void Star::File::SearchFile(CString strDirectory)
 
 }
 
+//输入一个文件路径(可以是文件也可以是目录，返回该目录下的所有文件以及目录名，不递归)
+void Star::File::GetAllFilesList(LPCTSTR szFilePath,list<CString>&vtFiles)
+{
+	CString strPath;
+	vtFiles.clear();
+	DWORD dwFileAttributes=::GetFileAttributes(szFilePath);
+
+	//先验证是否是合法的路径
+	if ( dwFileAttributes!=-1 ){
+		size_t nLen=0;
+		TCHAR szDir[MAX_PATH]={0};
+		while ( *szFilePath ){
+			if ( *szFilePath=='/' ){
+				szDir[nLen]='\\';
+			}else{
+				szDir[nLen]=*szFilePath;
+			}
+			szFilePath++;
+			nLen++;
+		}
+
+		//是否是目录
+		if ( dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY ){
+			if ( szDir[nLen-1]!='\\' ){
+				szDir[nLen++]='\\';
+				szDir[nLen]='\0';
+			}
+		}else{
+			LPTSTR p=_tcsrchr(szDir,'\\');
+			if ( p!=NULL ){
+				p[1]='\0';
+			}else{
+				//err
+				return;
+			}
+		}
+
+		//得到目录后开始遍历
+		strPath = szDir;
+		_tcscat_s(szDir,MAX_PATH,_T("*"));
+		WIN32_FIND_DATA fd;   
+		HANDLE hFindFile = FindFirstFile(szDir, &fd);   
+		if( hFindFile==INVALID_HANDLE_VALUE ){   
+			return;
+		}   
+
+		BOOL bOK=TRUE;   
+		CString strFile;
+		while( bOK ){   
+
+			//如果是.或..  
+			if ( (fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)!=0 ){
+				if ( _tcscmp(fd.cFileName,_T("."))!=0 && _tcscmp(fd.cFileName,_T(".."))!=0 ){
+					strFile = strPath;
+					strFile += fd.cFileName;
+					strFile += _T("\\");
+					vtFiles.push_front(strFile);	//目录插在前面
+				}
+			}else{
+				strFile = strPath;
+				strFile += fd.cFileName;
+				vtFiles.push_back(strFile);			//文件插在后面
+			}
+
+			bOK = FindNextFile(hFindFile, &fd);   
+		}//end while
+		::FindClose(hFindFile);   
+
+	}
+}
+
 //计算文件的CRC值，返回0为成功
 int Star::File::GetFileCRC(LPCTSTR szFileName,unsigned long* result_crc)
 {

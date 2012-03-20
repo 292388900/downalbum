@@ -1,6 +1,7 @@
 
 #pragma once
 #include <vector>
+#include <list>
 using namespace std;
 
 namespace Star
@@ -14,6 +15,9 @@ namespace Star
 		void RarAddFile(CString strRarCmd,CString rarFile,CString strFileToAdd,CString currentDir);
 		void OpenFile(CString strFileName);
 		void SearchFile(CString strDirectory);
+
+		//输入一个文件路径(可以是文件也可以是目录，返回该目录下的所有文件以及目录名，不递归)
+		void GetAllFilesList(LPCTSTR szFilePath,list<CString>&vtFiles);
 
 		//计算文件的CRC值，返回0为成功
 		int GetFileCRC(LPCTSTR szFileName,unsigned long* result_crc);
