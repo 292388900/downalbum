@@ -30,5 +30,18 @@ namespace Star
 
 #endif
 
+		HWND FindTrayWnd();
+		HWND FindNotifyIconOverflowWindow();
+
+		//屏保是否运行
+		BOOL IsScreensaversOn(void);
+
+		//获取显示器个数，如果为零则可疑
+		int  GetMonitorCount(void);
+
+		//显示器是否关闭
+		BOOL IsMonitorOn(void);
+
+		static BOOL CALLBACK EnumMonitorsProc(HMONITOR hMonitor, HDC /*hdcMonitor*/, LPRECT lprcMonitor, LPARAM dwData);
 	}
 }
