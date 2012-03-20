@@ -193,3 +193,72 @@ BOOL Star::Sys::IsAdmin()
 
 
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+
+HWND Star::Sys::FindTrayWnd()
+{
+	HWND hWnd = NULL;
+
+	hWnd = FindWindow(_T("Shell_TrayWnd"), NULL);
+	hWnd = FindWindowEx(hWnd, NULL, _T("TrayNotifyWnd"), NULL);
+	hWnd = FindWindowEx(hWnd, NULL, _T("SysPager"), NULL);
+	hWnd = FindWindowEx(hWnd, NULL, _T("ToolbarWindow32"), NULL);
+
+	return hWnd;
+}
+
+HWND Star::Sys::FindNotifyIconOverflowWindow()
+{
+	HWND hWnd = NULL;
+
+	hWnd = FindWindow(_T("NotifyIconOverflowWindow"), NULL);
+	hWnd = FindWindowEx(hWnd, NULL, _T("ToolbarWindow32"), NULL);
+
+	return hWnd;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+//屏保是否运行
+BOOL Star::Sys::IsScreensaversOn(void)
+{
+	BOOL isActive = FALSE;   //一定是BOOL而不是bool否则运行时错误
+	SystemParametersInfo(SPI_GETSCREENSAVERRUNNING,0,&isActive,0);
+	return isActive;
+}
+
+// This function is used for monitor enumeration
+BOOL CALLBACK Star::Sys::EnumMonitorsProc(HMONITOR hMonitor, HDC /*hdcMonitor*/, LPRECT lprcMonitor, LPARAM dwData)
+{	
+	int *pMonitorCnt = (int *)dwData;
+	if ( pMonitorCnt==NULL ){
+		return FALSE;
+	}
+
+	++(*pMonitorCnt);
+
+	return TRUE;
+}
+
+//获取显示器个数，如果为零则可疑
+int  Star::Sys::GetMonitorCount(void)
+{
+	int nMonitorCnt = 0;
+	::EnumDisplayMonitors(NULL, NULL, EnumMonitorsProc, (LPARAM)&nMonitorCnt);
+	return nMonitorCnt;
+}
+
+
+//显示器是否关闭
+BOOL Star::Sys::IsMonitorOn(void)
+{
+	BOOL isActive = TRUE;
+	HANDLE hMonitor=CreateFile(_T("\\\\.\\LCD\\"),GENERIC_WRITE|GENERIC_READ,0,NULL,OPEN_EXISTING,0,NULL);
+	if( hMonitor!=INVALID_HANDLE_VALUE ){
+		::GetDevicePowerState(hMonitor,&isActive);
+		::CloseHandle(hMonitor);
+	}
+	return isActive;
+}
+//////////////////////////////////////////////////////////////////////////
