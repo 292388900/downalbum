@@ -112,5 +112,8 @@ namespace Star
 		void CopyToClipboard(LPCTSTR szText,int nCbSize=-1);
 
 		int GetMac(IN OUT TCHAR *szMac,IN int nBuffSize);
+
+		//截屏 如果hwnd为NULL则截取整个桌面，否则只截取该窗口,文件保存到szFilePath
+		DWORD CaptureScreen(HWND hWnd, LPCTSTR sSavePath);
 	}
 }
