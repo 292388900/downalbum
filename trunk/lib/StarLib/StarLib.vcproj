@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Process\Process.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -203,6 +207,14 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\Sys\Sys.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Process\Thread.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -214,7 +226,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Process\Process.h"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sys\Sys.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Process\Thread.h"
 				>
 			</File>
 		</Filter>
