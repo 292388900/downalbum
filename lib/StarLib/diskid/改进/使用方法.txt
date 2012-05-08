@@ -1,0 +1,6 @@
+²Î¿¼£ºhttp://www.winsim.com/diskid32/diskid32.cpp
+
+getHardDriveComputerID();
+	CString strTemp;
+	strTemp = HardDriveSerialNumber;
+	strTemp.Trim();
