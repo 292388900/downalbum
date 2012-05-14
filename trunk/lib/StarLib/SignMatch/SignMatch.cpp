@@ -204,14 +204,8 @@ PBYTE CSignMatch::SearchProcessSign(HANDLE hProcess,PBYTE pImageBase,DWORD dwIma
 		return NULL;
 	}
 
-	//如果结束位置过大，则只取到该段大小
-	if ( m_dwSearchEnd>dwImageSize ){
-		m_dwSearchEnd = dwImageSize;
-		m_nRange = m_dwSearchEnd - m_dwSearchBegin;
-	}
-
 	//不能越界
-	if ( m_dwSearchBegin>=dwImageSize || m_nRange<m_nSignLen ){
+	if ( m_dwSearchBegin>=dwImageSize || m_dwSearchEnd>dwImageSize || m_nRange<m_nSignLen ){
 		return NULL;
 	}
 
