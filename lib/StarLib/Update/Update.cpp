@@ -31,7 +31,13 @@ BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo)
 	}
 	
 	TiXmlDocument myDocument;
+#ifdef _UNICODE
+	CStringA strHtmlA;
+	strHtmlA = strHtml;
+	myDocument.Parse(strHtmlA);
+#else
 	myDocument.Parse(strHtml);
+#endif
 	TiXmlElement* rootElement = myDocument.RootElement();  //data
 	TiXmlNode*pNodeTemp=NULL;
 	if ( rootElement!=NULL ){
@@ -114,99 +120,99 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<name>");
+	nPos1=strHtml.Find(_T("<name>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+6);
+		nPos2=strHtml.Find(_T("</"),nPos1+6);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strName=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<version>");
+	nPos1=strHtml.Find(_T("<version>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+9);
+		nPos2=strHtml.Find(_T("</"),nPos1+9);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strVersion=strHtml.Mid(nPos1+9,nPos2-nPos1-9);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<downurl>");
+	nPos1=strHtml.Find(_T("<downurl>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+9);
+		nPos2=strHtml.Find(_T("</"),nPos1+9);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strDownUrl=strHtml.Mid(nPos1+9,nPos2-nPos1-9);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<downurl2>");
+	nPos1=strHtml.Find(_T("<downurl2>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+10);
+		nPos2=strHtml.Find(_T("</"),nPos1+10);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strDownUrl2=strHtml.Mid(nPos1+10,nPos2-nPos1-10);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<regurl>");
+	nPos1=strHtml.Find(_T("<regurl>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+8);
+		nPos2=strHtml.Find(_T("</"),nPos1+8);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strRegUrl=strHtml.Mid(nPos1+8,nPos2-nPos1-8);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<help>");
+	nPos1=strHtml.Find(_T("<help>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+6);
+		nPos2=strHtml.Find(_T("</"),nPos1+6);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strHelpUrl=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<bbs>");
+	nPos1=strHtml.Find(_T("<bbs>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+5);
+		nPos2=strHtml.Find(_T("</"),nPos1+5);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strBBS=strHtml.Mid(nPos1+5,nPos2-nPos1-5);
 			stUpdateInfo.strHome=stUpdateInfo.strBBS;
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<news>");
+	nPos1=strHtml.Find(_T("<news>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+6);
+		nPos2=strHtml.Find(_T("</"),nPos1+6);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strNews=strHtml.Mid(nPos1+6,nPos2-nPos1-6);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<urgent>");
+	nPos1=strHtml.Find(_T("<urgent>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+8);
+		nPos2=strHtml.Find(_T("</"),nPos1+8);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strUrgent=strHtml.Mid(nPos1+8,nPos2-nPos1-8);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<allsoft>");
+	nPos1=strHtml.Find(_T("<allsoft>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+9);
+		nPos2=strHtml.Find(_T("</"),nPos1+9);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strAllsoft=strHtml.Mid(nPos1+9,nPos2-nPos1-9);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<ad>");
+	nPos1=strHtml.Find(_T("<ad>"));
 	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find("</",nPos1+4);
+		nPos2=strHtml.Find(_T("</"),nPos1+4);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strAdsUrl=strHtml.Mid(nPos1+4,nPos2-nPos1-4);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find("<votes>");
+	nPos1=strHtml.Find(_T("<votes>"));
 	if ( nPos1!=-1 ){
 		stUpdateInfo.vtVotes.clear();
-		nEnd=strHtml.Find("</",nPos1);
+		nEnd=strHtml.Find(_T("</"),nPos1);
 		if ( nEnd==-1 ){
 			nEnd=strHtml.GetLength();
 		}
@@ -214,7 +220,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		VOTEINFO stVote;
 		nPos2=nPos1+7;
 		while ( TRUE ){
-			nPos1=strHtml.Find("s=",nPos2);
+			nPos1=strHtml.Find(_T("s="),nPos2);
 			if ( nPos1==-1 ){
 				break;
 			}
@@ -225,7 +231,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 				continue;
 			}
 
-			nPos1=strHtml.Find("p=",nPos2);
+			nPos1=strHtml.Find(_T("p="),nPos2);
 			if ( nPos1==-1 ){
 				break;
 			}
@@ -244,15 +250,15 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 
 void StartNewVersionApp(CString strNewApp)
 {
-	char szExePath[MAX_PATH];
+	TCHAR szExePath[MAX_PATH];
 	GetModuleFileName(NULL,szExePath,MAX_PATH);
 
 	CString strCmdLine;
-	strCmdLine.Format("\"%s\" delete \"%s\"",strNewApp,szExePath);
+	strCmdLine.Format(_T("\"%s\" delete \"%s\""),strNewApp,szExePath);
 
 	STARTUPINFO si={};
 	PROCESS_INFORMATION pi={};
 	si.cb=sizeof(si);
-	CreateProcess(NULL,(LPSTR)(LPCTSTR)strCmdLine,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi);
+	CreateProcess(NULL,(LPTSTR)(LPCTSTR)strCmdLine,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi);
 	::ExitProcess(0);
 }
