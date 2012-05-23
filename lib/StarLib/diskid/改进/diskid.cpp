@@ -670,9 +670,10 @@ int ReadPhysicalDriveInNTUsingSmart(char *sBuff,int nLen)
 					done = TRUE;
 				}
 				// Done
-				CloseHandle (hPhysicalDriveIOCTL);
 				delete []Command;
 			}
+
+			CloseHandle (hPhysicalDriveIOCTL);
 		}
 	}
 
