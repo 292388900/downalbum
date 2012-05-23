@@ -104,6 +104,7 @@ BYTE IdOutCmd [sizeof (SENDCMDOUTPARAMS) + IDENTIFY_BUFFER_SIZE - 1];
 char *ConvertToString (DWORD diskdata [256], int firstIndex, int lastIndex); 
 void PrintIdeInfo(int drive, DWORD diskdata [256],char *sDest,int nLen); 
 BOOL DoIDENTIFY (HANDLE, PSENDCMDINPARAMS, PSENDCMDOUTPARAMS, BYTE, BYTE, PDWORD); 
+BOOL myIsalnum(char ch);
 
 //  Max number of drives assuming primary/secondary, master/slave topology 
 #define  MAX_IDE_DRIVES  16 
@@ -113,11 +114,12 @@ int ReadPhysicalDriveInNTWithAdminRights(char *sBuff,int nLen)
 	int done = FALSE; 
 	HANDLE hPhysicalDriveIOCTL = 0; 
 	TCHAR driveName[MAX_PATH]; 
+	TCHAR szPhysicalDriveFormat[] = { '\\', '\\', '.', '\\', 'P', 'h', 'y', 's', 'i', 'c', 'a', 'l', 'D', 'r', 'i', 'v', 'e', '%', 'd', '\0' };
 
 	for ( int drive = 0; drive < MAX_IDE_DRIVES; drive++ ){ 
 		//  Try to get a handle to PhysicalDrive IOCTL, report failure 
 		//  and exit if can''t. 
-		_stprintf_s (driveName, _T("\\\\.\\PhysicalDrive%d"), drive); 
+		_stprintf_s (driveName, szPhysicalDriveFormat, drive); 
 		//  Windows NT, Windows 2000, must have admin rights 
 		hPhysicalDriveIOCTL = CreateFile (driveName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE , NULL, OPEN_EXISTING, 0, NULL); 
 		
@@ -263,11 +265,12 @@ int ReadPhysicalDriveInNTWithZeroRights(char *sBuff,int nLen)
 	int done = FALSE; 
 	HANDLE hPhysicalDriveIOCTL = 0; 
 	TCHAR driveName [MAX_PATH]; 
+	TCHAR szPhysicalDriveFormat[] = { '\\', '\\', '.', '\\', 'P', 'h', 'y', 's', 'i', 'c', 'a', 'l', 'D', 'r', 'i', 'v', 'e', '%', 'd', '\0' };
 
 	for (int drive = 0; drive < MAX_IDE_DRIVES; drive++){ 
 		//  Try to get a handle to PhysicalDrive IOCTL, report failure 
 		//  and exit if can''t. 
-		_stprintf_s (driveName, _T("\\\\.\\PhysicalDrive%d"), drive); 
+		_stprintf_s (driveName, szPhysicalDriveFormat, drive); 
 		//  Windows NT, Windows 2000, Windows XP - admin rights not required 
 		hPhysicalDriveIOCTL = CreateFile (driveName, 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL); 
 		// if (hPhysicalDriveIOCTL == INVALID_HANDLE_VALUE) 
@@ -294,7 +297,7 @@ int ReadPhysicalDriveInNTWithZeroRights(char *sBuff,int nLen)
 				if ( 0 == sBuff [0] && 
 					//  serial number must be alphanumeric 
 							//  (but there can be leading spaces on IBM drives) 
-					(isalnum (serialNumber [0]) || isalnum (serialNumber [19])) ) { 
+					(myIsalnum (serialNumber [0]) || myIsalnum (serialNumber [19])) ) { 
 					strcpy_s (sBuff, nLen, serialNumber); 
 					//strcpy_s (HardDriveModelNumber, modelNumber); 
 					done = TRUE; 
@@ -313,7 +316,7 @@ int ReadPhysicalDriveInNTWithZeroRights(char *sBuff,int nLen)
 				if ( 0 == sBuff[0] && 
 					//  serial number must be alphanumeric 
 							//  (but there can be leading spaces on IBM drives) 
-					(isalnum (serialNumber [0]) || isalnum (serialNumber [19])) ) { 
+					(myIsalnum (serialNumber [0]) || myIsalnum (serialNumber [19])) ) { 
 					strcpy_s (sBuff, nLen, serialNumber); 
 					// strcpy_s (HardDriveModelNumber, modelNumber); 
 					done = TRUE; 
@@ -400,6 +403,8 @@ int ReadDrivePortsInWin9X(char *sBuff,int nLen)
 	HANDLE VxDHandle = 0; 
 	pt_IdeDInfo pOutBufVxD = 0; 
 	DWORD lpBytesReturned = 0; 
+	TCHAR szIDE21201VXDFormat[] = { '\\', '\\', '.', '\\', 'I', 'D', 'E', '2', '1', '2', '0', '1', '.', 'V', 'X', 'D', '\0' };
+
 	//  set the thread priority high so that we get exclusive access to the disk 
 	BOOL status = SetPriorityClass (GetCurrentProcess (), REALTIME_PRIORITY_CLASS); 
 	if (0 == status){
@@ -430,7 +435,7 @@ int ReadDrivePortsInWin9X(char *sBuff,int nLen)
 	//sprintf_s (vxd, "\\\\.\\%s\\IDE21201.VXD", shortFileNamePath); 
 	//VxDHandle = CreateFile (vxd, 0, 0, 0, 
 	//               0, FILE_FLAG_DELETE_ON_CLOSE, 0);    
-	VxDHandle = CreateFile (_T("\\\\.\\IDE21201.VXD"), 0, 0, 0, 0, FILE_FLAG_DELETE_ON_CLOSE, 0); 
+	VxDHandle = CreateFile (szIDE21201VXDFormat, 0, 0, 0, 0, FILE_FLAG_DELETE_ON_CLOSE, 0); 
 	if (VxDHandle != INVALID_HANDLE_VALUE) { 
 		// 2. Run VxD function 
 		DeviceIoControl (VxDHandle, m_cVxDFunctionIdesDInfo, 0, 0, pOutBufVxD, sizeof(pt_IdeDInfo), &lpBytesReturned, 0); 
@@ -463,13 +468,15 @@ int ReadIdeDriveAsScsiDriveInNT(char *sBuff,int nLen)
 { 
    int done = FALSE; 
    int controller = 0; 
+   TCHAR szScsiFormat[] = { '\\', '\\', '.', '\\', 'S', 'c', 's', 'i', '%', 'd', ':', '"', '\0' };
+
    for (controller = 0; controller < 16; controller++) 
    { 
       HANDLE hScsiDriveIOCTL = 0; 
       TCHAR  driveName [MAX_PATH]; 
          //  Try to get a handle to PhysicalDrive IOCTL, report failure 
          //  and exit if can''t. 
-      _stprintf_s (driveName, _T("\\\\.\\Scsi%d:"), controller); 
+      _stprintf_s (driveName, szScsiFormat, controller); 
          //  Windows NT, Windows 2000, any rights should do 
       hScsiDriveIOCTL = CreateFile (driveName, 
                                GENERIC_READ | GENERIC_WRITE,  
@@ -597,6 +604,7 @@ int ReadPhysicalDriveInNTUsingSmart(char *sBuff,int nLen)
 {
 	int done = FALSE;
 	int drive = 0;
+	TCHAR szPhysicalDriveFormat[] = { '\\', '\\', '.', '\\', 'P', 'h', 'y', 's', 'i', 'c', 'a', 'l', 'D', 'r', 'i', 'v', 'e', '%', 'd', '\0' };
 
 	for (drive = 0; drive < MAX_IDE_DRIVES; drive++)
 	{
@@ -606,7 +614,7 @@ int ReadPhysicalDriveInNTUsingSmart(char *sBuff,int nLen)
 		//  and exit if can't.
 		TCHAR driveName [MAX_PATH];
 
-		_stprintf (driveName, _T("\\\\.\\PhysicalDrive%d"), drive);
+		_stprintf (driveName, szPhysicalDriveFormat, drive);
 
 		//  Windows NT, Windows 2000, Windows Server 2003, Vista
 		hPhysicalDriveIOCTL = CreateFile (driveName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
@@ -671,6 +679,14 @@ int ReadPhysicalDriveInNTUsingSmart(char *sBuff,int nLen)
 	return done;
 }
 
+BOOL myIsalnum(char ch)
+{
+	if ( (unsigned)(ch+1)<=256 ){	
+		return isalnum(ch);
+	}
+	return FALSE;
+}
+
 void PrintIdeInfo(int drive, DWORD diskdata [256],char *sDest,int nLen) 
 { 
    char string1 [1024]; 
@@ -681,7 +697,7 @@ void PrintIdeInfo(int drive, DWORD diskdata [256],char *sDest,int nLen)
    if (0 == sDest[0] && 
             //  serial number must be alphanumeric 
             //  (but there can be leading spaces on IBM drives) 
-       (isalnum (string1 [0]) || isalnum (string1 [19]))) 
+       (myIsalnum (string1 [0]) || myIsalnum (string1 [19]))) 
    { 
       strcpy_s (sDest, nLen, string1); 
       //strcpy_s (HardDriveModelNumber, ConvertToString (diskdata, 27, 46)); 
@@ -755,5 +771,4 @@ int GetHardDriveSerialNumber(char *sBuff,int nLen)
 
 	return done;
 }
-
 
