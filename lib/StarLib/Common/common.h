@@ -104,6 +104,8 @@ namespace Star
 		BOOL ShutDownComputer(UINT ShutdownFlags=EWX_POWEROFF);
 		
 		CString GetCurrentTimeStr();
+		CString GetCurrentTimeTotalSeconds();
+		CString GetCurrentTimeTotalMiliSeconds();
 
 		//////////////////////////////////////////////////////////////////////////
 		int WaitData(SOCKET hSocket,DWORD dwTime);
