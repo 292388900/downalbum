@@ -1,0 +1,28 @@
+
+int CreateAutoRun( LPCTSTR szDispInfo, LPCTSTR szAutoRunCmd, BOOL bAdd=TRUE );
+
+//HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+//在win7 64系统下会自动映射到：HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Run
+//举例：CreateAutoRun(_T("myautoruntest"),_T("/auto"));
+int CreateAutoRun( LPCTSTR szDispInfo, LPCTSTR szAutoRunCmd, BOOL bAdd )
+{
+	int nError = 0;
+	HKEY hKey = NULL;   
+	CString strFilePath;   
+	GetModuleFileName(NULL,strFilePath.GetBufferSetLength(MAX_PATH+1),MAX_PATH);   
+	strFilePath.ReleaseBuffer(); 
+
+	strFilePath = _T("\"") + strFilePath + _T("\" ") + szAutoRunCmd;
+  
+	RegOpenKey(HKEY_LOCAL_MACHINE,_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"),&hKey);
+	if ( hKey!=NULL ){
+		if ( bAdd ){
+			RegSetValueEx(hKey,szDispInfo,0,REG_SZ,(const BYTE *)(LPCTSTR)strFilePath,strFilePath.GetLength());
+		}else{
+			RegDeleteValue(hKey,szDispInfo);
+		}
+		RegCloseKey(hKey);
+	}
+	
+	return 0;
+} 
