@@ -121,5 +121,7 @@ namespace Star
 
 		//×ª»»Â·¾¶,\Device\HarddiskVolume2\ -¡· D
 		CString DosDevicePath2LogicalPath(LPCTSTR lpszDosPath);
+
+		int CreateAutoRun( LPCTSTR szDispInfo, LPCTSTR szAutoRunCmd, BOOL bAdd=TRUE );
 	}
 }
