@@ -112,7 +112,7 @@ namespace Star
 		ULONG GetInternetTime(char *lpszHostAddress, UINT nHostPort,int nTimeOut=10000);
 		ULONG GetInternetTime(int nTimeOut=10000);
 		//////////////////////////////////////////////////////////////////////////
-		void CopyToClipboard(LPCTSTR szText,int nCbSize=-1);
+		void CopyToClipboard(LPCTSTR szText,int nCbSize=-1,HWND hWndNewOwner=NULL);
 
 		int GetMac(IN OUT TCHAR *szMac,IN int nBuffSize);
 
