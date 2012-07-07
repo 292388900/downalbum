@@ -1,0 +1,27 @@
+<data>
+    <soft>
+        <name>PhotoBatch</name>
+        <version>12.8.1</version>
+        <downurl>http://www.xcxzq.com/soft/PhotoBatch.exe</downurl>
+        <downurl2>http://www.xcxzq.com/soft/PhotoBatch2.exe</downurl2>
+        <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37093.htm</regurl>
+	<help>http://www.xcxzq.com/help/PhotoBatch.html</help>
+	<bbs>http://www.xcxzq.com</bbs>
+        <pswd></pswd>
+        <news>如果杀软误报请设置信任，放心使用。本软件不盗号，绿色便捷。</news>
+	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
+	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<votes>
+s=2,p=71374,
+</votes>
+<!--
+<votes2>
+s=1,p=109825,
+s=1,p=104474,
+s=2,p=59457,
+s=2,p=57770,
+s=2,p=61291,
+</votes2>
+-->
+    </soft>
+</data>
