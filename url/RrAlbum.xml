@@ -1,14 +1,14 @@
 <data>
     <soft>
         <name>RrAlbum</name>
-        <version>2.64</version>
+        <version>2.65</version>
         <downurl>http://www.xcxzq.com/soft/RrAlbum.exe</downurl>
         <downurl2>http://www.xcxzq.com/soft/RrAlbum2.exe</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37281.htm</regurl>
         <help>http://www.xcxzq.com/help/rralbum.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
         <pswd></pswd>
-      	<news>v2.64加强了人人小站图片的下载，建议升级到最新版!</news>
+      	<news>v2.65修复了不能下载分享相册、单个相册、公共相册的问题，建议升级到最新版!</news>
 	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
 	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <!--
