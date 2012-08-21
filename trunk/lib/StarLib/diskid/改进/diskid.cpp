@@ -16,6 +16,61 @@
 #include "diskid.h"
 #include <WinIoCtl.h>
 
+//////////////////////////////////////////////////////////////////////////
+
+#if _MSC_VER < 1600
+
+typedef enum _STORAGE_PROPERTY_ID { 
+	StorageDeviceProperty                   = 0,
+	StorageAdapterProperty                  = 1,
+	StorageDeviceIdProperty                 = 2,
+	StorageDeviceUniqueIdProperty           = 3,
+	StorageDeviceWriteCacheProperty         = 4,
+	StorageMiniportProperty                 = 5,
+	StorageAccessAlignmentProperty          = 6,
+	StorageDeviceSeekPenaltyProperty        = 7,
+	StorageDeviceTrimProperty               = 8,
+	StorageDeviceWriteAggregationProperty   = 9,
+	StorageDeviceDeviceTelemetryProperty    = 10,
+	// 0xA  StorageDeviceLBProvisioningProperty     = 11,
+	// 0xB  StorageDeviceZeroPowerODDProperty       = 12,
+	// 0xC  StorageDeviceCopyOffloadProperty        = 13,
+	// 0xD  StorageDeviceResiliencyProperty         = 14   // 0xE
+} STORAGE_PROPERTY_ID, *PSTORAGE_PROPERTY_ID;
+
+typedef enum _STORAGE_QUERY_TYPE { 
+	PropertyStandardQuery     = 0,
+	PropertyExistsQuery       = 1,
+	PropertyMaskQuery         = 2,
+	PropertyQueryMaxDefined   = 3 
+} STORAGE_QUERY_TYPE, *PSTORAGE_QUERY_TYPE;
+
+typedef struct _STORAGE_PROPERTY_QUERY {
+	STORAGE_PROPERTY_ID PropertyId;
+	STORAGE_QUERY_TYPE  QueryType;
+	BYTE                AdditionalParameters[1];
+} STORAGE_PROPERTY_QUERY, *PSTORAGE_PROPERTY_QUERY;
+
+
+typedef struct _STORAGE_DEVICE_DESCRIPTOR {
+	DWORD            Version;
+	DWORD            Size;
+	BYTE             DeviceType;
+	BYTE             DeviceTypeModifier;
+	BOOLEAN          RemovableMedia;
+	BOOLEAN          CommandQueueing;
+	DWORD            VendorIdOffset;
+	DWORD            ProductIdOffset;
+	DWORD            ProductRevisionOffset;
+	DWORD            SerialNumberOffset;
+	STORAGE_BUS_TYPE BusType;
+	DWORD            RawPropertiesLength;
+	BYTE             RawDeviceProperties[1];
+} STORAGE_DEVICE_DESCRIPTOR, *PSTORAGE_DEVICE_DESCRIPTOR;
+
+#endif
+//////////////////////////////////////////////////////////////////////////
+
 
 //  Required to ensure correct PhysicalDrive IOCTL structure setup 
 #pragma pack(1) 
@@ -205,7 +260,7 @@ char * flipAndCodeBytes (char * str)
 	int i = 0; 
 	int j = 0; 
 	int k = 0; 
-	int num = strlen (str); 
+	int num = (int)strlen(str); 
 	strcpy_s (flipped,""); 
 	for (i = 0; i < num; i += 4) 
 	{ 
@@ -614,7 +669,7 @@ int ReadPhysicalDriveInNTUsingSmart(char *sBuff,int nLen)
 		//  and exit if can't.
 		TCHAR driveName [MAX_PATH];
 
-		_stprintf (driveName, szPhysicalDriveFormat, drive);
+		_stprintf(driveName, szPhysicalDriveFormat, drive);
 
 		//  Windows NT, Windows 2000, Windows Server 2003, Vista
 		hPhysicalDriveIOCTL = CreateFile (driveName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
