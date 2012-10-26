@@ -33,8 +33,8 @@ bool gzip_decoder::ungzip(unsigned char* gzdata, size_t gzdata_len, std::string&
     d_stream.zfree = (free_func)0;
     d_stream.opaque = (voidpf)0;
     d_stream.next_in = gzdata;
-    d_stream.avail_in = gzdata_len;
-    d_stream.avail_out = uncompress_buff_len_;
+    d_stream.avail_in = (uInt)gzdata_len;
+    d_stream.avail_out = (uInt)uncompress_buff_len_;
     d_stream.next_out = uncompress_buff_;
 
     if(inflateInit2(&d_stream, 47) != Z_OK)
@@ -55,7 +55,7 @@ bool gzip_decoder::ungzip(unsigned char* gzdata, size_t gzdata_len, std::string&
         {
             out_data.append((const char*)uncompress_buff_, d_stream.total_out - out_count);
             out_count = d_stream.total_out;
-            d_stream.avail_out = uncompress_buff_len_;
+            d_stream.avail_out = (uInt)uncompress_buff_len_;
             d_stream.next_out = uncompress_buff_;
         }
         else
