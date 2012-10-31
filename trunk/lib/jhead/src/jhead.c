@@ -31,67 +31,67 @@
 #define JPEGS_ONLY  4
 #define MODIFY_JPEG 5
 #define READ_JPEG   6
-static int DoModify     = FALSE;
+int DoModify     = FALSE;
 
 
-static int FilesMatched;
-static int FileSequence;
+int FilesMatched;
+int FileSequence;
 
-static const char * CurrentFile;
+const char * CurrentFile;
 
-static const char * progname;   // program name for error messages
+const char * progname;   // program name for error messages
 
 //--------------------------------------------------------------------------
 // Command line options flags
-static int TrimExif = FALSE;        // Cut off exif beyond interesting data.
-static int RenameToDate = 0;        // 1=rename, 2=rename all.
+int TrimExif = FALSE;        // Cut off exif beyond interesting data.
+int RenameToDate = 0;        // 1=rename, 2=rename all.
 #ifdef _WIN32
-static int RenameAssociatedFiles = FALSE;
+int RenameAssociatedFiles = FALSE;
 #endif
-static char * strftime_args = NULL; // Format for new file name.
-static int Exif2FileTime  = FALSE;
+char * strftime_args = NULL; // Format for new file name.
+int Exif2FileTime  = FALSE;
        int ShowTags     = FALSE;    // Do not show raw by default.
-static int Quiet        = FALSE;    // Be quiet on success (like unix programs)
+int Quiet        = FALSE;    // Be quiet on success (like unix programs)
        int DumpExifMap  = FALSE;
-static int ShowConcise  = FALSE;
-static int CreateExifSection = FALSE;
-static char * ApplyCommand = NULL;  // Apply this command to all images.
-static char * FilterModel = NULL;
-static int    ExifOnly    = FALSE;
-static int    PortraitOnly = FALSE;
-static time_t ExifTimeAdjust = 0;   // Timezone adjust
-static time_t ExifTimeSet = 0;      // Set exif time to a value.
-static char DateSet[11];
-static unsigned DateSetChars = 0;
-static unsigned FileTimeToExif = FALSE;
+int ShowConcise  = FALSE;
+int CreateExifSection = FALSE;
+char * ApplyCommand = NULL;  // Apply this command to all images.
+char * FilterModel = NULL;
+int    ExifOnly    = FALSE;
+int    PortraitOnly = FALSE;
+time_t ExifTimeAdjust = 0;   // Timezone adjust
+time_t ExifTimeSet = 0;      // Set exif time to a value.
+char DateSet[11];
+unsigned DateSetChars = 0;
+unsigned FileTimeToExif = FALSE;
 
-static int DeleteComments = FALSE;
-static int DeleteExif = FALSE;
-static int DeleteIptc = FALSE;
-static int DeleteXmp = FALSE;
-static int DeleteUnknown = FALSE;
-static char * ThumbSaveName = NULL; // If not NULL, use this string to make up
+int DeleteComments = FALSE;
+int DeleteExif = FALSE;
+int DeleteIptc = FALSE;
+int DeleteXmp = FALSE;
+int DeleteUnknown = FALSE;
+char * ThumbSaveName = NULL; // If not NULL, use this string to make up
                                     // the filename to store the thumbnail to.
 
-static char * ThumbInsertName = NULL; // If not NULL, use this string to make up
+char * ThumbInsertName = NULL; // If not NULL, use this string to make up
                                     // the filename to retrieve the thumbnail from.
 
-static int RegenThumbnail = FALSE;
+int RegenThumbnail = FALSE;
 
-static char * ExifXferScrFile = NULL;// Extract Exif header from this file, and
+char * ExifXferScrFile = NULL;// Extract Exif header from this file, and
                                     // put it into the Jpegs processed.
 
-static int EditComment = FALSE;     // Invoke an editor for editing the comment
-static int SupressNonFatalErrors = FALSE; // Wether or not to pint warnings on recoverable errors
+int EditComment = FALSE;     // Invoke an editor for editing the comment
+int SupressNonFatalErrors = FALSE; // Wether or not to pint warnings on recoverable errors
 
-static char * CommentSavefileName = NULL; // Save comment to this file.
-static char * CommentInsertfileName = NULL; // Insert comment from this file.
-static char * CommentInsertLiteral = NULL;  // Insert this comment (from command line)
+char * CommentSavefileName = NULL; // Save comment to this file.
+char * CommentInsertfileName = NULL; // Insert comment from this file.
+char * CommentInsertLiteral = NULL;  // Insert this comment (from command line)
 
-static int AutoRotate = FALSE;
-static int ZeroRotateTagOnly = FALSE;
+int AutoRotate = FALSE;
+int ZeroRotateTagOnly = FALSE;
 
-static int ShowFileInfo = TRUE;     // Indicates to show standard file info
+int ShowFileInfo = TRUE;     // Indicates to show standard file info
                                     // (file name, file size, file date)
 
 
@@ -100,9 +100,9 @@ static int ShowFileInfo = TRUE;     // Indicates to show standard file info
     // the comments in a JPEG.  The programs rdjpgcom and wrjpgcom
     // included with Linux distributions do a better job.
 
-    static char * AddComment = NULL; // Add this tag.
-    static char * RemComment = NULL; // Remove this tag
-    static int AutoResize = FALSE;
+    char * AddComment = NULL; // Add this tag.
+    char * RemComment = NULL; // Remove this tag
+    int AutoResize = FALSE;
 #endif // MATTHIAS
 
 //--------------------------------------------------------------------------
@@ -774,7 +774,7 @@ void FileTimeAsString(char * TimeStr)
 //--------------------------------------------------------------------------
 // Do selected operations to one file at a time.
 //--------------------------------------------------------------------------
-void ProcessFile(const char * FileName)
+extern void ProcessFile(const char * FileName)
 {
     int Modified = FALSE;
     ReadMode_t ReadMode;
