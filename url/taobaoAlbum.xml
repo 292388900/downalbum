@@ -1,14 +1,14 @@
 <data>
     <soft>
         <name>taobaoAlbum</name>
-        <version>1.23</version>
+        <version>1.24</version>
         <downurl>http://www.xcxzq.com/soft/taobaoAlbum.exe</downurl>
         <downurl2>http://www.xcxzq.com/soft/taobaoAlbum2.exe</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_40497.htm</regurl>
         <help>http://www.xcxzq.com/help/taobaoalbum.html</help>
         <bbs>http://www.xcxzq.com</bbs>
         <pswd></pswd>
-      	<news>v1.23版本修复了不能获取预览图片的问题，强烈建议更新软件!</news>
+      	<news>v1.24版本修复了不能获取宝贝详情图片的问题，强烈建议更新软件!</news>
 	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
 	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <!--
