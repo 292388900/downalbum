@@ -256,6 +256,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="gzipDecoder"
+				>
+				<File
+					RelativePath="..\..\lib\StarLib\gzipDecoder\gzipDecoder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\lib\StarLib\gzipDecoder\gzipDecoder.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

@@ -10,15 +10,14 @@ local url = nil
 local index = 1
 local pos1 = nil
 local pos2 = nil
-local html = mylib.gethtml('http://xiu.mop.com/artical/11070800113226.shtml')
+local html = mylib.gethtml('http://game.mop.com/ol/2139593.shtml')
 html = mylib.utf8togbk(html)
 
-local start = string.find(html,[[class="content"]])
-local over = string.find(html,[[class="ckyt"]])
+local start = 0;	--string.find(html,[[class="content"]])
 
 while true do
 	_, pos1 = string.find(html,[[src="]],start)
-	if pos1 == nil or pos1 > over then 
+	if pos1 == nil then 
 		break
 	end
 
@@ -34,7 +33,7 @@ while true do
 	index = index + 1
 end 
 
-mylib.msgbox('over')
+--mylib.msgbox('over')
 
 
 --mylib.msgbox( mylib.downloadfile('http://www.baidu.com',dir .. '1.html') )
