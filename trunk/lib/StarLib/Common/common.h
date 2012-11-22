@@ -123,5 +123,8 @@ namespace Star
 		CString DosDevicePath2LogicalPath(LPCTSTR lpszDosPath);
 
 		int CreateAutoRun( LPCTSTR szDispInfo, LPCTSTR szAutoRunCmd, BOOL bAdd=TRUE );
+
+		//弹出文件的系统菜单
+		void PopExplorerMenu(HWND hWnd, const CString&strFilePath, const CPoint&pt);
 	}
 }
