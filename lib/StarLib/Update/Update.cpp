@@ -115,6 +115,7 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	int nEnd=0;
 
 	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
+	//Star::Common::ConvertUtf8ToGBK(strHtml);
 	if ( dwHttpStatus!=0 ){
 		return bSucceed;
 	}
