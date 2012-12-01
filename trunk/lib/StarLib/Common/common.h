@@ -89,7 +89,7 @@ namespace Star
 
 		void RestartApp();
 
-		int SplitString(CString strSrc,CString strSep,vector<CString>&vtStr);
+		int SplitString(const CString&strSrc,const CString&strSep,vector<CString>&vtStr);
 
 		//int SetProxy(CInternetSession&sess,CHttpFile*pFile,char*szproxy, char*proxyUser, char* proxyPassword);   
 		
