@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="stdlib"
 	ProjectGUID="{D3D1A3AE-9BB8-490D-A668-8D8BA602B54E}"
+	RootNamespace="stdlib"
 	>
 	<Platforms>
 		<Platform
@@ -75,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib core.lib standard.lib libapi.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib"
 				OutputFile=".\..\..\executable\Debug/stdlib.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"

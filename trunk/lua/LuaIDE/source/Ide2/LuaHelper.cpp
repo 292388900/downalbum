@@ -72,6 +72,39 @@ BOOL CLuaHelper::ErrorStringToFileLine(CString strError, CString &strPathName, i
 	return TRUE;
 }
 
+//////////////////////////////////////////////////////////////////////////
+//added by sing 2012-12-11
+int	lua_getlineinfofromproto(Proto* p,int* lines)
+{
+	int size=0;
+	int i;
+
+	if(lines!=NULL)
+		memcpy(lines,p->lineinfo,sizeof(int)*p->sizelineinfo);	
+	size+=p->sizelineinfo;	
+
+	for (i=0; i<p->sizep; i++)
+	{			
+		size+=lua_getlineinfofromproto(
+			p->p[i],
+			(lines!=NULL)?lines+size:NULL);
+	}
+	return size;
+}
+
+//added by sing 2012-12-11
+LUA_API int lua_getlineinfo(lua_State* L,int* lines)
+{
+	const Closure* c = (const union Closure *)lua_topointer(L,-1);
+	int size;
+	lua_lock(L);
+	size=lua_getlineinfofromproto(c->l.p,lines);
+	lua_unlock(L);
+	return size;	
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 BOOL CLuaHelper::LoadDebugLines(CProjectFile* pPF)
 {
 	lua_State* L=lua_open();
@@ -141,7 +174,7 @@ BOOL CLuaHelper::PrepareDebugger()
 
 int CLuaHelper::OutputTop(lua_State* L)
 {
-	CDebugger::GetDebugger()->Write(luaL_check_string(L, -1));
+	CDebugger::GetDebugger()->Write(luaL_checkstring(L, -1));
 	CDebugger::GetDebugger()->Write("\n");
 	return 0;
 }
@@ -405,7 +438,7 @@ BOOL CLuaHelper::GetCalltip(const char *szWord, char *szCalltip)
 typedef int (*LuaRegister)(lua_State*, HWND hWnd);
 int CLuaHelper::lua_loadlib(lua_State *L)
 {
-	HMODULE hMod = LoadLibrary(luaL_check_string(L, 1));
+	HMODULE hMod = LoadLibrary(luaL_checkstring(L, 1));
 	if ( hMod )
 	{
 		LuaRegister lua_reg = (LuaRegister)GetProcAddress(hMod, "LuaRegister");
@@ -453,13 +486,13 @@ BOOL CLuaHelper::Eval(const char *szCode, char* szRet)
 	int top = lua_gettop(L);	
 	int status = luaL_loadbuffer(L, szCode, strlen(szCode), szCode);
 	if ( status )
-		sprintf(szRet, "%s", luaL_check_string(L, -1));
+		sprintf(szRet, "%s", luaL_checkstring(L, -1));
 	else
 	{
 		status = lua_pcall(L, 0, LUA_MULTRET, 0);  /* call main */
 		if ( status )
 		{
-			const char* szErr = luaL_check_string(L, -1);
+			const char* szErr = luaL_checkstring(L, -1);
 			const char* szErr2 = strstr(szErr, ": ");
 			sprintf(szRet, "%s", szErr2?(szErr2+2):szErr);
 		}
