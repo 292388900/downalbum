@@ -391,14 +391,14 @@ void CLuaEditor::SetLuaLexer()
    const short fontsize = 9;
    const char keywords[] = "and break do else elseif end false for function global if in local nil not or repeat return then true until while";
 	
-   //const char stopchars[]="\x09\x0A\x0D\x20";	//Added by zhuxingxing [2009-5-6]
+   //const char stopchars[]="\x09\x0A\x0D\x20";	//Added by sing [2009-5-6]
 
    // set style bits, choose the right lexer (Lua) and set the keywords list
    Sci(SCI_SETSTYLEBITS,5,0);
    Sci(SCI_SETLEXER,SCLEX_LUA,0);
    Sci(SCI_SETKEYWORDS,0,(LPARAM)keywords);
 
-   //Sci(SCI_AUTOCSTOPS,0,(LPARAM)stopchars);		//Added by zhuxingxing [2009-5-6]
+   //Sci(SCI_AUTOCSTOPS,0,(LPARAM)stopchars);		//Added by sing [2009-5-6]
    
    // set up basic features (iguides on, tab=3, tabs-to-spaces, EOL=CRLF)
    Sci(SCI_SETINDENTATIONGUIDES,1,0);
