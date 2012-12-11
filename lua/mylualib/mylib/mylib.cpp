@@ -63,8 +63,8 @@ int gethtml(lua_State *L)
 	return 1;
 }
 
-//utf8串转换为gbk的串
-int utf8togbk(lua_State *L)
+//utf8串转换为多字节的串
+int utf8s2ms(lua_State *L)
 {
 	int n = lua_gettop(L);
 	if ( n==0 ){
@@ -92,7 +92,7 @@ int utf8togbk(lua_State *L)
 
 //获取当前lua脚本的路径,返回3个结果:脚本路径,脚本全文件名,脚本文件名
 //参考:http://cjbskysea.blogbus.com/logs/68708391.html
-int getcurluapath(lua_State *L)
+int getluapath(lua_State *L)
 {
 	int level= 0;
 	lua_Debug dbg;
@@ -167,4 +167,30 @@ int downloadfile(lua_State *L)
 	lua_pushboolean(L,0);
 	lua_pushstring(L,"failed");
 	return 2;
+}
+
+int openurl(lua_State *L)
+{
+	string strUrl;
+	int nshowcmd = SW_SHOWNORMAL;
+	BOOL bRet = FALSE;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			strUrl = lua_tostring(L,1);
+		}
+	}
+	if ( n>1 ){
+		if ( lua_isnumber(L,2) ){
+			nshowcmd = (int)lua_tonumber(L,2);
+		}
+	}
+
+	if ( strUrl.empty()==false ){
+		bRet = (Star::Common::OpenUrl(strUrl.c_str(),nshowcmd) > (HINSTANCE)((PBYTE)32+NULL));
+	}
+
+	lua_pushnumber(L,bRet);
+	return 1;
 }
