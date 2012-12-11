@@ -35,7 +35,7 @@
 #include "ScintillaBase.h"
 
 
-#pragma comment(lib,"luaD.lib")
+#pragma comment(lib,"../../lib/luaD.lib")
 
 CallTipMap	m_mapFunction;			//命名空间
 
@@ -403,7 +403,7 @@ void ScintillaBase::AutoCompleteMove(int delta) {
 返回值：void
 说  明：搜索光标左侧的单词和命名空间单词,如果这两个单词都不为空则启用自定完成
 日  期：2009-5-8
-作  者：zhuxingxing
+作  者：sing
 ************************************************************************/
 void ScintillaBase::AutoCompleteMoveToCurrentWord() {
 	char wordCurrent[1000];
@@ -485,7 +485,7 @@ void ScintillaBase::AutoCompleteMoveToCurrentWord() {
 说  明：启动自动完成窗口,匹配lua关键字,匹配命名空间,匹配全局函数
 		如果ParentWord不为空则则再匹配其命名空间下的函数
 日  期：2009-5-6
-作  者：zhuxingxing
+作  者：sing
 ************************************************************************/
 void ScintillaBase::AutoCompleteStart(const char *LeftWord,const char*ParentWord)
 {
@@ -614,7 +614,7 @@ void ScintillaBase::AutoCompleteStart(const char *LeftWord,const char*ParentWord
 返回值：
 说  明：启动calltip窗口
 日  期：2009-5-8
-作  者：zhuxingxing
+作  者：sing
 ************************************************************************/
 void ScintillaBase::CallTipStart()
 {
@@ -868,7 +868,7 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 返回值：void
 说  明：初始化关键字列表
 日  期：2009-5-6
-作  者：zhuxingxing
+作  者：sing
 ************************************************************************/
 void ScintillaBase::InitCodeList(const char*keywords,char chSeparate)
 {

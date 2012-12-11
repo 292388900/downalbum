@@ -5,6 +5,18 @@
 #include "../libapi/libapi.h"
 #include "stdlib.h"
 
+
+#ifdef _DEBUG
+#pragma comment(lib,"../../lib/luaD.lib")
+#pragma comment(lib,"../../lib/libapiD.lib")
+#else
+#pragma comment(lib,"../../lib/luaD.lib")
+#pragma comment(lib,"../../lib/libapi.lib")
+#endif
+
+
+
+
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
@@ -25,7 +37,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 static int lua_trace(lua_State *L)
 {
-	Trace(luaL_check_string(L, 1));
+	Trace(luaL_checkstring(L, 1));
 	return 0;
 }
 
@@ -35,11 +47,11 @@ STDLIB_API int LuaRegister(lua_State* L, HWND hWnd)
 
 	AttachConsole();
 
-	lua_baselibopen(L);
-	lua_tablibopen(L);
-	lua_iolibopen(L);
-	lua_strlibopen(L);
-	lua_mathlibopen(L);
+	//lua_baselibopen(L);
+	//lua_tablibopen(L);
+	//lua_iolibopen(L);
+	//lua_strlibopen(L);
+	//lua_mathlibopen(L);
 
 	lua_register(L, "Trace", lua_trace);
 

@@ -175,11 +175,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CJ60Libd.lib core.lib standard.lib shlwapi.lib"
+				AdditionalDependencies="CJ60Libd.lib  shlwapi.lib luaD.lib"
 				OutputFile="..\..\executable\Debug/LuaIDE.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\library\debug"
+				AdditionalLibraryDirectories="..\..\library\debug;..\..\lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\executable\Debug/LuaIDE.pdb"

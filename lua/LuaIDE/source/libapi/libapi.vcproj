@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="libapi"
 	ProjectGUID="{81513D83-FED3-47A7-BB22-CF90C47CA8F9}"
+	RootNamespace="libapi"
 	>
 	<Platforms>
 		<Platform
@@ -15,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\library\debug"
+			OutputDirectory=".\"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
@@ -68,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\..\..\library\debug\libapi.lib"
+				OutputFile="..\..\lib\$(ProjectName)D.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
