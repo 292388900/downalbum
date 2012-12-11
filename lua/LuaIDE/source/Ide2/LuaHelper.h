@@ -25,7 +25,7 @@ public:
 	void DrawLocalVariables();
 	const char* GetSource();
 
-	static BOOL ErrorStringToFileLine(CString strError, CString &strPathName, int &nLine);
+	static BOOL ErrorStringToFileLine(const CString&strError, CString &strPathName, int &nLine);
 	static BOOL LoadDebugLines(CProjectFile* pPF);
 
 	CLuaHelper();

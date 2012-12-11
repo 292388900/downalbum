@@ -303,8 +303,7 @@ BOOL CProjectFile::Compile()
 	pOutput->Write(GetNameExt() + "\n");
 
 	CString strCmdLine;
-	strCmdLine.Format("\"%s\" -o \"%s\" \"%s\"", 
-		theApp.GetModuleDir() + "\\" + "luac.exe", GetOutputPathNameExt(), GetPathName());
+	strCmdLine.Format("\"%s\" -o \"%s\" \"%s\"", theApp.GetModuleDir() + "\\luac.exe", GetOutputPathNameExt(), GetPathName());
 
 	m_exe.Execute(strCmdLine);
 	CString strOutput = m_exe.GetOutputString();

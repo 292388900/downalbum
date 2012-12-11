@@ -523,8 +523,7 @@ BOOL CProject::BuildOutputFiles()
 		{
 			pOutput->Write("Linking\n");
 
-			strCmdLine.Format("\"%s\" -o \"%s\"", 
-				theApp.GetModuleDir() + "\\" + "luac.exe", GetDebugPathNameExt());
+			strCmdLine.Format("\"%s\" -o \"%s\"", theApp.GetModuleDir() + "\\luac.exe", GetDebugPathNameExt());
 
 			long nFiles = m_files.GetSize();
 			for ( int i=0; i<nFiles; ++i )
