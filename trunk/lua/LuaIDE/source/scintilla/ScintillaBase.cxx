@@ -35,7 +35,7 @@
 #include "ScintillaBase.h"
 
 
-#pragma comment(lib,"../../lib/luaD.lib")
+#pragma comment(lib,"../../lib/luaMBMTd.lib")
 
 CallTipMap	m_mapFunction;			//ÃüÃû¿Õ¼ä
 
