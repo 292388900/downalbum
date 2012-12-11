@@ -122,7 +122,7 @@ void CExecutor::Close()
 void CExecutor::PrepAndLaunchRedirectedChild(HANDLE hChildStdOut, HANDLE hChildStdIn, HANDLE hChildStdErr,
 											 CString strCmdLine)
 {
-	PROCESS_INFORMATION pi;
+	PROCESS_INFORMATION pi = {0};
 	STARTUPINFO si;
 
 	// Set up the start up info struct.
@@ -141,13 +141,16 @@ void CExecutor::PrepAndLaunchRedirectedChild(HANDLE hChildStdOut, HANDLE hChildS
 	// Child.exe). Make sure Child.exe is in the same directory as
 	// redirect.c launch redirect from a command line to prevent location
 	// confusion.
-	if (!CreateProcess(NULL, strCmdLine.GetBuffer(0), NULL, NULL, TRUE,
-					 0, _environ, NULL, &si, &pi))
+	if ( CreateProcess(NULL, (LPTSTR)(LPCTSTR)strCmdLine, NULL, NULL, TRUE, 0, /*_environ*/NULL, NULL, &si, &pi)==FALSE ){
 		theApp.FormatMessage("CExecutor::PrepAndLaunchRedirectedChild::CreateProcess");
-
+	}
 
 	// Close any unnecessary handles.
-	if (!CloseHandle(pi.hThread)) theApp.FormatMessage("CExecutor::PrepAndLaunchRedirectedChild::CloseHandle");
+	if ( pi.hThread!=NULL ){
+		if ( CloseHandle(pi.hThread)==FALSE ){
+			theApp.FormatMessage("CExecutor::PrepAndLaunchRedirectedChild::CloseHandle");
+		}
+	}
 }
 
 BOOL CExecutor::Write(LPBYTE lpData, int nSize)
@@ -194,11 +197,13 @@ DWORD WINAPI CExecutor::ReadAndHandleOutput(LPVOID lpvThreadParam)
 CString CExecutor::GetOutputString()
 {
 	CString strOutput;
+	ULONGLONG nSize = m_output.GetLength();
 
-	m_output.SeekToBegin();
-	m_output.Read(strOutput.GetBuffer(m_output.GetLength()), m_output.GetLength());
-	strOutput.ReleaseBuffer();
-
+	if ( nSize>0 ){
+		m_output.SeekToBegin();
+		m_output.Read(strOutput.GetBuffer(nSize), nSize);
+		strOutput.ReleaseBuffer(nSize);
+	}
 	return strOutput;
 }
 

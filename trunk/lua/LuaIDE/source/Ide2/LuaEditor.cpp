@@ -271,7 +271,7 @@ CString CLuaEditor::GetLine(int nLine)
 	if ( nLineLength>0 )
 	{
 		Sci(SCI_GETLINE, nLine-1, (int)strLine.GetBuffer(nLineLength));
-		strLine.ReleaseBuffer();
+		strLine.ReleaseBuffer(nLineLength);
 	}
 
 	return strLine;

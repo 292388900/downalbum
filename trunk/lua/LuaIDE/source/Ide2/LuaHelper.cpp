@@ -52,22 +52,29 @@ extern "C" void PrintDebugString(const char* str)
 	CDebugger::GetDebugger()->Write(str);
 }
 
-BOOL CLuaHelper::ErrorStringToFileLine(CString strError, CString &strPathName, int &nLine)
+BOOL CLuaHelper::ErrorStringToFileLine(const CString&strError, CString &strPathName, int &nLine)
 {
-	CString strFileLine = strError;
-	if ( strError.Left(4)=="luac" )
-		strFileLine = strError.Mid(6);
+	int nPos1 = 0;
+	int nPos2 = 0;
 
-	int nPos1 = strFileLine.Find(':',2);
-	if ( nPos1==-1 )
-		return FALSE;
-	int nPos2 = strFileLine.Find(':', nPos1+1);
-	if ( nPos2==-1 )
-		return FALSE;
+	nPos1 = strError.Find("luac");
+	if ( nPos1==-1 ){
+		nPos1 = 0;
+	}
+	nPos1 = strError.Find(": ",nPos1);
+	if ( nPos1==-1 ){
+		//可能就是一个文件名
+		strPathName = strError;
+		nLine = 0;
+		return TRUE;
+	}
+	nPos2 = strError.Find(':',nPos1+4);	//跳过盘符，例如：c:
+	strPathName = strError.Mid(nPos1+2,nPos2-nPos1-2);
 
-	CString strNum = strFileLine.Mid(nPos1+1, nPos2-nPos1-1);
+	nPos1 = nPos2;
+	nPos2 = strError.Find(':',nPos1+1);
+	CString strNum = strError.Mid(nPos1+1, nPos2-nPos1-1);
 	nLine = atoi(strNum);
-	strPathName = strFileLine.Left(nPos1);
 
 	return TRUE;
 }
