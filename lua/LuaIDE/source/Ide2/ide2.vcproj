@@ -115,7 +115,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\executable\Debug"
+			OutputDirectory=".\"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
@@ -176,10 +176,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="CJ60Libd.lib  shlwapi.lib luaD.lib"
-				OutputFile="..\..\executable\Debug/LuaIDE.exe"
+				OutputFile="..\..\bin\$(ProjectName)D.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\library\debug;..\..\lib"
+				AdditionalLibraryDirectories="..\..\lib"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\executable\Debug/LuaIDE.pdb"
