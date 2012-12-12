@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CJ60StaticLib", "source\CJ6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SciLexer", "source\scintilla\SciLexer.vcproj", "{A69BE7E6-54CB-4686-BA58-6428A4D58B6A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbg_stub", "source\dbg_stub\dbg_stub.vcproj", "{D93332F0-8837-4CA0-8641-88BE321825D6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ide2", "source\Ide2\ide2.vcproj", "{476E95F0-5248-4495-9414-67C0A9BFF25C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DF1F349C-5E5F-46C9-A0E3-763C63BB9B1A} = {DF1F349C-5E5F-46C9-A0E3-763C63BB9B1A}
@@ -26,8 +24,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stdlib", "source\stdlib\std
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua\lua.vcproj", "{D7E64D11-C9B1-4FF0-8B37-1D9500EC9C5F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "compiler\compiler.vcproj", "{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luac", "lua\luac.vcproj", "{9E6B13EB-68C2-432C-9089-85154BFA263B}"
 EndProject
@@ -56,12 +52,6 @@ Global
 		{A69BE7E6-54CB-4686-BA58-6428A4D58B6A}.LibDebugRuntimeDll|Win32.Build.0 = Debug|Win32
 		{A69BE7E6-54CB-4686-BA58-6428A4D58B6A}.Release|Win32.ActiveCfg = Release|Win32
 		{A69BE7E6-54CB-4686-BA58-6428A4D58B6A}.Release|Win32.Build.0 = Release|Win32
-		{D93332F0-8837-4CA0-8641-88BE321825D6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D93332F0-8837-4CA0-8641-88BE321825D6}.Debug|Win32.Build.0 = Debug|Win32
-		{D93332F0-8837-4CA0-8641-88BE321825D6}.LibDebugRuntimeDll|Win32.ActiveCfg = Debug|Win32
-		{D93332F0-8837-4CA0-8641-88BE321825D6}.LibDebugRuntimeDll|Win32.Build.0 = Debug|Win32
-		{D93332F0-8837-4CA0-8641-88BE321825D6}.Release|Win32.ActiveCfg = Release|Win32
-		{D93332F0-8837-4CA0-8641-88BE321825D6}.Release|Win32.Build.0 = Release|Win32
 		{476E95F0-5248-4495-9414-67C0A9BFF25C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{476E95F0-5248-4495-9414-67C0A9BFF25C}.Debug|Win32.Build.0 = Debug|Win32
 		{476E95F0-5248-4495-9414-67C0A9BFF25C}.LibDebugRuntimeDll|Win32.ActiveCfg = Debug|Win32
@@ -86,12 +76,6 @@ Global
 		{D7E64D11-C9B1-4FF0-8B37-1D9500EC9C5F}.LibDebugRuntimeDll|Win32.Build.0 = LibDebugRuntimeDll|Win32
 		{D7E64D11-C9B1-4FF0-8B37-1D9500EC9C5F}.Release|Win32.ActiveCfg = Release|Win32
 		{D7E64D11-C9B1-4FF0-8B37-1D9500EC9C5F}.Release|Win32.Build.0 = Release|Win32
-		{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}.Debug|Win32.Build.0 = Debug|Win32
-		{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}.LibDebugRuntimeDll|Win32.ActiveCfg = Debug|Win32
-		{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}.LibDebugRuntimeDll|Win32.Build.0 = Debug|Win32
-		{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}.Release|Win32.ActiveCfg = Release|Win32
-		{A9328BD6-78F0-4DC2-AB43-E52D5D0C38A6}.Release|Win32.Build.0 = Release|Win32
 		{9E6B13EB-68C2-432C-9089-85154BFA263B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9E6B13EB-68C2-432C-9089-85154BFA263B}.Debug|Win32.Build.0 = Debug|Win32
 		{9E6B13EB-68C2-432C-9089-85154BFA263B}.LibDebugRuntimeDll|Win32.ActiveCfg = LibDebugRuntimeDll|Win32
