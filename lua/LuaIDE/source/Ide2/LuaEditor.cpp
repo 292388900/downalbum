@@ -388,15 +388,15 @@ void CLuaEditor::SetLuaLexer()
 {
    const char font[] = "Verdana";
    const char monospace[] = "Courier";
-   const short fontsize = 9;
-   const char keywords[] = "and break do else elseif end false for function global if in local nil not or repeat return then true until while";
-	
+   const short fontsize = 10;
+
    //const char stopchars[]="\x09\x0A\x0D\x20";	//Added by sing [2009-5-6]
 
    // set style bits, choose the right lexer (Lua) and set the keywords list
    Sci(SCI_SETSTYLEBITS,5,0);
    Sci(SCI_SETLEXER,SCLEX_LUA,0);
-   Sci(SCI_SETKEYWORDS,0,(LPARAM)keywords);
+   Sci(SCI_SETKEYWORDS,0,(LPARAM)g_luaKeywords);
+   Sci(SCI_SETKEYWORDS,1,(LPARAM)g_luaFunctions);
 
    //Sci(SCI_AUTOCSTOPS,0,(LPARAM)stopchars);		//Added by sing [2009-5-6]
    
@@ -414,37 +414,52 @@ void CLuaEditor::SetLuaLexer()
    Sci(SCI_STYLESETFONT,32, (LPARAM) font);
    Sci(SCI_STYLESETSIZE,32, fontsize);
    // style 0: whitespace
-   Sci(SCI_STYLESETFORE,0, 0x808080);
+   Sci(SCI_STYLESETFORE,SCE_L_DEFAULT, 0x808080);
    // style 1: comment (not used in Lua)
    // style 2: line comment (green)
-   Sci(SCI_STYLESETFONT,2, (int)monospace);
-   Sci(SCI_STYLESETSIZE,2, fontsize);
-   Sci(SCI_STYLESETFORE,2, 0x00AA00);
+   Sci(SCI_STYLESETFONT,SCE_LUA_COMMENTLINE, (int)monospace);
+   Sci(SCI_STYLESETSIZE,SCE_LUA_COMMENTLINE, fontsize);
+   Sci(SCI_STYLESETFORE,SCE_LUA_COMMENTLINE, 0x00AA00);
    // style 3: doc comment (grey???)
-   Sci(SCI_STYLESETFORE,3, 0x7F7F7F);      
+   Sci(SCI_STYLESETFORE,SCE_LUA_COMMENTDOC, 0x7F7F7F);      
    // style 4: numbers (blue)
-   Sci(SCI_STYLESETFORE,4, 0xFF0000);
+   Sci(SCI_STYLESETFORE,SCE_LUA_NUMBER, 0xFF0000);
    // style 5: keywords (black bold)
-   Sci(SCI_STYLESETFONT,5, (int)font);
-   Sci(SCI_STYLESETSIZE,5, (int)fontsize);
-   Sci(SCI_STYLESETFORE,5, 0x000000);
-   Sci(SCI_STYLESETBOLD,5, 1);
+   Sci(SCI_STYLESETFONT,SCE_LUA_WORD, (int)font);
+   Sci(SCI_STYLESETSIZE,SCE_LUA_WORD, (int)fontsize);
+   Sci(SCI_STYLESETFORE,SCE_LUA_WORD, 0x000000);
+   Sci(SCI_STYLESETBOLD,SCE_LUA_WORD, 1);
    // style 6: double qouted strings (???)
-   Sci(SCI_STYLESETFORE,6, 0x7F007F);
+   Sci(SCI_STYLESETFORE,SCE_LUA_STRING, 0x7F007F);
    // style 7: single quoted strings (???)
-   Sci(SCI_STYLESETFORE,7, 0x7F007F);
+   Sci(SCI_STYLESETFORE,SCE_LUA_CHARACTER, 0x7F007F);
    // style 8: UUIDs (IDL only, not used in Lua)
    // style 9: preprocessor directives (not used in Lua 4)
    // style 10: operators (black bold)
-   Sci(SCI_STYLESETFONT,10, (int)font);
-   Sci(SCI_STYLESETSIZE,10, fontsize);
-   Sci(SCI_STYLESETFORE,10, 0x000000);
-   Sci(SCI_STYLESETBOLD,10, 1);
+   Sci(SCI_STYLESETFONT,SCE_LUA_OPERATOR, (int)font);
+   Sci(SCI_STYLESETSIZE,SCE_LUA_OPERATOR, fontsize);
+   Sci(SCI_STYLESETFORE,SCE_LUA_OPERATOR, 0x000000);
+   //Sci(SCI_STYLESETBOLD,SCE_LUA_OPERATOR, 1);
    // style 11: identifiers (leave to default)
    // style 12: end of line where string is not closed (black on violet, eol-filled)
-   Sci(SCI_STYLESETFORE,12, 0x000000);
-   Sci(SCI_STYLESETBACK,12, 0xE0C0E0);
-   Sci(SCI_STYLESETEOLFILLED,12, 1);
+   Sci(SCI_STYLESETFORE,SCE_LUA_STRINGEOL, 0x000000);
+   Sci(SCI_STYLESETBACK,SCE_LUA_STRINGEOL, 0xE0C0E0);
+   Sci(SCI_STYLESETEOLFILLED,SCE_LUA_STRINGEOL, 1);
+
+	//////////////////////////////////////////////////////////////////////////
+   COLORREF comment= RGB(0,128,128);
+   COLORREF string= RGB(128,128,0);
+
+   Sci(SCI_STYLESETFORE,SCE_LUA_COMMENT, RGB(0,160,0));
+   Sci(SCI_STYLESETFORE,SCE_LUA_STRING, RGB(0,144,144));
+
+   Sci(SCI_STYLESETFORE,SCE_LUA_COMMENTDOC,RGB(0,160,0));
+   Sci(SCI_STYLESETFORE,SCE_LUA_NUMBER,RGB(255,0,0));
+   Sci(SCI_STYLESETFORE,SCE_LUA_WORD,RGB(0,0,128));
+   Sci(SCI_STYLESETFORE,SCE_LUA_CHARACTER,RGB(0,144,144));
+   Sci(SCI_STYLESETFORE,SCE_LUA_LITERALSTRING,RGB(0,144,144));
+   Sci(SCI_STYLESETFORE,SCE_LUA_WORD2,RGB(144,0,144));
+   //////////////////////////////////////////////////////////////////////////
 }
 
 
