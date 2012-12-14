@@ -147,7 +147,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\core,..\..\include\cj60,..\..\include\lua,..\..\include\scintilla"
+				AdditionalIncludeDirectories="..\core;..\..\include\cj60;..\..\lua;..\..\include\scintilla"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

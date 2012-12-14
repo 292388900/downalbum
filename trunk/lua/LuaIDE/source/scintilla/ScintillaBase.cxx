@@ -840,7 +840,8 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 		lexCurrent = LexerModule::Find(SCLEX_NULL);
 
 	/************************************************************************/
-	InitCodeList("and break do else elseif end false for function global if in local nil not or repeat return then true until while");
+	InitCodeList(g_luaKeywords);
+	InitCodeList(g_luaFunctions);
 	char szCalltipsFile[MAX_PATH*2];
 	GetModuleFileName(NULL,szCalltipsFile,sizeof(szCalltipsFile));
 	strcpy(&strrchr(szCalltipsFile,'\\')[1],"calltips.lua");

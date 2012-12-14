@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,..\..\include\scintilla"
+				AdditionalIncludeDirectories=".;..\..\include\scintilla;..\..\lua"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;SCI_LEXER"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
