@@ -840,8 +840,6 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 		lexCurrent = LexerModule::Find(SCLEX_NULL);
 
 	/************************************************************************/
-	InitCodeList(g_luaKeywords);
-	InitCodeList(g_luaFunctions);
 	char szCalltipsFile[MAX_PATH*2];
 	GetModuleFileName(NULL,szCalltipsFile,sizeof(szCalltipsFile));
 	strcpy(&strrchr(szCalltipsFile,'\\')[1],"calltips.lua");
@@ -1128,6 +1126,8 @@ sptr_t ScintillaBase::WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lPara
 		if (wParam < numWordLists) {
 			keyWordLists[wParam]->Clear();
 			keyWordLists[wParam]->Set(reinterpret_cast<const char *>(lParam));
+			//关键字加到自动提示里去
+			InitCodeList(reinterpret_cast<const char *>(lParam));
 		}
 		break;
 
