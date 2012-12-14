@@ -112,9 +112,6 @@ int AddCallTips(lua_State *L)
 ScintillaBase::ScintillaBase() {
 	displayPopupMenu = true;
 	listType = 0;
-	/************************************************************************/
-	m_codeKeyWords=NULL;
-	/************************************************************************/
 #ifdef SCI_LEXER
 	lexLanguage = SCLEX_CONTAINER;
 	lexCurrent = 0;
@@ -126,20 +123,6 @@ ScintillaBase::ScintillaBase() {
 
 ScintillaBase::~ScintillaBase() {
 	/************************************************************************/
-	PCODENODE p,q;
-
-	if (m_codeKeyWords)
-	{
-		p=m_codeKeyWords->pCodeHeader;
-		while(p)
-		{
-			q=p;
-			p=p->Next;
-			delete q;
-		}
-	}
-	delete m_codeKeyWords;
-
 	//
 	PFUNCTIONNODE pFuncNode = NULL;
 	PFUNCTIONNODE pTemp = NULL;
@@ -528,13 +511,12 @@ void ScintillaBase::AutoCompleteStart(const char *LeftWord,const char*ParentWord
 	if (ParentWord==NULL)
 	{
 		//ÏÈÆ¥ÅäLua¹Ø¼ü×Ö
-		PCODENODE pCodeNode=m_codeKeyWords->pCodeHeader;
-		while(pCodeNode)
-		{
-			if(StrStrI(pCodeNode->strName,LeftWord))
-				ac.lb.Append((char*)(LPCTSTR)pCodeNode->strName);
-			pCodeNode=pCodeNode->Next;
-		}
+		for ( vector<KEYWORDNODE>::iterator i=m_vtKeywords.begin(); i!=m_vtKeywords.end(); ++i ){
+			if(StrStrI(i->strName,LeftWord)){
+				ac.lb.Append((char*)(LPCTSTR)i->strName);
+			}
+		}//endfor
+		
 
 		//ÔÙÆ¥ÅäÃüÃû¿Õ¼ä
 		PFUNCTIONNODE pGlobalFuncNode = NULL;
@@ -871,12 +853,7 @@ void ScintillaBase::SetLexer(uptr_t wParam) {
 ************************************************************************/
 void ScintillaBase::InitCodeList(const char*keywords,char chSeparate)
 {
-	m_codeKeyWords=new CODELIST;
-	m_codeKeyWords->nType=CODETYPE::KEYWORDS;
-	m_codeKeyWords->pCodeHeader=NULL;
-
-	PCODENODE pCodeNode=NULL;
-	PCODENODE pTail=NULL;
+	KEYWORDNODE stKeyword;
 
 	char *words = new char[strlen(keywords) + 1];
 	if (words) {
@@ -887,38 +864,15 @@ void ScintillaBase::InitCodeList(const char*keywords,char chSeparate)
 			if (words[i] == chSeparate) {
 				words[i] = '\0';
 
-				pCodeNode=new CODENODE;
-				pCodeNode->strName=startword;
-				pCodeNode->Next=NULL;
-				if (pTail==NULL)
-				{
-					m_codeKeyWords->pCodeHeader=pCodeNode;
-					pTail=m_codeKeyWords->pCodeHeader;
-				}
-				else
-				{
-					pTail->Next=pCodeNode;
-					pTail=pCodeNode;
-				}
-
+				stKeyword.strName = startword;
+				m_vtKeywords.push_back(stKeyword);
+				
 				startword = words + i + 1;
 			}
 		}
 		if (startword) {
-			pCodeNode=new CODENODE;
-			pCodeNode->strName=startword;
-			pCodeNode->Next=NULL;
-
-			if (pTail==NULL)
-			{
-				m_codeKeyWords->pCodeHeader=pCodeNode;
-				pTail=m_codeKeyWords->pCodeHeader;
-			}
-			else
-			{
-				pTail->Next=pCodeNode;
-				pTail=pCodeNode;
-			}
+			stKeyword.strName = startword;
+			m_vtKeywords.push_back(stKeyword);
 		}
 		delete []words;
 	}

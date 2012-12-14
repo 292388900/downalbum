@@ -15,6 +15,7 @@
 #include	<atlstr.h>			//使用CString需要包含的头文件
 #include	<string>
 #include	<map>
+#include	<vector>
 using namespace std;
 
 extern "C"
@@ -24,21 +25,15 @@ extern "C"
 	#include "lualib.h"
 };
 
-//CODE类型,目前支持关键字,函数
-enum CODETYPE{KEYWORDS=1,FUNCTION=2};	
-
 //关键字组织形式
-typedef struct _CODENODE 
+typedef struct KEYWORDNODE 
 {
-	CString strName;			//关键字(例如:for,while,function,end...)
-	_CODENODE*Next;				//老师说这是后继结点
-}CODENODE,*PCODENODE;	
-
-typedef struct _CODELIST 
-{
-	CODETYPE  nType;			//类别:关键字
-	PCODENODE pCodeHeader;		//指向关键字列表
-}CODELIST,*PCODELIST;
+	KEYWORDNODE(){
+		nUsedCount = 0;
+	}
+	CString		strName;			//关键字(例如:for,while,function,end...)
+	int			nUsedCount;			//使用次数，使用次数越高排名越靠前
+}*PKEYWORDNODE;	
 
 //函数组织形式
 typedef struct _FUNCTIONNODE
@@ -61,7 +56,7 @@ class ScintillaBase : public Editor {
 
 /************************************************************************/
 public:
-	PCODELIST m_codeKeyWords;		//关键字列表
+	vector<KEYWORDNODE>m_vtKeywords;	//关键字列表
 
 	//初始化关键字列表
 	void InitCodeList(const char*keywords,char chSeparate=' ');
