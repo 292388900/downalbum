@@ -14,3 +14,4 @@ int utf8s2ms(lua_State *L);
 int getluapath(lua_State *L);
 int downloadfile(lua_State *L);
 int openurl(lua_State *L);
+int copytoclipboard(lua_State *L);
