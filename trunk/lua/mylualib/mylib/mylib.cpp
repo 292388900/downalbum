@@ -194,3 +194,21 @@ int openurl(lua_State *L)
 	lua_pushnumber(L,bRet);
 	return 1;
 }
+
+int copytoclipboard(lua_State *L)
+{
+	CString s;
+	int nshowcmd = SW_SHOWNORMAL;
+	BOOL bRet = FALSE;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			s = lua_tostring(L,1);
+		}
+	}
+	
+	Star::Common::CopyToClipboard(s,s.GetLength());
+
+	return 0;
+}
