@@ -15,3 +15,5 @@ int getluapath(lua_State *L);
 int downloadfile(lua_State *L);
 int openurl(lua_State *L);
 int copytoclipboard(lua_State *L);
+int md5(lua_State *L);
+int md5file(lua_State *L);
