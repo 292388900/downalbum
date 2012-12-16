@@ -27,5 +27,6 @@ MD5VAL md5File(FILE * fpin);
 //参数不可为：CString&file，因为会被改写，惨惨惨。
 CString ValueMD5(CString file);
 
+CString MD5Data(char * str, unsigned int size);
 CString Md5File(CString strFileName);
 

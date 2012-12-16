@@ -514,15 +514,19 @@ CString ValueMD5(CString file)
 	return chtmp;
 }
 
+CString MD5Data(char * str, unsigned int size)
+{
+	CString strMd5;
+	MD5VAL val = md5(str,size);
+	strMd5.Format("%08x%08x%08x%08x", conv(val.a), conv(val.b), conv(val.c), conv(val.d));
+	return strMd5;
+}
+
 CString Md5File(CString strFileName)
 {
-	MD5VAL val;
-	CString result;
-	char chtmp[1024]={0};
-
-	val = md5File(strFileName);
-	sprintf(chtmp, "%08x%08x%08x%08x", conv(val.a), conv(val.b), conv(val.c), conv(val.d));
-
-	return chtmp;
+	CString strMd5;
+	MD5VAL val = md5File(strFileName);
+	strMd5.Format("%08x%08x%08x%08x", conv(val.a), conv(val.b), conv(val.c), conv(val.d));
+	return strMd5;
 }
 
