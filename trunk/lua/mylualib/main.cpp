@@ -34,6 +34,9 @@ static const struct luaL_reg mylib [] = {
 	{"getluapath", getluapath},
 	{"downloadfile", downloadfile},
 	{"openurl", openurl},
+	{"copytoclipboard", copytoclipboard},
+	{"md5", md5},
+	{"md5file", md5file},
 	{NULL, NULL} /* sentinel */ 
 }; 
 

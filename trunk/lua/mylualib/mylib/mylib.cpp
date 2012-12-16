@@ -3,6 +3,7 @@
 #include "mylib.h"
 #include <StarLib/Common/common.h>
 #include <StarLib/htmldown/htmldown.h>
+#include <StarLib/MD5/Md5.h>
 #include <string>
 using namespace std;
 
@@ -198,8 +199,6 @@ int openurl(lua_State *L)
 int copytoclipboard(lua_State *L)
 {
 	CString s;
-	int nshowcmd = SW_SHOWNORMAL;
-	BOOL bRet = FALSE;
 
 	int n = lua_gettop(L);
 	if ( n>0 ){
@@ -211,4 +210,38 @@ int copytoclipboard(lua_State *L)
 	Star::Common::CopyToClipboard(s,s.GetLength());
 
 	return 0;
+}
+
+int md5(lua_State *L)
+{
+	CString s;
+	CString strMd5;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			s = lua_tostring(L,1);
+			strMd5 = MD5Data((char *)(LPCTSTR)s,s.GetLength());
+		}
+	}
+
+	lua_pushstring(L,strMd5);
+	return 1;
+}
+
+int md5file(lua_State *L)
+{
+	CString s;
+	CString strMd5;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			s = lua_tostring(L,1);
+			strMd5 = Md5File(s);
+		}
+	}
+
+	lua_pushstring(L,strMd5);
+	return 1;
 }

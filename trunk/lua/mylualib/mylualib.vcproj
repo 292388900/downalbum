@@ -268,6 +268,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="MD5"
+				>
+				<File
+					RelativePath="..\..\lib\StarLib\MD5\Md5.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\lib\StarLib\MD5\Md5.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
