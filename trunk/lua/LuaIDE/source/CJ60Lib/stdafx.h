@@ -46,7 +46,8 @@
 
 #include <afxpriv.h>
 #include <afxtempl.h>
-#include <D:\\Microsoft Visual Studio 8\\VC\\atlmfc\\src\\mfc\\afximpl.h>
+#include <..\src\mfc\afximpl.h>		//D:\Microsoft Visual Studio 8\VC\atlmfc\src\mfc
+
 
 #define AFX_IDW_SIZEBAR_LEFT	AFX_IDW_DOCKBAR_LEFT	+ 4
 #define AFX_IDW_SIZEBAR_RIGHT	AFX_IDW_DOCKBAR_RIGHT	+ 5

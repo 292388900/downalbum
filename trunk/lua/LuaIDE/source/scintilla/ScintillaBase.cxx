@@ -34,8 +34,11 @@
 #include "Editor.h"
 #include "ScintillaBase.h"
 
-
+#ifdef _DEBUG
 #pragma comment(lib,"../../lib/luaMBMTd.lib")
+#else
+#pragma comment(lib,"../../lib/lua.lib")
+#endif
 
 CallTipMap	m_mapFunction;			//ÃüÃû¿Õ¼ä
 

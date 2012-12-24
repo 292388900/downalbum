@@ -1,0 +1,7 @@
+CJ60Lib需要：在共享 DLL 中使用 MFC	MDd
+主程序ide2先暂且迁就CJ60Lib需要。
+
+CJ60StaticLib需要：在静态库中使用 MFC  多线程调试(/MTd)
+SciLexer项目需要：在静态库中使用 MFC  多线程调试(/MTd)
+
+
