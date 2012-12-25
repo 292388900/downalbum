@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="ide2"
+	Name="LuaIDE"
 	ProjectGUID="{476E95F0-5248-4495-9414-67C0A9BFF25C}"
 	RootNamespace="ide2"
 	Keyword="MFCProj"
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\executable\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(SolutionDir)bin\"
+			IntermediateDirectory="$(SolutionDir)tmp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="2"
@@ -50,17 +50,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\core,..\..\include\cj60,..\..\include\lua,..\..\include\scintilla"
+				AdditionalIncludeDirectories="..\..\include\cj60;..\..\lua;..\..\include\scintilla"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
-				PrecompiledHeaderFile=".\Release/ide2.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -77,12 +72,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="CJ60Lib.lib core.lib standard.lib shlwapi.lib"
-				OutputFile="..\..\executable\Release/LuaIDE.exe"
+				AdditionalDependencies="CJ60Lib.lib shlwapi.lib"
+				OutputFile="$(OutDir)$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\library\release"
-				ProgramDatabaseFile=".\..\..\executable\Release/LuaIDE.pdb"
+				AdditionalLibraryDirectories="..\..\lib"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -98,7 +92,6 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\..\..\executable\Release/ide2.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -147,7 +140,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\core;..\..\include\cj60;..\..\lua;..\..\include\scintilla"
+				AdditionalIncludeDirectories="..\..\include\cj60;..\..\lua;..\..\include\scintilla"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
