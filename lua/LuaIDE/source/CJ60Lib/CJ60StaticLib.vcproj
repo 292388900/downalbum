@@ -92,8 +92,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\Library\release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(SolutionDir)lib\"
+			IntermediateDirectory="$(SolutionDir)tmp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="1"
@@ -119,14 +119,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\include\cj60"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile="StaticRelease/CJ60StaticLib.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile="StaticRelease/"
-				ProgramDataBaseFileName="StaticRelease/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -143,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile=".\..\..\Library\release\CJ60StaticLib.lib"
+				OutputFile="$(OutDir)$(ProjectName).lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -155,7 +152,6 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\..\..\Library\release/CJ60StaticLib.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

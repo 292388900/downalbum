@@ -4,7 +4,7 @@
  **/
 // Copyright 1998-2002 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
-#include <afx.h>
+//#include <afx.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -35,7 +35,7 @@
 #include "ScintillaBase.h"
 
 #ifdef _DEBUG
-#pragma comment(lib,"../../lib/luaMBMTd.lib")
+#pragma comment(lib,"../../lib/luaD.lib")
 #else
 #pragma comment(lib,"../../lib/lua.lib")
 #endif

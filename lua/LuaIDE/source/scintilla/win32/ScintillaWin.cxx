@@ -4,7 +4,7 @@
  **/
 // Copyright 1998-2002 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
-#include <afx.h>
+//#include <afx.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -1970,7 +1970,7 @@ bool Scintilla_ReleaseResources() {
 }
 
 #ifndef STATIC_BUILD
-extern "C" int APIENTRY DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID) {
+extern "C" BOOL APIENTRY DllMain(HMODULE hInstance, DWORD dwReason, LPVOID) {
 	//Platform::DebugPrintf("Scintilla::DllMain %d %d\n", hInstance, dwReason);
 	if (dwReason == DLL_PROCESS_ATTACH) {
 		if (!Scintilla_RegisterClasses(hInstance))
