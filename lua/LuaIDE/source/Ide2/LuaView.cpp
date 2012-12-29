@@ -295,6 +295,9 @@ void CLuaView::OnInitialUpdate()
 	
 	// use main frame dynamic accel table
 	GetParentFrame()->m_hAccelTable = NULL;
+
+	//默认文档最大化
+	((CMainFrame *)GetParentFrame())->ShowWindow(SW_MAXIMIZE);
 }
 
 void CLuaView::ToggleBreakPoint(int nLine)
