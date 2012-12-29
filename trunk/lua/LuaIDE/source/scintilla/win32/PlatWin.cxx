@@ -762,7 +762,7 @@ void Window::SetTitle(const char *s) {
 	::SetWindowText(reinterpret_cast<HWND>(id), s);
 }
 
-ListBox::ListBox() : desiredVisibleRows(5), maxItemCharacters(0), aveCharWidth(8) {
+ListBox::ListBox() : desiredVisibleRows(10), maxItemCharacters(0), aveCharWidth(8) {
 }
 
 ListBox::~ListBox() {
@@ -799,10 +799,10 @@ PRectangle ListBox::GetDesiredRect() {
 	if ((rows == 0) || (rows > desiredVisibleRows))
 		rows = desiredVisibleRows;
 	// The +6 allows for borders
-	rcDesired.bottom = rcDesired.top + 6 + itemHeight * rows;
+	rcDesired.bottom = rcDesired.top + 6 + itemHeight * (rows + 1);
 	int width = maxItemCharacters;
-	if (width < 12)
-		width = 12;
+	if (width < 24)
+		width = 24;
 	rcDesired.right = rcDesired.left + width * (aveCharWidth+aveCharWidth/3);
 	if (Length() > rows)
 		rcDesired.right = rcDesired.right + ::GetSystemMetrics(SM_CXVSCROLL);
