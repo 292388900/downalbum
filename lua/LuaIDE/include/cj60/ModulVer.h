@@ -9,7 +9,7 @@
 
 #undef _INC_SHLWAPI
 #undef NOSHLWAPI
-#include <shlwapi.h>
+//#include <shlwapi.h>
 
 // tell linker to link with version.lib for VerQueryValue, etc.
 #pragma comment(linker, "/defaultlib:version.lib")
