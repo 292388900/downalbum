@@ -141,7 +141,7 @@ resend:
 	}
 
 	//Now do the actual read of the file
-	hFile = CreateFile(lpszSaveAs,GENERIC_READ|GENERIC_WRITE,0,NULL,CREATE_NEW,FILE_ATTRIBUTE_NORMAL,NULL);
+	hFile = CreateFile(lpszSaveAs,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
 	if ( hFile==INVALID_HANDLE_VALUE ){
 		//TRACE(_T("Failed to create file :%s\n"), lpszSaveAs);
 		return dwHttpStatus;
