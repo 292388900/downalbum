@@ -2,8 +2,11 @@
     <soft>
         <name>taobaoAlbum</name>
         <version>1.25</version>
+	<scriptver>1.0</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ8eTdSHiwvT</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8tw8jtEtrA</downurl2>
+	<scripturl>http://www.xcxzq.com/script/taobaoAlbum.txt</scripturl>
+	<scripturl2>http://www.xcxzq.com/help/taobaoAlbum.txt</scripturl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_40497.htm</regurl>
         <help>http://www.xcxzq.com/help/taobaoalbum.html</help>
         <bbs>http://www.xcxzq.com</bbs>
