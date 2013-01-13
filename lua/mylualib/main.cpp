@@ -37,6 +37,7 @@ static const struct luaL_reg mylib [] = {
 	{"copytoclipboard", copytoclipboard},
 	{"md5", md5},
 	{"md5file", md5file},
+	{"sleep", sleep},
 	{NULL, NULL} /* sentinel */ 
 }; 
 

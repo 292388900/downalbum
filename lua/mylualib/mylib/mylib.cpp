@@ -245,3 +245,15 @@ int md5file(lua_State *L)
 	lua_pushstring(L,strMd5);
 	return 1;
 }
+
+int sleep(lua_State *L)
+{
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isnumber(L,1) ){
+			Sleep((DWORD)lua_tonumber(L,1));
+		}
+	}
+
+	return 0;
+}
