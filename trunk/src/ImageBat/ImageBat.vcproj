@@ -681,11 +681,11 @@
 				Name="StaticLink"
 				>
 				<File
-					RelativePath="..\..\open\lib\StarLib\StaticLink\StaticLink.cpp"
+					RelativePath="..\..\lib\StarLib\StaticLink\StaticLink.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\open\lib\StarLib\StaticLink\StaticLink.h"
+					RelativePath="..\..\lib\StarLib\StaticLink\StaticLink.h"
 					>
 				</File>
 			</Filter>
@@ -693,11 +693,11 @@
 				Name="Update"
 				>
 				<File
-					RelativePath="..\..\open\lib\StarLib\Update\Update.cpp"
+					RelativePath="..\..\lib\StarLib\Update\Update.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\open\lib\StarLib\Update\Update.h"
+					RelativePath="..\..\lib\StarLib\Update\Update.h"
 					>
 				</File>
 			</Filter>
@@ -705,11 +705,11 @@
 				Name="PathDialog"
 				>
 				<File
-					RelativePath="..\..\open\lib\StarLib\PathDialog\PathDialog.cpp"
+					RelativePath="..\..\lib\StarLib\PathDialog\PathDialog.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\open\lib\StarLib\PathDialog\PathDialog.h"
+					RelativePath="..\..\lib\StarLib\PathDialog\PathDialog.h"
 					>
 				</File>
 			</Filter>
