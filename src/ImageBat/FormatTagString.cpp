@@ -164,7 +164,7 @@ CString CFormatTagString::FormatShutterTime(ITEMINFO *pItem)
 	CString str;
 	if ( pItem->fShutterTime<1 ){
 		int nShutterTime = (int)ceil( 1 / pItem->fShutterTime );
-		str.Format("1/%d\'",nShutterTime);
+		str.Format("1£¯%d\'",nShutterTime);
 	}else{
 		str.Format("%.1f\'",pItem->fShutterTime);
 	}
