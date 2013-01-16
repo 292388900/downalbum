@@ -19,3 +19,4 @@ int copytoclipboard(lua_State *L);
 int md5(lua_State *L);
 int md5file(lua_State *L);
 int sleep(lua_State *L);
+int DecodeEscapeUsequence(lua_State *L);
