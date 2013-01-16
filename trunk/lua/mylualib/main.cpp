@@ -38,6 +38,7 @@ static const struct luaL_reg mylib [] = {
 	{"md5", md5},
 	{"md5file", md5file},
 	{"sleep", sleep},
+	{"DecodeEscapeUsequence", DecodeEscapeUsequence},
 	{NULL, NULL} /* sentinel */ 
 }; 
 

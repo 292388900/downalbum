@@ -257,3 +257,18 @@ int sleep(lua_State *L)
 
 	return 0;
 }
+
+int DecodeEscapeUsequence(lua_State *L)
+{
+	CString str;
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			str = Star::Common::DecodeUnicodeEscapeSequence(lua_tostring(L,1));
+		}
+	}
+
+	lua_pushstring(L,str);
+	return 1;
+}
+
