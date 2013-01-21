@@ -1,5 +1,0 @@
-CJ60Lib需要：在共享 DLL 中使用 MFC	MDd
-主程序ide2先暂且迁就CJ60Lib需要。
-
-
-
