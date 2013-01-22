@@ -1,6 +1,0 @@
-EXPORTS
-	_WaveInit
-	_WaveDropStone
-	_WaveEffect
-	_WaveUpdateFrame
-	_WaveFree
