@@ -1,14 +1,17 @@
 <data>
     <soft>
         <name>RrAlbum</name>
-        <version>2.65</version>
+        <version>3.0</version>
+	<scriptver>1.0</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ85TaJ6mG2k</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8eQLpNUqUh</downurl2>
+	<scripturl>http://www.xcxzq.com/script/RrAlbum.txt</scripturl>
+	<scripturl2>http://www.xcxzq.com/script/RrAlbum.txt</scripturl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37281.htm</regurl>
         <help>http://www.xcxzq.com/help/rralbum.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
         <pswd></pswd>
-      	<news>v2.65修复了不能下载分享相册、单个相册、公共相册的问题，建议升级到最新版!</news>
+      	<news>v3.0临时解决不能下载的问题，强烈建议升级!</news>
 	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
 	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <!--
