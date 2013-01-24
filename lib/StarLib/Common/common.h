@@ -67,7 +67,7 @@ namespace Star
 		CString RemoveFileNameInvalidChar(CString strText);
 
 		//转义网页中的一些字符
-		void EscapeXmlHtmlChar(CString&strText);
+		void unescapexml(CString&strText);
 
 		//解析\u65F6\u5149\u5F71\u50CF\u9986
 		CString DecodeUnicodeEscapeSequence(const char *lpszText);

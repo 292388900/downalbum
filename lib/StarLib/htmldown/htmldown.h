@@ -10,5 +10,5 @@ UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds=10);
 UINT GetHttpFileContentEx(CString strUrl,CString&strHtml,int nTimeOutSeconds=10);
 BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds=10);
 
-CString SendHttpData(LPCTSTR szHost, LPCTSTR szPath, LPCTSTR szHeaders, LPCTSTR szSendData, int nSendDataSize, 
+CString SendHttpData(const CString&strHost, const CString&strPath, const CString&strHeaders, const CString&strSendData, 
 					 int nMethod=0, BOOL bNeedDocode=FALSE );
