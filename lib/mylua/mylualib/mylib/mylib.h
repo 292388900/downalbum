@@ -7,7 +7,7 @@ extern "C" {
 	#include <lua/lualib.h>
 }
 
-extern "C" __declspec(dllexport) int luaopen_mylib (lua_State *L);
+extern "C" __declspec(dllexport) int luaopen_star (lua_State *L);
 
 int msgbox(lua_State *L);
 int gethtml(lua_State *L);
