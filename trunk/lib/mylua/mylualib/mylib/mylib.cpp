@@ -122,6 +122,35 @@ int getluapath(lua_State *L)
 	return 3;
 }
 
+int gettemppath(lua_State *L)
+{
+	CString strRet;
+
+	strRet = Star::Common::GetSysTempPath();
+	lua_pushstring(L,strRet);
+	return 1;
+}
+
+int gettempfilepath(lua_State *L)
+{
+	CString strRet;
+
+	strRet = Star::Common::GetSysTempFileName();
+
+	lua_pushstring(L,strRet);
+	return 1;
+}
+
+int getdesktoppath(lua_State *L)
+{
+	CString strRet;
+
+	strRet = Star::Common::GetDesktopPath();
+
+	lua_pushstring(L,strRet);
+	return 1;
+}
+
 //参数:url,本地文件路径
 //返回:true/false,errmsg
 int downloadfile(lua_State *L)
@@ -272,3 +301,66 @@ int DecodeEscapeUsequence(lua_State *L)
 	return 1;
 }
 
+int unescapexml(lua_State *L)
+{
+	CString str;
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			str = lua_tostring(L,1);
+			Star::Common::unescapexml(str);
+		}
+	}
+
+	lua_pushstring(L,str);
+	return 1;
+}
+
+int sendhttpdata(lua_State *L)
+{
+	CString strRet;
+
+	CString strHost;
+	CString strPath;
+	CString strHeaders;
+	CString strSendData;
+	int nMethod = 0;
+	BOOL bNeedDocode = FALSE;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			strHost = lua_tostring(L,1);
+		}
+	}
+	if ( n>1 ){
+		if ( lua_isstring(L,2) ){
+			strPath = lua_tostring(L,2);
+		}
+	}
+	if ( n>2 ){
+		if ( lua_isstring(L,3) ){
+			strHeaders = lua_tostring(L,3);
+		}
+	}
+	if ( n>3 ){
+		if ( lua_isstring(L,4) ){
+			strSendData = lua_tostring(L,4);
+		}
+	}
+	if ( n>4 ){
+		if ( lua_isnumber(L,5) ){
+			nMethod = (int)lua_tonumber(L,5);
+		}
+	}
+	if ( n>5 ){
+		if ( lua_isnumber(L,6) ){
+			bNeedDocode = (int)lua_tonumber(L,6);
+		}
+	}
+
+	strRet = SendHttpData(strHost,strPath,strHeaders,strSendData,nMethod,bNeedDocode);
+
+	lua_pushstring(L,strRet);
+	return 1;
+}

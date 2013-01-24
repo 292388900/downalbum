@@ -27,7 +27,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-static const struct luaL_reg mylib [] = { 
+static const struct luaL_reg starlib [] = { 
 	{"msgbox", msgbox},
 	{"gethtml", gethtml},
 	{"utf8s2ms", utf8s2ms},
@@ -39,6 +39,11 @@ static const struct luaL_reg mylib [] = {
 	{"md5file", md5file},
 	{"sleep", sleep},
 	{"DecodeEscapeUsequence", DecodeEscapeUsequence},
+	{"unescapexml", unescapexml},
+	{"sendhttpdata", sendhttpdata},
+	{"gettemppath", gettemppath},
+	{"gettempfilepath", gettempfilepath},
+	{"getdesktoppath", getdesktoppath},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
@@ -47,7 +52,7 @@ extern "C" __declspec(dllexport) int luaopen_mylib (lua_State *L) {
 	// luaL_openlib(L, "mylib", mylib, 0);
 	
 	CoInitialize(NULL);
-	luaL_register(L, "mylib", mylib);
+	luaL_register(L, "star", starlib);
 	return 1; 
 }
 

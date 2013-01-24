@@ -445,22 +445,23 @@ BOOL URLDownloadToString(CString strUrl,CString&strHtml,int nTimeOutSeconds)
 }
 
 //默认使用POST方式，默认不需要解密
-CString SendHttpData(LPCTSTR szHost, LPCTSTR szPath, LPCTSTR szHeaders, LPCTSTR szSendData, int nSendDataSize, 
+CString SendHttpData(const CString&strHost, const CString&strPath, const CString&strHeaders, const CString&strSendData, 
 					 int nMethod/*=CHttpConnection::HTTP_VERB_POST*/, BOOL bNeedDocode/*=FALSE*/ )
 {
 	CInternetSession m_InetSession("session");
 	CHttpConnection*pServer =NULL;
 	CHttpFile*pFile =NULL;
 	CString strResult;
+	int nSendDataSize = strSendData.GetLength();
 
 	try{
-		pServer =m_InetSession.GetHttpConnection(szHost);
-		pFile =pServer->OpenRequest(nMethod,szPath);
-		pFile->AddRequestHeaders(szHeaders);
+		pServer =m_InetSession.GetHttpConnection(strHost);
+		pFile =pServer->OpenRequest(nMethod,strPath);
+		pFile->AddRequestHeaders(strHeaders);
 
 		pFile->SendRequestEx(nSendDataSize);
 		if ( nSendDataSize>0 ){
-			pFile->WriteString(szSendData);
+			pFile->WriteString(strSendData);
 		}
 		pFile->EndRequest();
 
