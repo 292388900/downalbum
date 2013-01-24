@@ -97,6 +97,7 @@
 			OutputDirectory="$(SolutionDir)..\..\2005bin\"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
+			UseOfMFC="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>

@@ -5,12 +5,12 @@
 #include "mylib/mylib.h"
 
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
 #pragma comment(lib,"luaD.lib")
 #pragma comment(lib,"User32.lib")
-//#else
-//#pragma comment(lib,"lua.lib")
-//#endif
+#else
+#pragma comment(lib,"lua.lib")
+#endif
 
 
 #ifdef _MANAGED
@@ -48,7 +48,7 @@ static const struct luaL_reg starlib [] = {
 }; 
 
 
-extern "C" __declspec(dllexport) int luaopen_mylib (lua_State *L) { 
+extern "C" __declspec(dllexport) int luaopen_star (lua_State *L) { 
 	// luaL_openlib(L, "mylib", mylib, 0);
 	
 	CoInitialize(NULL);
