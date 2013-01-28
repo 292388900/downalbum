@@ -364,3 +364,33 @@ int sendhttpdata(lua_State *L)
 	lua_pushstring(L,strRet);
 	return 1;
 }
+
+//0,1,2
+int getcurrenttime(lua_State *L)
+{
+	CString strRet;
+	int nMethod = 0;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isnumber(L,1) ){
+			nMethod = (int)lua_tonumber(L,1);
+		}
+	}
+
+	switch ( nMethod )
+	{
+	case 0:
+		strRet = Star::Common::GetCurrentTimeStr();
+		break;
+	case 1:
+		strRet = Star::Common::GetCurrentTimeTotalSeconds();
+		break;
+	case 2:
+		strRet = Star::Common::GetCurrentTimeTotalMiliSeconds();
+		break;
+	}
+
+	lua_pushstring(L,strRet);
+	return 1;
+}
