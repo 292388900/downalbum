@@ -44,6 +44,7 @@ static const struct luaL_reg starlib [] = {
 	{"gettemppath", gettemppath},
 	{"gettempfilepath", gettempfilepath},
 	{"getdesktoppath", getdesktoppath},
+	{"getcurrenttime", getcurrenttime},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
