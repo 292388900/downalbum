@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>alibabaAlbum</name>
-        <version>2.28</version>
+        <version>3.0</version>
 	<scriptver>1.0</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ8BVYYMVRjn</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8B3WvJZSGg</downurl2>
@@ -11,7 +11,7 @@
         <help>http://www.xcxzq.com/help/alibabaalbum.html</help>
         <bbs>http://www.xcxzq.com</bbs>
         <pswd></pswd>
-      	<news>v2.28版本修复了某些相册不能下载的bug，强烈建议更新软件</news>
+      	<news>v3.0版本修全新内核，强烈建议更新软件</news>
 	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
 	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <!--
