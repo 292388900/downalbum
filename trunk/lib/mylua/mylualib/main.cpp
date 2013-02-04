@@ -45,11 +45,15 @@ static const struct luaL_reg starlib [] = {
 	{"gettempfilepath", gettempfilepath},
 	{"getdesktoppath", getdesktoppath},
 	{"getcurrenttime", getcurrenttime},
+	{"postmessage", postmessage},
+	{"sendmessage", sendmessage},
+	{"loadlibray", loadlibray},
+	{"getprocaddress", getprocaddress},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
 
-extern "C" __declspec(dllexport) int luaopen_star (lua_State *L) { 
+extern "C" __declspec(dllexport) int luaopen_star(lua_State *L) { 
 	// luaL_openlib(L, "mylib", mylib, 0);
 	
 	CoInitialize(NULL);
