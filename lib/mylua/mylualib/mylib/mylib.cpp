@@ -394,3 +394,196 @@ int getcurrenttime(lua_State *L)
 	lua_pushstring(L,strRet);
 	return 1;
 }
+
+//////////////////////////////////////////////////////////////////////////
+int sendorpostmessge(lua_State *L,int nMethod)
+{
+	DWORD dwRet = FALSE;
+
+	HWND hWnd = NULL;
+	DWORD dwMsg = WM_NULL;
+	WPARAM wParam = NULL;
+	LPARAM lParam = NULL;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isnumber(L,1) ){
+			hWnd = HWND( PBYTE(NULL) + (DWORD)lua_tonumber(L,1) );
+		}
+	}
+	if ( n>1 ){
+		if ( lua_isnumber(L,2) ){
+			dwMsg = (DWORD)lua_tonumber(L,2);
+		}
+	}
+	if ( n>2 ){
+		switch (lua_type(L,3) ) {
+		case LUA_TNIL:
+			wParam = NULL;
+			break;
+		case LUA_TNUMBER:
+			wParam = WPARAM( PBYTE(NULL) + (DWORD)lua_tonumber(L,3) );
+			break;
+		case LUA_TBOOLEAN:
+			wParam = WPARAM( PBYTE(NULL) + (DWORD)lua_toboolean(L,3) );
+			break;
+		case LUA_TSTRING:
+			wParam = WPARAM(lua_tostring(L,3));
+			break;
+		case LUA_TLIGHTUSERDATA:
+			wParam = WPARAM( PBYTE(NULL) + (DWORD)lua_touserdata(L,3) );
+			break;
+		default:
+			wParam = NULL;
+			break;
+		}
+	}
+	if ( n>3 ){
+		switch (lua_type(L,3) ) {
+		case LUA_TNIL:
+			lParam = NULL;
+			break;
+		case LUA_TNUMBER:
+			lParam = LPARAM( PBYTE(NULL) + (DWORD)lua_tonumber(L,3) );
+			break;
+		case LUA_TBOOLEAN:
+			lParam = LPARAM( PBYTE(NULL) + (DWORD)lua_toboolean(L,3) );
+			break;
+		case LUA_TSTRING:
+			lParam = LPARAM(lua_tostring(L,3));
+			break;
+		case LUA_TLIGHTUSERDATA:
+			lParam = LPARAM( PBYTE(NULL) + (DWORD)lua_touserdata(L,3) );
+			break;
+		default:
+			lParam = NULL;
+			break;
+		}
+	}
+
+	if ( hWnd!=NULL && dwMsg!=WM_NULL ){
+		if ( nMethod==0 ){
+			dwRet = ::PostMessageA(hWnd,dwMsg,wParam,lParam);
+		}else{
+			dwRet = ::SendMessageA(hWnd,dwMsg,wParam,lParam);
+		}
+	}
+
+	lua_pushnumber(L,dwRet);
+	return 1;
+}
+
+int postmessage(lua_State *L)
+{
+	return sendorpostmessge(L,0);
+}
+
+int sendmessage(lua_State *L)
+{
+	return sendorpostmessge(L,1);
+}
+
+int loadlibray(lua_State *L)
+{
+	HMODULE hModule = NULL;
+	CString strModuleName;
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			strModuleName = lua_tostring(L,1);
+		}
+	}
+
+	if ( strModuleName.IsEmpty()==FALSE ){
+		hModule = GetModuleHandleA(strModuleName);
+		if ( hModule==NULL ){
+			hModule = LoadLibraryA(strModuleName);
+		}
+	}
+
+	lua_pushnumber(L,(DWORD)hModule);
+	return 1;
+}
+
+static int CallApi(lua_State* L)
+{
+	int n = lua_gettop(L);
+	FARPROC fc=(FARPROC)lua_touserdata(L,lua_upvalueindex(1));
+	if ( fc==NULL ){
+		lua_pushinteger(L,0);
+		return 1;
+	}
+
+	DWORD dwRet = 0;
+	DWORD dwParam = 0;
+
+	for ( int i = n; i > 0; --i ) {
+		switch (lua_type(L,i) ) {
+		case LUA_TNIL:
+			__asm{
+				push 0;
+			}
+			break;
+		case LUA_TNUMBER:
+			dwParam=(DWORD)lua_tointeger(L,i);
+			__asm{
+				push dwParam;
+			}
+			break;
+		case LUA_TBOOLEAN:
+			dwParam=(DWORD)lua_toboolean(L,i);
+			__asm{
+				push dwParam;
+			}
+			break;
+		case LUA_TSTRING:
+			dwParam=(DWORD)lua_tostring(L,i);
+			__asm{
+				push dwParam;
+			}
+			break;
+		case LUA_TLIGHTUSERDATA:
+			dwParam=(DWORD)lua_touserdata(L,i);
+			__asm{
+				push dwParam;
+			}
+			break;
+		default:
+			lua_pushstring(L,"unknown argument type");
+			lua_error(L);
+			break;
+		}
+	}
+	__asm{
+		call fc;
+		mov dwRet,eax;
+	}
+
+	lua_pushinteger(L,dwRet);
+	return 1;
+}
+
+int getprocaddress(lua_State* L)
+{
+	FARPROC func = NULL;
+	DWORD dwModule = 0;
+	string strFuncName;
+
+	int n = lua_gettop(L);
+	if ( n>1 ){
+		if ( lua_isnumber(L,-2) ){
+			dwModule = (DWORD)lua_tonumber(L,-2);
+		}
+		if ( lua_isstring(L,-1) ){
+			strFuncName = lua_tostring(L,-1);
+		}
+
+		func = GetProcAddress((HMODULE)dwModule,strFuncName.c_str());
+	}
+
+	lua_pushlightuserdata(L,func);
+	lua_pushcclosure(L,CallApi,1);
+	return 1;
+}
+
+//////////////////////////////////////////////////////////////////////////

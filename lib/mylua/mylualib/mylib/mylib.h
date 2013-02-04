@@ -26,3 +26,7 @@ int DecodeEscapeUsequence(lua_State *L);
 int unescapexml(lua_State *L);
 int sendhttpdata(lua_State *L);
 int getcurrenttime(lua_State *L);
+int postmessage(lua_State *L);
+int sendmessage(lua_State *L);
+int loadlibray(lua_State *L);
+int getprocaddress(lua_State* L);
