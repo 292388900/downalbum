@@ -101,18 +101,24 @@ void CThumbnailDlg::InitAllControls()
 void CThumbnailDlg::OnBnClickedOk()
 {
 	UpdateData();
+	int nSelItem = -1;
 
-	int nSelItem = m_cmbThumnailPredefined.GetCurSel();
-	if ( nSelItem==-1 ){
-		AfxMessageBox("请选择一种方案!");
-		return;
+	int nBtnCheck = ((CButton *)GetDlgItem(IDC_RADIO_PREDEFINED))->GetCheck();
+	if ( nBtnCheck==BST_CHECKED ) {
+		nSelItem = m_cmbThumnailPredefined.GetCurSel();
+		if ( nSelItem==-1 ){
+			AfxMessageBox("请选择一种方案!");
+			return;
+		}
+
+		if ( nSelItem>(int)m_vtThumbnailOptions.size() || nSelItem<0 ){
+			nSelItem = 0;
+		}
+
+		m_nPixelWidth = m_vtThumbnailOptions[nSelItem].nPixelWidth;
+	}else{
+		m_nPixelWidth = m_nLimitWidth;
 	}
-
-	if ( nSelItem>(int)m_vtThumbnailOptions.size() ){
-		nSelItem = 0;
-	}
-
-	m_nPixelWidth = m_vtThumbnailOptions[nSelItem].nPixelWidth;
 
 	g_config.m_bResotreExif = m_bResotreExif;
 	g_config.m_nIndexPredefinedThumnailSeleted = nSelItem;
