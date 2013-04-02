@@ -586,4 +586,22 @@ int getprocaddress(lua_State* L)
 	return 1;
 }
 
+
 //////////////////////////////////////////////////////////////////////////
+
+
+int trim(lua_State* L)
+{
+	CStringA str;
+
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			str = lua_tostring(L,1);
+			str.Trim();
+		}
+	}
+
+	lua_pushstring(L,str);
+	return 1;
+}
