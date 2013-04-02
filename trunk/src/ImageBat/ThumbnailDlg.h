@@ -41,6 +41,8 @@ public:
 	CString m_strImageSrcPath;
 	CString m_strImageOutPath;
 	BOOL m_bResotreExif;
+	int m_nLimitWidth;
+	int m_nLimitHeight;
 
 private:
 	vector<THUMBNAIL_PREDEFINED_OPTIONS>m_vtThumbnailOptions;

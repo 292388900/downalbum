@@ -4,6 +4,8 @@
 //
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
+#define IMAGE_WIDTH                     100
+#define IMAGE_HEIGHT                    100
 #define IDS_ABOUTBOX                    101
 #define IDD_MAIN_DIALOG                 102
 #define IDD_DIALOG_TOOLBOX              103
@@ -22,6 +24,8 @@
 #define IDD_DIALOG_ADD_COMMENTS         140
 #define IDR_MENU_OPERATE                141
 #define IDR_MENU_ADD_TAG                142
+#define MAIN_HEIGHT                     600
+#define MAIN_WIDTH                      800
 #define IDC_LIST_PHOTOS                 1000
 #define IDC_BATCHCMD_START              1001
 #define IDC_RENAME                      1001
@@ -74,6 +78,8 @@
 #define IDC_EDIT_FRAME_RIGHT_WIDTH      10016
 #define IDC_CHECK_RESTORE_EXIF          10017
 #define IDC_CHECK_ALL                   10018
+#define IDC_RADIO_PREDEFINED2           10018
+#define IDC_RADIO_CUSTOM                10018
 #define IDC_EDIT_WATERMARKER_TEXT       10019
 #define IDC_EDIT_WATERMARKER_IMAGEFILE  10020
 #define IDC_STATIC_WORK_AREA            10021
@@ -98,6 +104,8 @@
 #define IDC_SPIN_ADD_HOURS              10037
 #define IDC_STATIC_RENAME_PREVIEW       10039
 #define IDC_STATIC_SHOW_OPRATE_MENU     10040
+#define IDC_EDIT_LIMIT_WIDTH            10041
+#define IDC_EDIT_LIMIT_HEIGHT           10042
 #define IDD_DIALOG_REGSOFT              0x6E20
 #define IDC_EDIT_HARDCODE               0x6E21
 #define IDC_EDIT_SERIAL                 0x6E22
@@ -180,7 +188,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         32848
-#define _APS_NEXT_CONTROL_VALUE         10041
+#define _APS_NEXT_CONTROL_VALUE         10042
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

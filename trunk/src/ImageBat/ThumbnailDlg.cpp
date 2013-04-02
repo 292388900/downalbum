@@ -16,6 +16,8 @@ CThumbnailDlg::CThumbnailDlg(CWnd* pParent /*=NULL*/)
 	, m_strImageSrcPath(_T(""))
 	, m_strImageOutPath(_T(""))
 	, m_bResotreExif(FALSE)
+	, m_nLimitWidth(200)
+	, m_nLimitHeight(200)
 {
 	m_nPixelWidth = 1600;
 }
@@ -31,6 +33,10 @@ void CThumbnailDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_IMAGE_SRC_PATH, m_strImageSrcPath);
 	DDX_Text(pDX, IDC_EDIT_IMAGE_OUT_PATH, m_strImageOutPath);
 	DDX_Check(pDX, IDC_CHECK_RESTORE_EXIF, m_bResotreExif);
+	DDX_Text(pDX, IDC_EDIT_LIMIT_WIDTH, m_nLimitWidth);
+	DDV_MinMaxInt(pDX, m_nLimitWidth, 0, 10000);
+	DDX_Text(pDX, IDC_EDIT_LIMIT_HEIGHT, m_nLimitHeight);
+	DDV_MinMaxInt(pDX, m_nLimitHeight, 0, 10000);
 }
 
 
@@ -87,6 +93,7 @@ void CThumbnailDlg::InitAllControls()
 	}
 
 	//默认第一种
+	((CButton *)GetDlgItem(IDC_RADIO_PREDEFINED))->SetCheck(BST_CHECKED);
 	m_cmbThumnailPredefined.SetCurSel(g_config.m_nIndexPredefinedThumnailSeleted);
 }
 
