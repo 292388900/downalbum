@@ -23,6 +23,7 @@ int md5(lua_State *L);
 int md5file(lua_State *L);
 int sleep(lua_State *L);
 int DecodeEscapeUsequence(lua_State *L);
+int RemoveFileNameInvalidChar(lua_State *L);
 int unescapexml(lua_State *L);
 int sendhttpdata(lua_State *L);
 int getcurrenttime(lua_State *L);

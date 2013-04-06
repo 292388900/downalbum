@@ -301,6 +301,20 @@ int DecodeEscapeUsequence(lua_State *L)
 	return 1;
 }
 
+int RemoveFileNameInvalidChar(lua_State *L)
+{
+	CString str;
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			str = Star::Common::RemoveFileNameInvalidChar(lua_tostring(L,1));
+		}
+	}
+
+	lua_pushstring(L,str);
+	return 1;
+}
+
 int unescapexml(lua_State *L)
 {
 	CString str;

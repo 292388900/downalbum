@@ -39,6 +39,7 @@ static const struct luaL_reg starlib [] = {
 	{"md5file", md5file},
 	{"sleep", sleep},
 	{"DecodeEscapeUsequence", DecodeEscapeUsequence},
+	{"RemoveFileNameInvalidChar", RemoveFileNameInvalidChar},
 	{"unescapexml", unescapexml},
 	{"sendhttpdata", sendhttpdata},
 	{"gettemppath", gettemppath},
