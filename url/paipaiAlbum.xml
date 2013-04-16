@@ -1,9 +1,12 @@
 <data>
     <soft>
         <name>paipaiAlbum</name>
-        <version>1.0</version>
+        <version>2.0</version>
+	<scriptver>1.0</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ8E3WPrVhUb</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8E642CZhuf</downurl2>
+	<scripturl>http://www.xcxzq.com/script/paipaiAlbum.txt</scripturl>
+	<scripturl2>http://www.xcxzq.com/script/paipaiAlbum.txt</scripturl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_43118.htm</regurl>
         <help>http://www.xcxzq.com/help/paipaialbum.html</help>
         <bbs>http://www.xcxzq.com</bbs>
