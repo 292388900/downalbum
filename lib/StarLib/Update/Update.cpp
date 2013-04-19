@@ -105,6 +105,46 @@ BOOL CheckUpdateInfo(CString strAppName,CString strUrl,UPDATEINFO&stUpdateInfo)
 	return bSucceed;
 }
 
+void GetScriptInfo(CString&strHtml,UPDATEINFO&stUpdateInfo)
+{
+	int nPos1 = 0;
+	int nPos2 = 0;
+	SCRIPTINFO stScript;
+
+
+	while ( TRUE ){
+		nPos1 = strHtml.Find(_T("<script"),nPos2);
+		if ( nPos1==-1 ) {
+			break;
+		}
+
+		nPos1 = strHtml.Find(_T("name=\""),nPos1);
+		if ( nPos1==-1 ) {
+			break;
+		}
+		nPos2 = strHtml.Find('\"',nPos1+6);
+		stScript.strScriptName = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+
+		nPos1 = strHtml.Find(_T("ver=\""),nPos1);
+		nPos2 = strHtml.Find('\"',nPos1+5);
+		stScript.strScriptVer = strHtml.Mid(nPos1+5,nPos2-nPos1-5);
+
+		nPos1 = strHtml.Find(_T("file=\""),nPos1);
+		nPos2 = strHtml.Find('\"',nPos1+6);
+		stScript.strLocalFileName = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+
+		nPos1 = strHtml.Find(_T("<url>"),nPos1);
+		nPos2 = strHtml.Find("</",nPos1+5);
+		stScript.strScriptUrl = strHtml.Mid(nPos1+5,nPos2-nPos1-5);
+
+		nPos1 = strHtml.Find(_T("<url2>"),nPos1);
+		nPos2 = strHtml.Find("</",nPos1+6);
+		stScript.strScriptUrl2 = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+
+		stUpdateInfo.vtScripts.push_back(stScript);
+	}
+}
+
 BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 {
 	BOOL bSucceed=FALSE;
@@ -113,6 +153,9 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	int nPos1=0;
 	int nPos2=0;
 	int nEnd=0;
+
+	stUpdateInfo.vtScripts.clear();
+	stUpdateInfo.vtVotes.clear();
 
 	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
 	//Star::Common::ConvertUtf8ToGBK(strHtml);
@@ -231,6 +274,14 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		nPos2=strHtml.Find(_T("</"),nPos1+4);
 		if ( nPos2!=-1 ){
 			stUpdateInfo.strAdsUrl=strHtml.Mid(nPos1+4,nPos2-nPos1-4);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	nPos1 = strHtml.Find(_T("<scripts"));
+	if ( nPos1!=-1 ) {
+		nPos2 = strHtml.Find(_T("</scripts"),nPos1);
+		if ( nPos2!=-1 ) {
+			GetScriptInfo(strHtml.Mid(nPos1,nPos2-nPos1),stUpdateInfo);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
