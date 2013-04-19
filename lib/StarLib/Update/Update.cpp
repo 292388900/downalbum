@@ -111,7 +111,18 @@ void GetScriptInfo(CString&strHtml,UPDATEINFO&stUpdateInfo)
 	int nPos2 = 0;
 	SCRIPTINFO stScript;
 
+	nPos1 = strHtml.Find(_T("path=\""));
+	if ( nPos1!=-1 ) {
+		nPos2 = strHtml.Find('\"',nPos1+6);
+		stUpdateInfo.strScriptPath = strHtml.Mid(nPos1+6,nPos2-nPos1-6).Trim();
+		if ( stUpdateInfo.strScriptPath.GetLength()>1 && stUpdateInfo.strScriptPath.Right(1)!=_T("\\") ) {
+			stUpdateInfo.strScriptPath += _T("\\");
+		}
+	}else{
+		stUpdateInfo.strScriptPath = _T(".\\");
+	}
 
+	nPos2 = 0;
 	while ( TRUE ){
 		nPos1 = strHtml.Find(_T("<script"),nPos2);
 		if ( nPos1==-1 ) {
