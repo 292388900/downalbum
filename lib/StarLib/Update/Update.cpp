@@ -207,30 +207,6 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find(_T("<scriptver>"));
-	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find(_T("</"),nPos1+11);
-		if ( nPos2!=-1 ){
-			stUpdateInfo.strScriptVer=strHtml.Mid(nPos1+11,nPos2-nPos1-11);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find(_T("<scripturl>"));
-	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find(_T("</"),nPos1+11);
-		if ( nPos2!=-1 ){
-			stUpdateInfo.strScriptUrl=strHtml.Mid(nPos1+11,nPos2-nPos1-11);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find(_T("<scripturl2>"));
-	if ( nPos1!=-1 ){
-		nPos2=strHtml.Find(_T("</"),nPos1+12);
-		if ( nPos2!=-1 ){
-			stUpdateInfo.strScriptUrl2=strHtml.Mid(nPos1+12,nPos2-nPos1-12);
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////
 	nPos1=strHtml.Find(_T("<regurl>"));
 	if ( nPos1!=-1 ){
 		nPos2=strHtml.Find(_T("</"),nPos1+8);
