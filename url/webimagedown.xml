@@ -24,11 +24,11 @@ s=2,p=57829,
 	</soft>
 
 	<scripts path=".\script\">
-		<script name="abc" ver="1.0" file="abc.txt">
-			<url>http://www.xcxzq.com/script/webimagedown.txt</url>
-			<url2>http://www.xcxzq.com/script/webimagedown.txt</url2>
+		<script name="rakuten" ver="1.0" file="rakuten.txt">
+			<url>http://www.xcxzq.com/script/rakuten.txt</url>
+			<url2>http://www.xcxzq.com/script/rakuten.txt</url2>
 		</script>
-		<script name="def" ver="1.0" file="def.txt">
+		<script name="webimagedown" ver="1.0" file="webimagedown.txt">
 			<url>http://www.xcxzq.com/script/webimagedown.txt</url>
 			<url2>http://www.xcxzq.com/script/webimagedown.txt</url2>
 		</script>
