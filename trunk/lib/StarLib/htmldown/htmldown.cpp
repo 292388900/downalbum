@@ -5,6 +5,8 @@
 #include "../Common/common.h"
 #include "../gzipDecoder/gzipDecoder.h"
 
+#pragma comment(lib,"Urlmon.lib")
+
 
 UINT GetHttpFileSaveAs(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 {

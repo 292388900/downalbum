@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="F:\open\lib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,6 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="F:\open\lib\2005bin"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -176,7 +178,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\File\File.cpp"
+				RelativePath=".\gzipDecoder\gzipDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\htmldown\htmldown.cpp"
 				>
 			</File>
 			<File
@@ -212,7 +218,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Process\Thread.cpp"
+				RelativePath=".\Update\Update.cpp"
 				>
 			</File>
 		</Filter>
@@ -222,7 +228,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\File\File.h"
+				RelativePath=".\gzipDecoder\gzipDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\htmldown\htmldown.h"
 				>
 			</File>
 			<File
@@ -238,7 +248,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Process\Thread.h"
+				RelativePath=".\Update\Update.h"
 				>
 			</File>
 		</Filter>
