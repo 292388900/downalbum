@@ -27,9 +27,6 @@ typedef struct UPDATEINFO
 	CString strVersion;			//最新版本信息
 	CString strDownUrl;			//试用版下载地址
 	CString strDownUrl2;		//注册版下载地址
-	CString strScriptVer;		//脚本最新版本
-	CString strScriptUrl;		//脚本下载地址
-	CString strScriptUrl2;		//脚本备用下载地址
 	CString strRegUrl;			//购买网址
 	CString strHelpUrl;			//帮助网页地址
 	CString strHome;			//官方网站
