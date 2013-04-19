@@ -1,5 +1,6 @@
  
 #pragma once
+#include <afx.h>
 #include <atlstr.h>
 #include <vector>
 using namespace std;
