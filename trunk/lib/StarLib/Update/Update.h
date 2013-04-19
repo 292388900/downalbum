@@ -38,6 +38,7 @@ typedef struct UPDATEINFO
 	CString strAdsUrl;			//广告配置信息的文件地址
 	CString strUrgent;			//应急措施
 	CString strAllsoft;			//所有软件
+	CString strScriptPath;		//脚本存放相对路径
 	vector<SCRIPTINFO>vtScripts;//脚本列表
 	vector<VOTEINFO>vtVotes;	//为软件投票
 }*PUPDATEINFO;
