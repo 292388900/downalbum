@@ -24,7 +24,7 @@ s=2,p=57829,
 	</soft>
 
 	<scripts path=".\script\">
-		<script name="rakuten" ver="1.0" file="rakuten.txt">
+		<script name="rakuten" ver="1.1" file="rakuten.txt">
 			<url>http://www.xcxzq.com/script/rakuten.txt</url>
 			<url2>http://www.xcxzq.com/script/rakuten.txt</url2>
 		</script>
