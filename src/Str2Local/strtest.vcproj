@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="strtest"
+	Name="Str2Local"
 	ProjectGUID="{5DBDD594-9A33-4717-AFC7-5A5D00A9599A}"
 	RootNamespace="strtest"
 	Keyword="MFCProj"
