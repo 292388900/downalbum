@@ -24,7 +24,7 @@ s=2,p=61291,
     </soft>
 
 	<scripts path=".\">
-		<script name="tqqAlbumDown" ver="1.0" file="tqqAlbumDown.txt">
+		<script name="tqqAlbumDown" ver="1.1" file="tqqAlbumDown.txt">
 			<url>http://www.xcxzq.com/script/tqqAlbumDown.txt</url>
 			<url2>http://www.xcxzq.com/script/tqqAlbumDown.txt</url2>
 		</script>
