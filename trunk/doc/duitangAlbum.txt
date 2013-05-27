@@ -1,0 +1,400 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'alibabaAlbum';
+name_cn = '堆糖网专辑批量下载器';
+prefix = 'DUIT';
+ver = '1.1';
+firstpagename = '堆糖网';
+firstpageurl = 'http://www.duitang.com';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+star.utf8s2ms = star.utf8s2ms or print
+
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+user_id = ''
+ndowntype = 0;
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+function GetHomePageFromUrl(url)
+	local html = nil
+	local id = nil
+	local homeurl = ''
+	
+	_,_,id = string.find(url,[[duitang.com/people/(%d+)]])
+	if id~=nil then
+		homeurl = 'http://www.duitang.com/people/' .. id .. '/'
+		return homeurl
+	else
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			return homeurl
+		end
+	end
+	
+	_,_,id = string.find(html,[[personinfo.-href="(.-)"]])
+	if id~=nil then
+		homeurl = 'http://www.duitang.com' .. id
+	end
+	
+	return homeurl
+end
+
+function GetNickyFromHomePage(url)
+	local html = nil
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return ''
+	end
+	html = star.utf8s2ms(html)
+	
+	_,_,username = string.find(html,[[</span><h1.->(.-)<span]])
+	_,_,user_id = string.find(html,[["id":"(%d+)"]])
+	return username
+end
+
+function GetZhuanji(url,IsFavalAlbum)
+	local albumcount = 0
+	local html = nil
+	local homeurl = nil
+	local nextpageurl = nil
+	local pages = 1
+	local ipage = 1
+	local strlike = ''
+		
+	homeurl = GetHomePageFromUrl(url)
+	username = GetNickyFromHomePage(homeurl)
+	SetDirectryName(username);
+	
+	url = homeurl .. '#!album'
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	--get count
+	if IsFavalAlbum==true then
+		strlike = '&like=1'
+		_,_,count = string.find(html,[[TA喜欢的专辑<u>.-(%d+)]])
+	else
+		_,_,count = string.find(html,[[TA的专辑<u>.-(%d+)]])
+	end
+	print(count)
+	
+	pages,_ =math.modf(count/12) 
+	rest = math.mod(count,12)
+	pages = pages + (rest~=0 and 1 or 0)
+	
+	for ipage = 1,pages do
+		msgprint('正在获取第 ' .. ipage .. '/' .. pages .. '页专辑信息……' )
+		url = 'http://www.duitang.com/album/list/' .. ipage .. '/12/?user_id=' .. user_id .. '&pic=1' .. strlike
+		html = star.gethtml(url)
+		html = star.utf8s2ms(html)
+		
+		for count,id,name,src in string.gfind(html, [["count":(%d+).-"id":(%d+).-"name":"(.-)".-"pics".-(http.-)"]]) do
+			src = string.gsub(src,'(%.thumb%.%d+_%d+_c%.)','.')
+			albumcount = albumcount + 1
+			albums[albumcount].id = id;
+			albums[albumcount].url = 'http://www.duitang.com/album/' .. id;
+			albums[albumcount].preview = src;
+			albums[albumcount].total = count;
+			albums[albumcount].name = name --star.DecodeEscapeUsequence(name)
+		end
+		
+	end
+	
+end
+
+function GetSelfAlbum(url)
+	GetZhuanji(url,false)
+end
+
+function trim(s)
+	local from = '';
+	if s==nil then
+		return '';
+	end
+	from = s:match"^%s*()"
+	return from > #s and "" or s:match(".*%S", from)
+end
+
+--获取分类产品图片
+function GetFavalAlbum(url)
+	GetZhuanji(url,true)
+end
+
+function GetFabuImage(url,isOriginal,isGetAll)
+	local photocount = 0;
+	local photos = PHOTOS.new()
+	local html = nil
+	local homeurl = nil
+	local name = ''
+	local nextpageurl = nil
+	local pages = 1
+	local ipage = 1
+	local strOriginal = ''
+		
+	homeurl = GetHomePageFromUrl(url)
+	name = GetNickyFromHomePage(homeurl)
+	SetDirectryName(name);
+	
+	url = homeurl .. '#!collect'
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	--get count
+	if isOriginal==true then
+		strOriginal = '?filter=original'
+		_,_,count = string.find(html,[[TA的发布<u>.-(%d+)]])
+	else
+		_,_,count = string.find(html,[[TA的收集<u>.-(%d+)]])
+	end
+	print(count)
+	
+	pages,_ =math.modf(count/24) 
+	rest = math.mod(count,24)
+	pages = pages + (rest~=0 and 1 or 0)
+	
+	for ipage = 1,pages do
+		msgprint('正在获取第 ' .. ipage .. '/' .. pages .. '页图片信息……' )
+		url = 'http://www.duitang.com/people/' .. user_id .. '/message/list/masn/' .. ipage .. '/24/' .. strOriginal
+		html = star.gethtml(url)
+		
+		for src,name,id in string.gfind(html, [["isrc":"(.-)".-"msg":"(.-)".-"photo_id":(%d+)]]) do
+			src = string.gsub(src,'(%.thumb%.%d+_%d+%.)','.')
+			photocount = photocount + 1;
+			photos[photocount].preview = src
+			photos[photocount].orign = src;
+			photos[photocount].id = id;
+			photos[photocount].name = star.DecodeEscapeUsequence(name);
+		end
+		
+		if isGetAll==false then
+			break
+		end
+		
+	end	
+	
+	return photos;
+end
+
+function GetCollectAlbum(url)
+	local albumcount = 0
+	local photos = GetFabuImage(url,false,false)
+	
+	if #photos>0 then
+		albumcount = albumcount + 1
+		albums[albumcount].url = url
+		albums[albumcount].preview = photos[1].preview;
+		albums[albumcount].total = -1;
+		albums[albumcount].name = username .. '_的收集';
+	end
+end
+function GetFabuAlbum(url)
+	local albumcount = 0
+	local photos = GetFabuImage(url,true,false)
+		if #photos>0 then
+		albumcount = albumcount + 1
+		albums[albumcount].url = url
+		albums[albumcount].preview = photos[1].preview;
+		albums[albumcount].total = -1;
+		albums[albumcount].name = username .. '_的发布';
+	end
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	homeurl = GetHomePageFromUrl(url)
+	msgprint(homeurl)
+	ndowntype = ntype;
+	if ntype==0 then
+		GetSelfAlbum(url)
+	elseif ntype==1 then
+		GetFavalAlbum(url)
+	elseif ntype==2 then
+		GetCollectAlbum(url)
+	elseif ntype==3 then
+		GetFabuAlbum(url)
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function randfloatnum()
+	s = '0.'
+	math.randomseed(os.time())
+	for i = 1,16 do
+		s = s .. math.random(0,9);
+	end
+	
+	return s;
+end
+
+function GetFabuPhotos(album)
+	return GetFabuImage(album.url,true,true);
+end
+function GetCollectPhotos(album)
+	return GetFabuImage(album.url,false,true);
+end
+
+function GetAlbumPhotos(album)
+	local photocount = 0;
+	local photos = PHOTOS.new()
+	
+	pagecount,_ =math.modf(album.total/24) 
+	rest =math.mod(album.total,24)
+	pagecount = pagecount + (rest~=0 and 1 or 0)
+	
+	for ipage = 1,pagecount do
+		url = string.format('http://www.duitang.com/album/%s/masn/p/%d/24/',album.id,ipage)
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		
+		for src,name,id in string.gfind(html, [["isrc":"(.-)".-"msg":"(.-)".-"photo_id":(%d+)]]) do
+			src = string.gsub(src,'(%.thumb%.%d+_%d+%.)','.')
+			photocount = photocount + 1;
+			photos[photocount].preview = src
+			photos[photocount].orign = src;
+			photos[photocount].id = id;
+			photos[photocount].name = star.DecodeEscapeUsequence(name);
+		end
+
+	end
+	
+	return photos;
+end
+
+function GetPhotos(index)
+	local photos = PHOTOS.new()
+	
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	if ndowntype==0 then
+		photos = GetAlbumPhotos(albums[index])
+	elseif ndowntype==1 then
+		photos = GetAlbumPhotos(albums[index])
+	elseif ndowntype==2 then
+		photos = GetCollectPhotos(albums[index])
+	elseif ndowntype==3 then
+		photos = GetFabuPhotos(albums[index])
+	end
+	
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--http://www.duitang.com/people/1723793564/
+--http://www.duitang.com/people/1723258857/
+--发布较少: http://www.duitang.com/people/1723734606/
+--[[function test()
+	local url = nil
+	GetAlbums(0,'http://www.duitang.com/people/1723793564/')
+	GetPhotos(8)
+end
+
+test();--]]

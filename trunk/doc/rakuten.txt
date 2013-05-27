@@ -1,0 +1,253 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'rakuten';
+name_cn = 'rakuten图片批量下载器';
+prefix = 'rktn';
+ver = '1.1';
+firstpagename = 'rakuten';
+firstpageurl = 'http://www.rakuten.co.jp/';
+inputurl = 'http://item.rakuten.co.jp/dreamworld777/c/0000000157/?p=3';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+downtypes = {
+'下载rakuten图片'
+}
+
+--c函数初始化
+msgprint = msgprint or print
+msgbox = msgbox or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+star.utf8s2ms = star.utf8s2ms or print
+
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+ndowntype = 0;
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+
+function GetOneItemAlbum(url)
+	local html = nil
+	local index = 0
+    local photocount = 0
+	local albumcount = 0
+    local album = {photos={}}
+	
+	album.url = url;
+	_,_,id = string.find(url,'item.rakuten.co.jp/.+/(.*)/')
+    html = star.gethtml(url)
+	
+	--get name
+	name = ''
+	isbigimage = true
+	_,_,html = string.find(html,[["sale_desc"(.-)"tax_postage"]])
+	p = string.find(html,'<table')
+	s1 = string.sub(html,1,p)
+	s2 = string.sub(html,p)
+	
+	index = 0
+	for src in string.gfind(s1,'src="(http.-)"') do 
+		index = index + 1
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src;
+		album.photos[photocount].orign = src;
+		album.photos[photocount].name = id .. '大' .. index;
+	end
+	
+	index = 0
+	for src in string.gfind(s2,'src="(http.-)"') do 
+		index = index + 1
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src;
+		album.photos[photocount].orign = src;
+		album.photos[photocount].name = id .. '小' .. index;
+	end
+    
+	albumcount = albumcount + 1
+	albums[albumcount] = album
+	albums[albumcount].total = photocount
+	albums[albumcount].name = name
+	return album;
+end
+
+function GetCatItemsAlbum(url)
+	local albumcount = 0
+	local html = nil
+	local pageformat = nil
+	local pages = 1
+	local ipage = 1
+	local bfound = false
+	
+	p = string.find(url,'?')
+	if p~=nil then
+		url = string.sub(url,1,p-1)
+	end
+	if string.sub(url,-1)~= '/' then
+		url = url .. '/'
+	end
+	
+	--cate id
+	_,_,catit = string.find(url,'/c/(%d+)')
+	SetDirectryName(catit)
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	
+	while true do 
+		s = url .. '?p=' .. ipage
+		ipage = ipage + 1
+		msgprint('正在获取第 '..ipage..'页图片信息……')
+		html = star.gethtml(s)
+		if html==nil or html=='' then
+			break
+		end
+		
+		_,_,s = string.find(html,'risfAllPages(.-)risfAllPages')
+		--file = io.open('r.txt',"w");file:write(s)
+
+		bfound = false
+		for href,src in string.gfind(s, [[<td.-href="(.-)".-src="(.-)"]]) do
+			bfound = true
+			_,_,id = string.find(href,'item.rakuten.co.jp/.+/(.*)/')
+			albumcount = albumcount + 1
+			albums[albumcount].id = id;
+			albums[albumcount].url = href;
+			albums[albumcount].preview = src;
+			albums[albumcount].total = -1;
+			albums[albumcount].name = id;
+		end
+		
+		if bfound==false then
+			break
+		end
+		
+	end
+	
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	ndowntype = ntype;
+	if ntype==0 then
+		GetCatItemsAlbum(url)
+	elseif ntype==1 then
+		GetOneItemAlbum(url)
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function GetPhotos(index)
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	album = GetOneItemAlbum(albums[index].url)
+	photos = album.photos;
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--http://item.rakuten.co.jp/dreamworld777/c/0000000157/?p=3
+--[[function test()
+	local url = nil
+	GetAlbums(0,'http://item.rakuten.co.jp/dreamworld777/c/0000000157/?p=3')
+	GetPhotos(1)
+end
+
+test();--]]

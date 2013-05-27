@@ -1,0 +1,432 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'alibabaAlbum';
+name_cn = '阿里巴巴图片批量下载器';
+prefix = 'ALBB';
+ver = '2.2';
+firstpagename = '阿里巴巴';
+firstpageurl = 'http://china.alibaba.com';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+member_id = ''
+ndowntype = 0;
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+function GetOneItemAlbum(url)
+	local albumcount = 0
+	local html = nil
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+		
+	--get id
+	_,_,id = string.find(html,'offerId.-=(%d*)')
+
+	--get name	
+	_,_,name = string.find(html,[[mod%-detail%-hd.-<h1>(.-)</h1>]])
+
+	if id==nil or name==nil then
+		msgbox('请输入单个产品网址!')
+		return
+	end
+	
+	--
+	SetDirectryName(name);
+	
+	--get preview
+	_,_,src = string.find(html,[[vertical%-img.-src.-(http.-.jpg)]])
+	
+	albumcount = albumcount + 1
+	albums[albumcount].id = id;
+	albums[albumcount].url = url;
+	albums[albumcount].preview = src;
+	albums[albumcount].total = -1;
+	albums[albumcount].name = name;
+end
+
+function trim(s)
+	local from = '';
+	if s==nil then
+		return '';
+	end
+	from = s:match"^%s*()"
+	return from > #s and "" or s:match(".*%S", from)
+end
+
+--获取分类产品图片
+function GetCatAlbum(url)
+	local albumcount = 0
+	local html = nil
+	local nextpageurl = url
+	local catname = nil
+	
+	repeat
+		html = star.gethtml(nextpageurl)
+		if html==nil or html=='' then
+			break
+		end
+		
+		if catname==nil then
+			--获取分类名以及该分类下的产品个数
+			_,_,catname,count = string.find(html,[[selected.-name">([^"^'^/]+)</span>.-num(%d*)]])
+			catname = trim(catname)
+			catname = string.gsub(catname, "|", "")
+			SetDirectryName(catname);
+		end
+		
+		_,_,html = string.find(html,[[标价</label>(.-)m%-footer]])
+		
+		bfound = false
+		for href,name,preview in string.gfind(html, [["image">.-href="(.-)".-title="(.-)".-src.-(http[^"^'^%s]-.jpg)]]) do
+			_,_,id = string.find(href,'/(%d+)')
+			bfound = true
+			albumcount = albumcount + 1
+			albums[albumcount].id = id;
+			albums[albumcount].url = href;
+			albums[albumcount].preview = preview;
+			albums[albumcount].total = -1;
+			albums[albumcount].name = name;
+		end
+		
+		if bfound==false then
+			break
+		end
+	
+		--是否还有下一页
+		p1,p2 = string.find(html,'next-disabled');
+		if p1~=nil then
+		  break
+		end
+		
+		pos1,pos2,nextpageurl = string.find(html,[[class="next".-href.-(http[^"^'^%s]*)]]);    
+		if nextpageurl==nil or nextpageurl=='' then
+		   break
+		end
+		nextpageurl = string.gsub(nextpageurl,"#anchor","");
+	until (false)
+		
+end
+
+function GetProductAlbum(url)
+	local bhascover = false
+	local albumcount = 0
+	local html = nil	
+	local ALBUMCOUNTPERPAGE = 20
+	local albumstart = 1
+	local albumend = ALBUMCOUNTPERPAGE
+	member_id = ''
+	
+	--获取member_id
+	url = string.lower(url)
+	_,_,account = string.find(url,'([%w]+).cn.')
+	if account~=nil then
+		url = 'http://' .. account .. '.cn.alibaba.com'
+	end
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+
+	_,_,member_id = string.find(html,[[member_id:.-([^'^"]+)]])
+	SetDirectryName(member_id)
+	if account==nil then
+		_,_,account = string.find(html,'([%w]+).cn.alibaba.com')
+	end
+	
+	repeat 
+		url = 'http://picman.china.alibaba.com/open/ajax/RecommendAlbumDetailList.json?memberId=' .. member_id .. '&hasAlbums=true&start=' .. albumstart .. '&end=' .. albumend
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		--msgbox(url)
+		bfound = false
+		
+		--可能有些没有封面图
+		for oneline in string.gfind(html,[[({"id".-})]]) do
+			--假设没有封面
+			bhascover = false
+			for id,preview,name,count in string.gfind(oneline, [["id":(%d+).-"cover".-(http.-.jpg).-"title":"(.-)".-"count":(%d+)]]) do
+				bhascover = true
+				preview = star.DecodeEscapeUsequence(preview)
+				name = star.DecodeEscapeUsequence(name)
+				bfound = true
+				albumcount = albumcount + 1
+				albums[albumcount].id = id;
+				albums[albumcount].url = 'http://' .. member_id .. '.cn.alibaba.com/page/albumdetail_' .. id .. '.htm';
+				albums[albumcount].preview = preview;
+				albums[albumcount].total = tonumber(count);
+				albums[albumcount].name = name;
+			end
+			
+			if bhascover==false then
+				for id,name,count in string.gfind(oneline, [["id":(%d+).-"title":"(.-)".-"count":(%d+)]]) do
+					preview = star.DecodeEscapeUsequence(preview)
+					name = star.DecodeEscapeUsequence(name)
+					bfound = true
+					albumcount = albumcount + 1
+					albums[albumcount].id = id;
+					albums[albumcount].url = 'http://' .. member_id .. '.cn.alibaba.com/page/albumdetail_' .. id .. '.htm';
+					albums[albumcount].preview = 'http://img.china.alibaba.com/images/app/platform/winport/mod/albums/no-cover-150.gif';
+					albums[albumcount].total = tonumber(count);
+					albums[albumcount].name = name;
+				end
+			end
+		end
+
+		
+		if bfound==false then
+			break
+		end
+		
+		_,_,count = string.find(html,[["total":(%d+)]])
+		count = tonumber(count)
+		if albumcount>=count then
+			break
+		end
+		
+		albumstart = albumstart + ALBUMCOUNTPERPAGE
+		albumend = albumend + ALBUMCOUNTPERPAGE
+	until (false)
+
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	ndowntype = ntype;
+	if ntype==0 then
+		GetOneItemAlbum(url)
+	elseif ntype==1 then
+		GetCatAlbum(url)
+	elseif ntype==2 then
+		GetProductAlbum(url)
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function randfloatnum()
+	s = '0.'
+	math.randomseed(os.time())
+	for i = 1,16 do
+		s = s .. math.random(0,9);
+	end
+	
+	return s;
+end
+
+function GetOneItemPhotos(album)
+	local url = nil
+	local photocount = 0;
+	local photos = PHOTOS.new()
+	
+	html = star.gethtml(album.url)
+	if html==nil or html=='' then
+		return
+	end
+
+	--预览图
+	bfound = false
+	for src in string.gfind(html, [[original.-(http.-.jpg)]]) do
+		bfound = true
+		photocount = photocount + 1;
+		photos[photocount].preview = src
+		photos[photocount].orign = src;
+	end
+	
+	--如果没有获取到预览图则获取封面图
+	if bfound==false then
+		--get cover
+		_,_,previewsrc = string.find(html,[[vertical%-img.-src.-(http.-.jpg)]])
+		orignsrc = string.gsub(previewsrc,'(%.%d+x%d+).jpg','.jpg')
+		
+		photocount = photocount + 1
+		photos[photocount].preview = previewsrc
+		photos[photocount].orign = orignsrc;
+	end
+	
+	--获取描述中的图片
+	for s in string.gfind(html, [[data%-url.-(http[^"^'^%s]*)]]) do
+		if string.find(s,'alibaba.com')~=nil then
+			url = s
+			break
+		end
+	end
+	
+	--http://laputa.china.alibaba.com/offer/ajax/OfferDesc.do?offerId=1019516444&callback=rnd13107180989315
+	url = url .. '?offerId=' .. album.id .. '&callback=rnd' .. os.time();
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	
+	for src in string.gfind(html, [[(http[^"^']-.jpg)]]) do
+		photocount = photocount + 1;
+		photos[photocount].preview = src
+		photos[photocount].orign = src;
+	end
+	for src in string.gfind(html, [[(http[^"^']-.JPG)]]) do
+		photocount = photocount + 1;
+		photos[photocount].preview = src
+		photos[photocount].orign = src;
+	end
+	
+	return photos;
+end
+
+function GetProductPhotos(album)
+	local photocount = 0;
+	local photos = PHOTOS.new()
+	
+	pagecount,_ =math.modf(album.total/8) 
+	rest =math.mod(album.total,8)
+	pagecount = pagecount + (rest~=0 and 1 or 0)
+	
+	for ipage = 1,pagecount do
+		url = string.format('http://%s.cn.alibaba.com/event/app/albumGuide/imageList.htm?albumId=%s&pageNum=%d',
+			account,album.id,ipage)
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		
+		for src in string.gfind(html, [[(http[^"^'^%s]-.jpg)]]) do
+			--大图
+			src = string.gsub(src,'(%.%d+x%d+).jpg','.jpg')
+			photocount = photocount + 1;
+			photos[photocount].preview = src
+			photos[photocount].orign = src;
+		end
+
+	end
+	
+	return photos;
+end
+
+function GetPhotos(index)
+	local photos = PHOTOS.new()
+	
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	if ndowntype==0 then
+		photos = GetOneItemPhotos(albums[index])
+	elseif ndowntype==1 then
+		photos = GetOneItemPhotos(albums[index])
+	elseif ndowntype==2 then
+		photos = GetProductPhotos(albums[index])
+	else
+	end
+	
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+
+function test()
+	--GetAlbums(0,'http://detail.china.alibaba.com/buyer/offerdetail/574616943.html')
+end
+
+--test();
