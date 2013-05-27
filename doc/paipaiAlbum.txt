@@ -1,0 +1,290 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'paipaiAlbum';
+name_cn = 'QQ网购拍拍宝贝图片批量下载器';
+prefix = 'PPAM';
+ver = '1.1';
+firstpagename = 'QQ网购';
+firstpageurl = 'http://buy.qq.com/';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+
+--c函数初始化
+msgprint = msgprint or print
+msgbox = msgbox or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+star.utf8s2ms = star.utf8s2ms or print
+
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+ndowntype = 0;
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+function GetHomePageFromUrl(url)
+	local html = nil
+	local homeurl = ''
+	
+	_,_,account = string.find(url,[[shop.paipai.com/(%d+)]])
+	if account==nil then
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			return homeurl
+		end
+		_,_,account = string.find(html,[[title="查看全部商品.-shop.paipai.com/(%d+)"]])
+	end
+	
+	if account~=nil then
+		homeurl = 'http://shop.paipai.com/' .. account
+		SetDirectryName(account)
+	else
+		SetDirectryName('')
+	end
+	
+	return homeurl
+end
+
+function GetOneItemAlbum(url)
+	local html = nil
+	local index = 0
+    local photocount = 0
+	local albumcount = 0
+    local album = {photos={}}
+	
+	url = string.gsub(url,'#nolink','')
+	album.url = url;
+    html = star.gethtml(url);
+	
+	--get name
+	_,_,name = string.find(html,[[商品标题.-<h1>(.-)</h1>]])
+	
+	--预览图
+	_,_,s = string.find(html,'picList:(.-)]')
+	index = 0
+	for src in string.gfind(s, [[(http[^"^'^%s]-.jpg)]]) do
+		index = index + 1;
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src;
+		album.photos[photocount].orign = src;
+		album.photos[photocount].name = '预览图'..index;
+    end
+	
+	--详情图
+	_,_,s = string.find(html,'商品描述(.-)%-%-闭合%-%-')
+	for src in string.gfind(s, [[src.-(http[^"^'^%s]*)]]) do
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src;
+		album.photos[photocount].orign = src;
+    end
+    
+	albumcount = albumcount + 1
+	albums[albumcount] = album
+	albums[albumcount].total = photocount
+	albums[albumcount].name = name
+	return album;
+end
+
+function GetCatItemsAlbum(url)
+	local albumcount = 0
+	local html = nil
+	local pageformat = nil
+	local pages = 1
+	local ipage = 1
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	
+	--getcout
+	_,_,catname,num = string.find(html,[[搜索商品列表模块.-<h3>(.-)</h3>.-搜到.-(%d+)]])
+	if catname==nil or num ==nil then
+		msgbox('出现未知错误，请联系开发者!')
+		return
+	end
+	msgprint('共搜索到 '..num..' 个宝贝……')
+	num = tonumber(num)
+	SetDirectryName(account..'_'..catname)
+
+	_,_,s = string.find(url,'(.-)?')
+	if s~=nil then
+		url = s
+	end
+	
+	p1,p2,page = string.find(url,'shop.paipai.com/%d+/%d+%-%d+%-%d+%-%d+%-(%d+)')
+	pageformat = string.sub(url,1,p2-1) .. '%d' .. string.sub(url,p2+1)
+	--msgbox(pageformat)
+	
+	pages,_ =math.modf(num/40)
+    rest =math.mod(num,40)
+    pages = pages + (rest~=0 and 1 or 0)
+	
+	repeat
+
+		for id,href,name,src in string.gfind(html, [[commodityid="(.-)".-href="(.-)".-title="(.-)".-(http[^"^'^%s]-.jpg)]]) do
+			albumcount = albumcount + 1
+			albums[albumcount].id = id;
+			albums[albumcount].url = href;
+			albums[albumcount].preview = src;
+			albums[albumcount].total = -1;
+			albums[albumcount].name = name;
+		end
+		
+		ipage = ipage + 1
+		if ipage>pages then
+			break
+		end
+		
+		url = string.format(pageformat,ipage)
+		s = string.format('正在获取第 %d/%d 页宝贝信息……',ipage,pages)
+		msgprint(s)
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+	until false 
+	
+end
+
+
+function GetAllItemsAlbum(url)
+	local html = nil
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	
+	_,_,url = string.find(html,[[title="查看全部商品.-(http.-)"]])	
+	GetCatItemsAlbum(url)	
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	homeurl = GetHomePageFromUrl(url)
+	msgprint(homeurl)
+	ndowntype = ntype;
+	if ntype==0 then
+		GetAllItemsAlbum(url)
+	elseif ntype==1 then
+		GetCatItemsAlbum(url)
+	elseif ntype==2 then
+		GetOneItemAlbum(url)
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function GetPhotos(index)
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	album = GetOneItemAlbum(albums[index].url)
+	photos = album.photos;
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--http://shop.paipai.com/454064122
+--http://shop.paipai.com/454064122/0-00000000155-0-1-1-0-3-0-0-0/index.shtml?PTAG=40042.1.5
+--[[function test()
+	local url = nil
+	GetAlbums(2,'http://auction1.paipai.com/FA77101B00000000040100001A27655C#nolink')
+	GetPhotos(1)
+end
+
+test();--]]
