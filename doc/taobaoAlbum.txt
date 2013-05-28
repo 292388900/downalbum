@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = 'ÌÔ±¦±¦±´Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TBAM';
-ver = '2.1';
+ver = '2.2';
 firstpagename = '¹Ù·½ÌÔ±¦';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -129,6 +129,13 @@ function getitemalbum(url)
 	end
 	
 	for value1 in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
+		photocount = photocount + 1;
+		album.photos[photocount] = {};
+		album.photos[photocount].preview = value1;
+		album.photos[photocount].orign = value1;
+	end
+	
+	for value1 in string.gfind(html, [[src.-(http[^%s]-.png)]]) do
 		photocount = photocount + 1;
 		album.photos[photocount] = {};
 		album.photos[photocount].preview = value1;
