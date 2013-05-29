@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>flickrAlbum</name>
-        <version>1.12</version>
+        <version>2.0</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8kpJ7dX8ak</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8vKRX5ZNqy</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_40983.htm</regurl>
@@ -18,4 +18,10 @@ s=2,p=57830,
 </votes2>
 -->
     </soft>
+	<scripts path=".\">
+		<script name="flickrAlbum" ver="1.0" file="flickrAlbum.txt">
+			<url>http://www.xcxzq.com/script/flickrAlbum.txt</url>
+			<url2>http://www.xcxzq.com/script/flickrAlbum.txt</url2>
+		</script>
+	</scripts>
 </data>
