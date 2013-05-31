@@ -63,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="F:\open\lib\2005bin"
+				AdditionalLibraryDirectories="F:\open\lib\2005bin;F:\open\lib\libxl\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -178,19 +178,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\gzipDecoder\gzipDecoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\htmldown\htmldown.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Process\Process.cpp"
 				>
 			</File>
 			<File
@@ -214,11 +202,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Sys\Sys.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Update\Update.cpp"
+				RelativePath=".\xls\XlsOperator.cpp"
 				>
 			</File>
 		</Filter>
@@ -228,27 +212,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\gzipDecoder\gzipDecoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\htmldown\htmldown.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Process\Process.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Sys\Sys.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Update\Update.h"
+				RelativePath=".\xls\XlsOperator.h"
 				>
 			</File>
 		</Filter>
