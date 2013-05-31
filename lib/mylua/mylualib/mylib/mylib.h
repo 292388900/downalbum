@@ -7,6 +7,9 @@ extern "C" {
 	#include <lua/lualib.h>
 }
 
+#include <StarLib/xls/XlsOperator.h>
+
+
 extern "C" __declspec(dllexport) int luaopen_star (lua_State *L);
 
 int msgbox(lua_State *L);
