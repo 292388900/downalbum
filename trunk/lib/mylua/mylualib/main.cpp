@@ -4,12 +4,18 @@
 #include "stdafx.h"
 #include "mylib/mylib.h"
 
+#include <luabind/luabind.hpp>
+#include <luabind/function.hpp>
+#include <luabind/class.hpp>
+using namespace luabind;
 
 #ifdef _DEBUG
 #pragma comment(lib,"luaD.lib")
+#pragma comment(lib,"luabindD.lib")
 #pragma comment(lib,"User32.lib")
 #else
 #pragma comment(lib,"lua.lib")
+#pragma comment(lib,"luabind.lib")
 #endif
 
 
@@ -59,7 +65,27 @@ extern "C" __declspec(dllexport) int luaopen_star(lua_State *L) {
 	// luaL_openlib(L, "mylib", mylib, 0);
 	
 	CoInitialize(NULL);
-	luaL_register(L, "star", starlib);
+
+	luabind::open(L);
+
+	luaL_register(L, "star", starlib);	
+
+	module(L,"star")
+	[
+		class_<CXlsOperator>("XLS")
+			.def(constructor<>())
+			.def("create", &CXlsOperator::Create)
+			.def("setcol", &CXlsOperator::SetCol)
+			.def("addtitle", &CXlsOperator::AddTitle)
+			.def("writestr", &CXlsOperator::WriteStr)
+			.def("getrowscount", &CXlsOperator::GetRowsCount)
+			.def("getcolscount", &CXlsOperator::GetColsCount)
+			.def("save", &CXlsOperator::Save)
+			.def("error", &CXlsOperator::GetLastError)
+		//def("a",a),
+		//def("b",b)
+	];
+
 	return 1; 
 }
 

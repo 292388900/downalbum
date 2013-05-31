@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "XlsOperator.h"
 
-#pragma comment(lib,"libxl.lib")
+//#pragma comment(lib,"libxl.lib")
 
 
 CXlsOperator::CXlsOperator()
@@ -19,10 +19,30 @@ CXlsOperator::~CXlsOperator()
 	}
 }
 
+typedef libxl::IBookT<char>* (__stdcall *TxlCreateBookA)();
+
 bool CXlsOperator::Create()
 {
 	bool bSuccess = false;
-	m_book = xlCreateBook();
+	TCHAR szlibxldll[] = { "libxl.dll" };
+	HMODULE hModule = GetModuleHandle(szlibxldll);
+	if ( hModule==NULL ){
+		hModule = LoadLibrary(szlibxldll);
+	}
+
+	if ( hModule==NULL ) {
+		m_strLastError = "not found:";
+		m_strLastError += szlibxldll;
+		return bSuccess;
+	}
+
+	TxlCreateBookA fnxlCreateBook = (TxlCreateBookA)::GetProcAddress(hModule,"xlCreateBookA");
+	if ( fnxlCreateBook==NULL ) {
+		m_strLastError = "not found: libxl.dll::xlCreateBookA";
+		return bSuccess;
+	}
+
+	m_book = fnxlCreateBook();	//xlCreateBook();
 	if ( m_book==NULL ) {
 		return bSuccess;
 	}
@@ -38,12 +58,12 @@ bool CXlsOperator::Create()
 }
 
 //设置栏的宽度
-bool CXlsOperator::SetCol(int colFirst, int colLast, double width, IFormatT<TCHAR>* format/* = 0*/, bool hidden/* = false*/)
+bool CXlsOperator::SetCol(int colFirst, int colLast, double width)
 {
 	bool bRet = false;
 
 	if ( m_sheet!=NULL ) {
-		bRet = m_sheet->setCol(colFirst, colLast, width, format, hidden);
+		bRet = m_sheet->setCol(colFirst, colLast, width);
 	}
 
 	return bRet;
@@ -51,20 +71,19 @@ bool CXlsOperator::SetCol(int colFirst, int colLast, double width, IFormatT<TCHA
 
 //添加标题：第0行被占用了：Created by LibXL trial version. Please buy the LibXL full version for removing this message.
 //所以我们的标题从第1行开始
-bool CXlsOperator::AddTitle(const TCHAR* value, IFormatT<TCHAR>* format/* = 0*/)
+bool CXlsOperator::AddTitle(const TCHAR* value)
 {
 	bool bRet = false;
-	IFormatT<TCHAR>* boldFormat = format;
+	IFormatT<TCHAR>* boldFormat = NULL;
 
 	if ( m_sheet!=NULL ) {
-		if ( boldFormat==NULL ) {
-			Font* font = m_book->addFont();
-			font->setColor(COLOR_BLACK);
-			font->setBold(true);
-			boldFormat = m_book->addFormat();
-			boldFormat->setFont(font);
-			boldFormat->setAlignH(ALIGNH_CENTER);	
-		}
+		Font* font = m_book->addFont();
+		font->setColor(COLOR_BLACK);
+		font->setBold(true);
+		boldFormat = m_book->addFormat();
+		boldFormat->setFont(font);
+		boldFormat->setAlignH(ALIGNH_CENTER);	
+
 		bRet = m_sheet->writeStr(1,m_nTitleCount++,value,boldFormat);
 	}
 
@@ -72,17 +91,16 @@ bool CXlsOperator::AddTitle(const TCHAR* value, IFormatT<TCHAR>* format/* = 0*/)
 }
 
 //写内容
-bool CXlsOperator::WriteStr(int row, int col, const TCHAR* value, IFormatT<TCHAR>* format/* = 0*/)
+bool CXlsOperator::WriteStr(int row, int col, const TCHAR* value)
 {
 	bool bRet = false;
-	Format* alignFormat = format;
+	Format* alignFormat = NULL;
 
 	if ( m_sheet!=NULL ) {
-		if ( alignFormat==NULL ) {
-			//设置字体居中
-			Format* alignFormat = m_book->addFormat();
-			alignFormat->setAlignH(ALIGNH_CENTER);
-		}
+		//设置字体居中
+		Format* alignFormat = m_book->addFormat();
+		alignFormat->setAlignH(ALIGNH_CENTER);
+
 		bRet = m_sheet->writeStr(row, col, value, alignFormat);
 	}
 
@@ -123,4 +141,9 @@ bool CXlsOperator::Save(const TCHAR* lpszFileName)
 	}
 
 	return bRet;
+}
+
+string CXlsOperator::GetLastError()
+{
+	return m_strLastError;
 }

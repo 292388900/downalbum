@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="F:\open\lib"
+				AdditionalIncludeDirectories="F:\open\lib;..\..\luabind;;..\..\lua"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MYLUALIB_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,7 +64,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)$(ProjectName).dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="F:\open\lib\2005bin"
+				AdditionalLibraryDirectories="F:\open\lib\2005bin;..\..\libxl\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -421,6 +421,18 @@
 				</File>
 				<File
 					RelativePath="..\..\starlib\MD5\Md5.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="XlsOperator"
+				>
+				<File
+					RelativePath="..\..\StarLib\xls\XlsOperator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\StarLib\xls\XlsOperator.h"
 					>
 				</File>
 			</Filter>
