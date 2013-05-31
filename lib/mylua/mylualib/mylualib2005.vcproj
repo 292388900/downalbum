@@ -120,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="F:\open\lib;..\..\luabind;;..\..\lua"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MYLUALIB_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="2"
@@ -140,6 +141,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)$(ProjectName).dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="F:\open\lib\2005bin;..\..\libxl\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
