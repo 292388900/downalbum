@@ -61,6 +61,20 @@ static const struct luaL_reg starlib [] = {
 }; 
 
 
+/*
+xls = star.XLS()
+if xls:create() then
+	xls:addtitle('1')
+	xls:addtitle('2')
+	xls:addtitle('3')
+	xls:writestr(2,0,'123')
+	xls:writestr(2,1,'123')
+	xls:writestr(3,2,'123')
+	xls:save('d:/2.xls')
+else
+	print(xls:error())
+end
+*/
 extern "C" __declspec(dllexport) int luaopen_star(lua_State *L) { 
 	// luaL_openlib(L, "mylib", mylib, 0);
 	
