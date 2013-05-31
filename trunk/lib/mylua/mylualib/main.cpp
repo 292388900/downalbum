@@ -62,6 +62,9 @@ static const struct luaL_reg starlib [] = {
 
 
 /*
+require "star"
+require "libxl"
+
 xls = star.XLS()
 if xls:create() then
 	xls:addtitle('1')
