@@ -7,7 +7,7 @@
 name_en = '163Album';
 name_cn = '163网易相册批量下载器';
 prefix = 'NETE';
-ver = '1.3';
+ver = '1.4';
 firstpagename = '我的网易博客';
 firstpageurl = 'http://blog.163.com';
 mainwidth = 940;
@@ -98,6 +98,7 @@ end
 --var
 username = '';
 account = '';
+photo_account = ''
 user_id = ''
 ndowntype = 0;
 INT_MAX = 2147483647;
@@ -122,6 +123,16 @@ function GetNickyFromHomePage(url)
 	_,_,account,username = string.find(html,[[author.-content="(.-),(.-)"]])
 	username = star.RemoveFileNameInvalidChar(username)
 	SetDirectryName(username)
+	
+	--
+	_,_,photo_account = string.find(html,[[photo163Name:'(.-)']])
+	if photo_account==nil then
+		_,_,photo_account = string.find(html,[[photo163HostName:'(.-)']])
+	end
+	if photo_account==nil then
+		photo_account = account
+	end
+	
 	return account,username
 end
 
@@ -261,12 +272,12 @@ function Get163blogAlbum(url)
 	local strSuburl = ''
 	local strHeaders = ''
 	local strSendData = ''
-	local strAccount = account
+	local strAccount = photo_account
 	local albumcount = 0
 	local albumids = {}
 	
 	--账号中的@替换掉
-	strAccount = string.gsub(account,"@","%%40")
+	strAccount = string.gsub(photo_account,"@","%%40")
 	
 	strSuburl = string.format("photo/%s/dwr/call/plaincall/UserSpaceBean.getUserSpace.dwr",strAccount)
 	
