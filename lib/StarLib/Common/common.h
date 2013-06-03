@@ -127,5 +127,7 @@ namespace Star
 
 		//弹出文件的系统菜单
 		void PopExplorerMenu(HWND hWnd, const CString&strFilePath, const CPoint&pt);
+
+		CString FormatLastError(DWORD dwError = -1);
 	}
 }

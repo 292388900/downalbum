@@ -9,29 +9,57 @@ using namespace std;
 
 //²Î¿¼:luaB_print
 int msgbox(lua_State *L) { 
-	std::string str;
+	int nRet = IDOK;
+	HWND hWnd = NULL;
+	string strText;
+	string strCaption;
+	UINT uType = MB_OK;
+	int i = 1;
 
-	int n = lua_gettop(L);  /* number of arguments */
-	int i;
-	lua_getglobal(L, "tostring");
-	for (i=1; i<=n; i++) {
-		const char *s;
-		lua_pushvalue(L, -1);  /* function to be called */
-		lua_pushvalue(L, i);   /* value to print */
-		lua_call(L, 1, 1);
-		s = lua_tostring(L, -1);  /* get result */
-		if (s == NULL)
-			return luaL_error(L, LUA_QL("tostring") " must return a string to "
-			LUA_QL("msgbox"));
-		if (i>1) str.append("\t");
-		
-		str.append(s);
-		lua_pop(L, 1);  /* pop result */
+	int n = lua_gettop(L);
+	
+	if ( n>=4 ){
+		if ( lua_isnumber(L,1) ){
+			hWnd = HWND(PBYTE(NULL)+(DWORD)lua_tonumber(L,1));
+		}
+		if ( lua_isstring(L,2) ) {
+			strText = lua_tostring(L,2);
+		}
+		if ( lua_isstring(L,3) ) {
+			strCaption = lua_tostring(L,3);
+		}
+		if ( lua_isnumber(L,4) ){
+			uType = (UINT)lua_tonumber(L,4);
+		}
+	}else if ( n>=3 ) {
+		if ( lua_isstring(L,1) ) {
+			strText = lua_tostring(L,1);
+		}
+		if ( lua_isstring(L,2) ) {
+			strCaption = lua_tostring(L,2);
+		}
+		if ( lua_isnumber(L,3) ){
+			uType = (UINT)lua_tonumber(L,3);
+		}
+	}else if ( n>=2 ) {
+		if ( lua_isstring(L,1) ) {
+			strText = lua_tostring(L,1);
+		}
+		if ( lua_isnumber(L,2) ){
+			uType = (UINT)lua_tonumber(L,2);
+		}else if ( lua_isstring(L,2) ) {
+			strCaption = lua_tostring(L,2);
+		}
+	}else if ( n>=1 ) {
+		if ( lua_isstring(L,1) ) {
+			strText = lua_tostring(L,1);
+		}
+	}else{
 	}
 
-	::MessageBoxA(NULL,str.c_str(),"",MB_OK);
-
-	return 0;
+	nRet = ::MessageBoxA(NULL,strText.c_str(),strCaption.c_str(),uType);
+	lua_pushnumber(L,nRet);
+	return 1;
 }
 
 //html gethtml(url) Ê§°Ü·µ»Ønil 
@@ -110,8 +138,8 @@ int getluapath(lua_State *L)
 			lua_pushstring(L,(const char *)(LPCTSTR)strDir);
 			lua_pushstring(L,(const char *)(LPCTSTR)strFilePath);
 			lua_pushstring(L,(const char *)(LPCTSTR)strName);
+			return 3;
 		}
-		return 3;
 	}else{
 		//callstack << "-- error at level " << level;
 	}
@@ -618,4 +646,25 @@ int trim(lua_State* L)
 
 	lua_pushstring(L,str);
 	return 1;
+}
+
+int	run(lua_State* L)
+{
+	BOOL bRet = FALSE;
+	CStringA strCmdLine;
+	int n = lua_gettop(L);
+	if ( n>0 ){
+		if ( lua_isstring(L,1) ){
+			strCmdLine = lua_tostring(L,1);
+		}
+		STARTUPINFO si = { sizeof(si) };
+		PROCESS_INFORMATION pi;
+		bRet = ::CreateProcess(NULL,(LPSTR)(LPCSTR)strCmdLine,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi);
+		CloseHandle(pi.hThread);
+		CloseHandle(pi.hProcess);
+	}
+
+	lua_pushnumber(L,bRet);
+	lua_pushstring(L,Star::Common::FormatLastError());
+	return 2;
 }

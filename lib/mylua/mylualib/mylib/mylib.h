@@ -35,3 +35,4 @@ int sendmessage(lua_State *L);
 int loadlibray(lua_State *L);
 int getprocaddress(lua_State* L);
 int trim(lua_State* L);
+int	run(lua_State* L);
