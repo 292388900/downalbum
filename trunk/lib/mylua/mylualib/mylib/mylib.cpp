@@ -668,3 +668,28 @@ int	run(lua_State* L)
 	lua_pushstring(L,Star::Common::FormatLastError());
 	return 2;
 }
+
+int keypress(lua_State* L)
+{
+	int nKey = VK_END;
+	int nRepeatCnt = 1;
+
+	int n = lua_gettop(L);
+	if ( n>=1 ){
+		if ( lua_isnumber(L,1) ){
+			nKey = lua_tonumber(L,1);
+		}
+	}
+	if ( n>=2 ){
+		if ( lua_isnumber(L,2) ){
+			nRepeatCnt = lua_tonumber(L,2);
+		}
+	}
+
+	for ( int i = 0; i < nRepeatCnt; ++i ) {
+		keybd_event(nKey,0,0,0); 
+		keybd_event(nKey,0,KEYEVENTF_KEYUP,0); 
+	}//endfor
+
+	return 0;
+}
