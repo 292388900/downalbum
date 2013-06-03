@@ -57,6 +57,9 @@ static const struct luaL_reg starlib [] = {
 	{"loadlibray", loadlibray},
 	{"getprocaddress", getprocaddress},
 	{"trim", trim},
+	{"run", run},
+	{"createprocess", run},
+	{"open", run},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
