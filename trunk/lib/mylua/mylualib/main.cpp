@@ -35,6 +35,7 @@ using namespace luabind;
 
 static const struct luaL_reg starlib [] = { 
 	{"msgbox", msgbox},
+	{"dbgprint", dbgprint},
 	{"gethtml", gethtml},
 	{"utf8s2ms", utf8s2ms},
 	{"getluapath", getluapath},
@@ -60,6 +61,7 @@ static const struct luaL_reg starlib [] = {
 	{"run", run},
 	{"createprocess", run},
 	{"open", run},
+	{"keypress", keypress},
 	{NULL, NULL} /* sentinel */ 
 }; 
 

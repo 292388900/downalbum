@@ -13,6 +13,7 @@ extern "C" {
 extern "C" __declspec(dllexport) int luaopen_star (lua_State *L);
 
 int msgbox(lua_State *L);
+int dbgprint(lua_State *L);
 int gethtml(lua_State *L);
 int utf8s2ms(lua_State *L);
 int getluapath(lua_State *L);
