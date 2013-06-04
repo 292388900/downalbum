@@ -88,30 +88,24 @@ int dbgprint(lua_State *L) {
 	return 0;
 }
 
-//html gethtml(url) Ê§°Ü·µ»Ønil 
+//html gethtml(url) Ê§°Ü·µ»Ø''¿Õ´®£¬·Çnil 
 int gethtml(lua_State *L)
 {
+	CString strHtml;
 	int n =  lua_gettop(L);
 	if ( n==0 ){
-		lua_pushnil(L);
+		lua_pushstring(L,(const char *)(LPCTSTR)strHtml);
 		return 1;
 	}
 
 	if ( lua_type(L,-1)!=LUA_TSTRING ){
-		lua_pushnil(L);
+		lua_pushstring(L,(const char *)(LPCTSTR)strHtml);
 		return 1;
 	}
 	
 	const char *lpszUrl = lua_tostring(L,-1);
-	if ( lpszUrl==NULL ){
-		lua_pushnil(L);
-		return 1;
-	}
-	
-	CString strHtml;
-	if ( GetHttpFileContent(lpszUrl,strHtml)!=0 ){
-		lua_pushnil(L);
-		return 1;
+	if ( lpszUrl!=NULL ){
+		GetHttpFileContent(lpszUrl,strHtml);
 	}
 
 	lua_pushstring(L,(const char *)(LPCTSTR)strHtml);
