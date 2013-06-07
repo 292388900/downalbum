@@ -422,8 +422,7 @@ int sendhttpdata(lua_State *L)
 	}
 
 	strRet = SendHttpData(strHost,strPath,strHeaders,strSendData,nMethod,bNeedDocode);
-
-	lua_pushstring(L,strRet);
+	lua_pushstring(L,(const char *)(LPCTSTR)strRet);
 	return 1;
 }
 

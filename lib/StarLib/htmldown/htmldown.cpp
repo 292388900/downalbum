@@ -489,6 +489,8 @@ CString SendHttpData(const CString&strHost, const CString&strPath, const CString
 				std::string str;
 				gzip.ungzip((unsigned char *)buff,nTotalSize,str);
 				strResult=str.c_str();
+			}else{
+				strResult = buff;
 			}
 
 			delete[] buff;
