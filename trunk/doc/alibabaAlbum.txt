@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '阿里巴巴图片批量下载器';
 prefix = 'ALBB';
-ver = '2.2';
+ver = '2.3';
 firstpagename = '阿里巴巴';
 firstpageurl = 'http://china.alibaba.com';
 mainwidth = 940;
@@ -345,8 +345,8 @@ function GetOneItemPhotos(album)
 	
 	--获取描述中的图片
 	for s in string.gfind(html, [[data%-url.-(http[^"^'^%s]*)]]) do
-		if string.find(s,'alibaba.com')~=nil then
-			url = s
+		url = s
+		if string.find(url,'alibaba.com')~=nil then
 			break
 		end
 	end
