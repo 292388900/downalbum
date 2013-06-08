@@ -135,6 +135,13 @@ function getitemalbum(url)
 		album.photos[photocount].orign = value1;
 	end
 	
+	for value1 in string.gfind(html, [[src.-(http[^%s]-.png)]]) do
+		photocount = photocount + 1;
+		album.photos[photocount] = {};
+		album.photos[photocount].preview = value1;
+		album.photos[photocount].orign = value1;
+	end
+	
 	--[[
 	例如宝贝http://item.taobao.com/item.htm?id=6019035368的描述文件：
 	http://dsc.taobaocdn.com/i4/671/d90/67dd91648457821fdd940dddd73da3a3/T1XGJ2XdXjXXXXXXXX.desc|var%5Edesc%3Bsign%5E3771fc396947db35e4f1542142407ff6%3Blang%5Egbk%3Bt%5E1299235564
