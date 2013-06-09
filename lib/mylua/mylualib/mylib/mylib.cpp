@@ -714,3 +714,33 @@ int keypress(lua_State* L)
 
 	return 0;
 }
+
+int reversefind(lua_State* L)
+{
+	int n = lua_gettop(L);
+	if ( n<2 ) {
+		return 0;
+	}
+
+	CString str;
+	CString strSub;
+
+	if ( lua_isstring(L,1) ) {
+		str = lua_tostring(L,1);
+	}
+	if ( lua_isstring(L,2) ) {
+		strSub = lua_tostring(L,2);
+	}
+
+	if ( strSub.GetLength()==0 ) {
+		return 0;
+	}
+
+	int nPos = str.ReverseFind(strSub.GetAt(0));
+	if ( nPos==-1 ) {
+		return 0;
+	}
+
+	lua_pushnumber(L,nPos+1);
+	return 1;
+}

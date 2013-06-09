@@ -62,6 +62,7 @@ static const struct luaL_reg starlib [] = {
 	{"createprocess", run},
 	{"open", run},
 	{"keypress", keypress},
+	{"reversefind", reversefind},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
