@@ -38,3 +38,4 @@ int getprocaddress(lua_State* L);
 int trim(lua_State* L);
 int	run(lua_State* L);
 int keypress(lua_State* L);
+int reversefind(lua_State* L);
