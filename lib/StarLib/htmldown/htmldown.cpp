@@ -22,6 +22,8 @@ UINT GetHttpFileSaveAs(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 	return dwHttpStatus;  
 }
 
+#pragma warning(disable:4102)
+
 UINT GetHttpFileSaveAs2(CString strUrl,LPCTSTR lpszSaveAs,int nTimeOutSeconds)
 {
 	DWORD dwHttpStatus=0x80000000;
@@ -321,6 +323,9 @@ resend:
 	//We're finished
 	return dwHttpStatus;
 }
+
+#pragma warning(default:4102)
+
 
 UINT GetHttpFileContent(LPCTSTR lpszUrl,CString&strHtml,int nTimeOutSeconds) 
 {

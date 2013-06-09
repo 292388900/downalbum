@@ -7,6 +7,8 @@
 #include <string>
 using namespace std;
 
+#pragma warning(disable:4311)
+
 int msgbox(lua_State *L) { 
 	int nRet = IDOK;
 	HWND hWnd = NULL;
@@ -526,7 +528,7 @@ int sendorpostmessge(lua_State *L,int nMethod)
 		if ( nMethod==0 ){
 			dwRet = ::PostMessageA(hWnd,dwMsg,wParam,lParam);
 		}else{
-			dwRet = ::SendMessageA(hWnd,dwMsg,wParam,lParam);
+			dwRet = (DWORD)::SendMessageA(hWnd,dwMsg,wParam,lParam);
 		}
 	}
 
@@ -639,7 +641,7 @@ int getprocaddress(lua_State* L)
 			strFuncName = lua_tostring(L,-1);
 		}
 
-		func = GetProcAddress((HMODULE)dwModule,strFuncName.c_str());
+		func = GetProcAddress((HMODULE)(PBYTE(NULL)+dwModule),strFuncName.c_str());
 	}
 
 	lua_pushlightuserdata(L,func);
@@ -696,12 +698,12 @@ int keypress(lua_State* L)
 	int n = lua_gettop(L);
 	if ( n>=1 ){
 		if ( lua_isnumber(L,1) ){
-			nKey = lua_tonumber(L,1);
+			nKey = (int)lua_tonumber(L,1);
 		}
 	}
 	if ( n>=2 ){
 		if ( lua_isnumber(L,2) ){
-			nRepeatCnt = lua_tonumber(L,2);
+			nRepeatCnt = (int)lua_tonumber(L,2);
 		}
 	}
 
