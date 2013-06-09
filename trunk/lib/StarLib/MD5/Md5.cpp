@@ -71,7 +71,7 @@ Rotation is separate from addition to prevent recomputation. */
 MD5VAL md5(char * str, unsigned int size)
 {
 	if(size==0)
-		size=strlen(str);
+		size = (unsigned int)strlen(str);
 	unsigned int m=size%64;
 	unsigned int lm=size-m;  //数据整块长度
 	unsigned int ln;  //数据补位后长度
@@ -197,7 +197,7 @@ MD5VAL md5File(FILE * fpin)
 	i=0;
 	do
 	{
-		count=fread(buf,1,BUFFER_SIZE,fpin);
+		count=(unsigned int)fread(buf,1,BUFFER_SIZE,fpin);
 		i+=count;
 		if(count==BUFFER_SIZE)
 			co=BUFFER_SIZE;
@@ -500,18 +500,16 @@ CString strChange(CString before)
 CString ValueMD5(CString file)
 {
 	MD5VAL val;
-	CString result;
-	char chtmp[1024]={0};
-	//file = strChange(file);
-	FILE *fp = fopen(file, "rb");
-	if(fp)
-	{
+	CString strRet;
+	FILE *fp = NULL;
+	fopen_s(&fp,file, "rb");
+	if( fp!=NULL ){
 		val = md5File(fp);	
-		sprintf(chtmp, "%08x%08x%08x%08x", conv(val.a), conv(val.b), conv(val.c), conv(val.d));
+		strRet.Format("%08x%08x%08x%08x", conv(val.a), conv(val.b), conv(val.c), conv(val.d));
 		fclose(fp);
 	}
 
-	return chtmp;
+	return strRet;
 }
 
 CString MD5Data(char * str, unsigned int size)
