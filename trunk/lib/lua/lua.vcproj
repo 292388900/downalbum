@@ -228,19 +228,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\lbitlib.c"
-				>
-			</File>
-			<File
 				RelativePath=".\lcode.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lcorolib.c"
-				>
-			</File>
-			<File
-				RelativePath=".\lctype.c"
 				>
 			</File>
 			<File
@@ -347,6 +335,10 @@
 				RelativePath=".\lzio.c"
 				>
 			</File>
+			<File
+				RelativePath=".\print.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -363,10 +355,6 @@
 			</File>
 			<File
 				RelativePath=".\lcode.h"
-				>
-			</File>
-			<File
-				RelativePath=".\lctype.h"
 				>
 			</File>
 			<File
@@ -427,10 +415,6 @@
 			</File>
 			<File
 				RelativePath=".\lua.h"
-				>
-			</File>
-			<File
-				RelativePath=".\lua.hpp"
 				>
 			</File>
 			<File
