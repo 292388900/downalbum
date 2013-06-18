@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '°¢Àï°Í°ÍÍ¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'ALBB';
-ver = '2.3';
+ver = '2.4';
 firstpagename = '°¢Àï°Í°Í';
 firstpageurl = 'http://china.alibaba.com';
 mainwidth = 940;
@@ -125,9 +125,6 @@ function GetOneItemAlbum(url)
 		return
 	end
 	
-	--
-	SetDirectryName(name);
-	
 	--get preview
 	_,_,src = string.find(html,[[vertical%-img.-src.-(http.-.jpg)]])
 	
@@ -137,6 +134,9 @@ function GetOneItemAlbum(url)
 	albums[albumcount].preview = src;
 	albums[albumcount].total = -1;
 	albums[albumcount].name = name;
+	
+	name = string.gsub(name,'|','')
+	SetDirectryName(name)
 end
 
 function trim(s)
