@@ -6,7 +6,7 @@
 name_en = 'flickrAlbum';
 name_cn = 'flickr相册照片批量下载器';
 prefix = 'FLCR';
-ver = '1.0';
+ver = '1.1';
 firstpagename = 'flickr首页';
 firstpageurl = 'http://www.flickr.com';
 mainwidth = 940;
@@ -131,7 +131,7 @@ function getcatalbum(url)
 	end
     html = star.utf8s2ms(html)
 	
-	for href,src,name,num in string.gfind(html, [[class="Sets.-href="(.-)".-src.-(http[^"^']*.jpg).-title="(.-)".-<p>.-(%d+)]]) do
+	for src,href,name,num in string.gfind(html, [[class="Sets.-(http[^"^']*.jpg).-href="(.-)".-title="(.-)".-<p>.-(.-) ]]) do
 		href = 'http://www.flickr.com' .. href
 		albumcount = albumcount + 1
 		albums[albumcount] = {}
@@ -139,6 +139,8 @@ function getcatalbum(url)
 		albums[albumcount].preview = src
 		albums[albumcount].url = href
 		albums[albumcount].name = name
+		num = star.trim(num)
+		num = string.gsub(num,',','')
 		albums[albumcount].total = tonumber(num)
 	end
     
