@@ -79,16 +79,11 @@ void APPCONFIG::LoadConfig()
 	nDownTimeOut=Star::File::GetIniInt(m_strCfgFile,"main","downtimeout",5);
 	strSavePath=Star::File::GetIniString(m_strCfgFile,"main","savepath");
 	if ( strSavePath.IsEmpty() || GetFileAttributes(strSavePath)==-1 ){
-		strSavePath = m_strStartPath + _T("out\\");
+		strSavePath = m_strStartPath;	// + _T("out\\")
 	}
 	SetSavePath(strSavePath);
 	if ( GetFileAttributes(strSavePath)==-1 ){
 		CreateDirectory(strSavePath,NULL);
-	}
-
-	m_strWatermarkTemplatePath = m_strStartPath + _T("WatermarkTemplate\\");
-	if ( GetFileAttributes(m_strWatermarkTemplatePath)==-1 ){
-		CreateDirectory(m_strWatermarkTemplatePath,NULL);
 	}
 
 	bUseSkin=Star::File::GetIniInt(m_strCfgFile,"main","useskin",1);

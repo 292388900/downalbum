@@ -19,6 +19,7 @@ extern CString g_sFIRST_PAGE_NAME;
 extern CString g_sHARDCODEPREFIX;
 
 extern CString g_sUPDATE_CONFIG_URL;
+extern CString g_sUPDATE_CONFIG_URL2;
 extern CString g_sLOGIN_URL;
 
 extern CString g_sREG_URL;
@@ -69,7 +70,6 @@ public:
 	CString m_strRegFile;
 	CString m_strTempPath;	//tmp目录放在软件目录下固然很好，但是用户会误认为那就是下载的图片，体验不好
 	CString m_strImagePath;	//当前或上次浏览的图片目录
-	CString m_strWatermarkTemplatePath;	//水印模板目录
 
 	int nViewMode;			//
 	int nImageViewWidth;	//图片预览宽度

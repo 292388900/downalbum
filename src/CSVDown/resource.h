@@ -17,6 +17,8 @@
 #define IDC_BUTTON_GETITEMS             1003
 #define IDC_BUTTON_GETITEMS2            1004
 #define IDC_BUTTON_DOWN_CSV             1004
+#define IDC_EDIT_URL                    1005
+#define IDC_COMBO_HISTORY               1006
 #define ID_VIEWMODE_START               32778
 #define ID_VIEWMODE_LARGEICON           32778
 #define ID_VIEWMODE_BIGICON             32779
@@ -46,7 +48,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1004
+#define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

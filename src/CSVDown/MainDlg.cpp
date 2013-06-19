@@ -21,6 +21,7 @@ extern CString g_sSTRFILEVER=STRFILEVER;
 extern CString g_sHARDCODEPREFIX=HARDCODEPREFIX;
 
 extern CString g_sUPDATE_CONFIG_URL=UPDATE_CONFIG_URL;
+extern CString g_sUPDATE_CONFIG_URL2=UPDATE_CONFIG_URL2;
 
 extern CString g_sREG_URL=REG_URL;
 extern CString g_sHELP_URL=HELP_URL;
@@ -37,6 +38,7 @@ extern int g_nIMAGE_HEIGHT=IMAGE_HEIGHT;
 extern CMainDlg *g_pMainDlg = NULL;
 
 bool CMainDlg::m_bSortAsc=false;
+vector<CBaseAlbumInfo*>CMainDlg::m_vtAlbumList;
 
 
 
@@ -87,6 +89,8 @@ void CMainDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_ITEMS, m_lstCtrl);
 	DDX_Control(pDX, IDC_BUTTON_VIEW_MODE, m_ctrlViewMode);
+	DDX_Control(pDX, IDC_COMBO_HISTORY, m_cmbHistory);
+	DDX_Text(pDX, IDC_EDIT_URL, m_strAccount);
 }
 
 BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
@@ -95,6 +99,11 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_NOTIFY(NM_CLICK, IDC_LIST_ITEMS, &CMainDlg::OnNMClickListAlbum)
+	ON_NOTIFY(NM_RCLICK, IDC_LIST_ITEMS, &CMainDlg::OnNMRClickListAlbum)
+	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LIST_ITEMS, &CMainDlg::OnColumnClickListAlbum)
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_LIST_ITEMS, &CMainDlg::OnGetDispInfo)
+	ON_NOTIFY(LVN_DELETEITEM, IDC_LIST_ITEMS, &CMainDlg::OnDeleteItemList) 
 	ON_MESSAGE(WM_POPMSG,&CMainDlg::OnTrayPopMsg)
 	ON_BN_CLICKED(IDC_CHECK_ALL, &CMainDlg::OnBnClickedCheckAll)
 	ON_BN_CLICKED(IDC_BUTTON_VIEW_MODE, &CMainDlg::OnBnClickedButtonViewMode)
@@ -109,6 +118,10 @@ BEGIN_MESSAGE_MAP(CMainDlg, CDialog)
 	ON_COMMAND(ID_EMAIL, &CMainDlg::OnEmailMe)
 	ON_COMMAND(ID_EXIT, &CMainDlg::OnExit)
 	ON_MESSAGE(WM_SENDMESSAGEBOX,&CMainDlg::OnSendMessageBox)
+	ON_BN_CLICKED(IDC_BUTTON_GETITEMS, &CMainDlg::OnBnClickedButtonGetitems)
+	ON_BN_CLICKED(IDC_BUTTON_DOWN_CSV, &CMainDlg::OnBnClickedButtonDownCsv)
+	ON_MESSAGE(WM_GETITEMSBEGIN,&CMainDlg::OnGetItemsBegin)
+	ON_MESSAGE(WM_GETITEMSEND,&CMainDlg::OnGetItemsEnd)
 END_MESSAGE_MAP()
 
 
@@ -162,8 +175,14 @@ UINT CMainDlg::ThreadCheckVersion(LPVOID lpParam)
 
 		CString strText;
 		CMainDlg*pMainDlg = g_pMainDlg;
+
 		//检查更新信息
-		if ( CheckUpdateInfoIni(g_sUPDATE_CONFIG_URL,g_stUpdateInfo )==TRUE ){
+		BOOL bOK = CheckUpdateInfoIni(g_sUPDATE_CONFIG_URL,g_stUpdateInfo);
+		if ( bOK==FALSE ){
+			bOK = CheckUpdateInfoIni(g_sUPDATE_CONFIG_URL2,g_stUpdateInfo);
+		}
+
+		if ( bOK==TRUE ){
 
 			//获取更新信息成功
 			AfxBeginThread(ThreadGetAdNews,pMainDlg);
@@ -176,7 +195,11 @@ UINT CMainDlg::ThreadCheckVersion(LPVOID lpParam)
 				int nRet = ::MessageBox(AfxGetMainWnd()->GetSafeHwnd(),strText,
 					"更新提示",MB_YESNO|MB_ICONINFORMATION);
 				if ( nRet==IDYES ){
+#ifdef _TRIAL 
 					strText=g_stUpdateInfo.strDownUrl;
+#else
+					strText=g_stUpdateInfo.strDownUrl2;
+#endif
 					strText.Replace(".exe",".rar");
 					Star::Common::OpenUrl(strText);
 				}
@@ -278,6 +301,44 @@ void CMainDlg::InitAllControls()
 
 	ResetImageList();
 
+	//////////////////////////////////////////////////////////////////////////
+	//适当调整布局，并隐藏m_cmbHistory的编辑框
+	CWnd *pEditUrl = GetDlgItem(IDC_EDIT_URL);
+	CWnd *pEdit = m_cmbHistory.FindWindowEx(m_cmbHistory.GetSafeHwnd(),0,NULL,NULL);
+	if ( pEdit!=NULL && pEditUrl!=NULL ){
+		CRect rcEdit;
+		CRect rcCmb;
+		CRect rcCmbEdit;
+		int nMargin = 0;
+		m_cmbHistory.GetWindowRect(rcCmb);
+		pEditUrl->GetWindowRect(rcEdit);
+		pEdit->GetWindowRect(rcCmbEdit);
+		nMargin = rcCmb.Width() - rcCmbEdit.Width();
+		if ( nMargin>4 ){
+			nMargin -= 4;
+		}else{
+			nMargin = 13;
+		}
+
+		//使得m_cmbHistory刚好比m_edtUrl宽一个nMargin
+		//m_cmbHistory的高是固定的，这里m_edtUrl的高度迁就m_cmbAccount一下
+		rcEdit.bottom = rcEdit.top + rcCmb.Height();
+		rcCmb.top = rcEdit.top;
+		rcCmb.bottom = rcEdit.bottom;
+		rcCmb.left = rcEdit.left;
+		rcCmb.right = rcEdit.right + nMargin;
+
+		this->ScreenToClient(rcEdit);
+		this->ScreenToClient(rcCmb);
+		pEditUrl->MoveWindow(rcEdit);
+		m_cmbHistory.MoveWindow(rcCmb);
+
+		pEdit->ShowWindow(SW_HIDE);
+	}
+
+	//加载历史记录
+	LoadHistoryUrlToFile();
+
 	//窗口布局
 	m_arranger.Init(m_hWnd);
 	//////////////////////////////////////////////////////////////////////////
@@ -290,6 +351,61 @@ void CMainDlg::InitAllControls()
 	m_arranger.Fix(m_lstCtrl.GetSafeHwnd(), CDlgResizeHelper::kLeftRight, CDlgResizeHelper::kTopBottom);
 	//////////////////////////////////////////////////////////////////////////
 
+}
+
+void CMainDlg::AddHistoryUrl(const CString&str)
+{
+	BOOL bFound = FALSE;
+
+	CString strText;
+	int nCount = m_cmbHistory.GetCount();
+	for ( int i=0; i<nCount; ++i ){
+		m_cmbHistory.GetLBText(i,strText);
+		if ( strText.Compare(str)==0 ){
+			bFound = TRUE;
+			m_cmbHistory.DeleteString(i);
+			m_cmbHistory.InsertString(0,str);
+			break;
+		}
+	}
+
+	if ( bFound==FALSE ){
+		if ( nCount>=10 ){
+			m_cmbHistory.DeleteString(nCount-1);
+		}
+
+		m_cmbHistory.InsertString(0,str);
+	}
+}
+
+void CMainDlg::SaveHistoryUrlToFile()
+{
+	int nIndex = 0;
+	CString strText;
+	CString strTemp;
+
+	for ( int i=0; i<m_cmbHistory.GetCount(); ++i ){
+		m_cmbHistory.GetLBText(i,strTemp);
+		strText = strText + strTemp + _T("|");
+	}
+
+	Star::File::SetIniString(g_config.m_strCfgFile,"history","urls",strText);
+}
+
+void CMainDlg::LoadHistoryUrlToFile()
+{
+	CString strText = Star::File::GetIniString(g_config.m_strCfgFile,"history","urls");
+	if ( strText.IsEmpty()==FALSE ){
+		vector<CString>vtHistoryUrl;
+		Star::Common::SplitString(strText,_T("|"),vtHistoryUrl);
+		for ( vector<CString>::iterator i=vtHistoryUrl.begin(); i!=vtHistoryUrl.end(); ++i ){
+			strText = *i;
+			strText.Trim();
+			if ( strText.IsEmpty()==FALSE ){
+				m_cmbHistory.InsertString(-1,strText);
+			}
+		}//end for
+	}
 }
 
 void CMainDlg::OnSize(UINT nType, int cx, int cy)
@@ -388,6 +504,7 @@ void CMainDlg::OnCancel()
 
 void CMainDlg::PostNcDestroy()
 {
+	ClearAlbumList(m_vtAlbumList);
 }
 
 void CMainDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -401,6 +518,16 @@ void CMainDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	{
 		CDialog::OnSysCommand(nID, lParam);
 	}
+}
+
+void ClearAlbumList(vector<CBaseAlbumInfo*>&vtAlbum)
+{
+	for ( int i=0; i<(int)vtAlbum.size(); ++i ){
+		CBaseAlbumInfo*pAlbum=vtAlbum[i];
+		delete pAlbum;
+	}
+
+	vtAlbum.clear();
 }
 
 // 如果向对话框添加最小化按钮，则需要下面的代码
@@ -473,6 +600,8 @@ void CMainDlg::OnBnClickedButtonViewMode()
 		}
 	}
 }
+
+#pragma warning(disable:4309)
 
 //让线程中弹出的对话框也有皮肤并置前，wParam区分消息号，lParam如果不为NULL就是字符串指针
 LRESULT CMainDlg::OnSendMessageBox(WPARAM wParam,LPARAM lParam)
@@ -582,6 +711,8 @@ LRESULT CMainDlg::OnSendMessageBox(WPARAM wParam,LPARAM lParam)
 	return 0;
 }
 
+#pragma warning(default:4309)
+
 //选项设置
 void CMainDlg::OnCommandOptions()
 {
@@ -685,4 +816,367 @@ void CMainDlg::OnEmailMe()
 void CMainDlg::OnExit()
 {
 	OnOK();
+}
+
+void CMainDlg::OnBnClickedButtonGetitems()
+{
+	GetDlgItem(IDC_BUTTON_GETITEMS)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BUTTON_DOWN_CSV)->EnableWindow(FALSE);
+	StartGetItems();
+}
+
+void CMainDlg::OnBnClickedButtonDownCsv()
+{
+	GetDlgItem(IDC_BUTTON_GETITEMS)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BUTTON_DOWN_CSV)->EnableWindow(FALSE);
+	StartDownCSV();
+}
+
+void CMainDlg::StartGetItems()
+{
+	UpdateData();
+	m_strAccount.Trim();
+	m_strAccount.MakeLower();
+	UpdateData(FALSE);
+	AfxBeginThread(ThreadGetItems,this);
+}
+
+UINT CMainDlg::ThreadGetItems(LPVOID lpParam)
+{
+	CoInitialize(NULL);	//这个一定要啊，否则URLDownloadToFile返回0x80040155L
+	AppendText("正在获取相册信息，请稍等……");
+	ShowToolTip("正在获取相册信息，请稍等……");
+	CMainDlg *pMainDlg = (CMainDlg*)lpParam;
+	pMainDlg->SendMessage(WM_GETITEMSBEGIN);
+
+//	//通过脚本获取
+//#ifdef _DEBUG
+//	RunScript(NULL);
+//#endif
+//
+//	if ( L!=NULL ){
+//		lua_getglobal(L, "GetAlbums");  
+//		//如果有参数就压入参数：
+//		//lua_pushstring(L, szInParam);  
+//		lua_pushnumber(L, pAlbumDlg->m_nDownType);  
+//		lua_pushstring(L, pAlbumDlg->m_strAccount);  
+//		int err = lua_pcall( L, 2, 0, 0 );  
+//		if ( err ){
+//			const char *szMsg = lua_tostring(L,-1);
+//			pAlbumDlg->MessageBox(szMsg,"脚本编写有误，请参考文档编写",MB_ICONERROR);
+//		}
+//	}
+//
+//	//调用派生类的具体方法获取相册列表
+//	pAlbumDlg->GetAlbumList();
+//
+//	AppendText("正在显示相册，请稍等……");
+//	ShowToolTip("正在显示相册，请稍等……");
+//	pAlbumDlg->ShowAlbumList();
+//	AppendText("相册显示完毕，请选择您要想下载的相册进行下载");
+//	ShowToolTip("相册显示完毕，请选择您要想下载的相册进行下载");
+
+	CoUninitialize();
+	pMainDlg->SendMessage(WM_GETITEMSEND);
+	return 0;
+}
+
+LRESULT CMainDlg::OnGetItemsBegin(WPARAM wParam,LPARAM lParam)
+{
+	m_lstCtrl.DeleteAllItems();
+	for ( int i=m_imageList.GetImageCount()-1; i>=0; i-- ){
+		m_imageList.Remove(i);
+	}
+
+	//记录输入的历史网址
+	AddHistoryUrl(m_strAccount);
+	SaveHistoryUrlToFile();
+
+	//清空上次的相册列表信息
+	ClearAlbumList(m_vtAlbumList);
+
+	return 0;
+}
+
+LRESULT CMainDlg::OnGetItemsEnd(WPARAM wParam,LPARAM lParam)
+{
+	//CString strText;
+
+	//if ( m_vtAlbumList.empty()==true ){
+	//	AppendText(
+	//		"如果未能获取到相册信息，请检查输入的账号是否有误\r\n"
+	//		"或者通过查看帮助网页获取正确的使用方法");
+	//}else{
+	//	strText.Format("共检测到 %d 个相册，勾选需要的相册开始下载",m_vtAlbumList.size());
+	//	AppendText(strText);
+	//}
+
+	////GetAlbumEnd();
+
+	////默认全部勾选
+	//if ( m_vtAlbumList.empty()==false ){
+	//	CButton*pButton=(CButton*)GetDlgItem(IDC_CHECK_SELECT_ALL);
+	//	pButton->SetCheck(BST_CHECKED);
+	//	OnBnClickedCheckSelectAll();
+	//}
+	//this->GetDlgItem(IDC_BUTTON_VIEW_ALBUM)->EnableWindow(TRUE);
+	//this->GetDlgItem(IDC_BUTTON_DOWN_PHOTO)->EnableWindow(m_lstCtrl.GetItemCount()>0);
+	//m_bIsGettingAlbumList=FALSE;
+
+
+	////加个判断，如果是用lua脚本就调用lua否则不调用
+	////////////////////////////////////////////////////////////////////////////
+	////调用lua脚本OnGetAlbumEnd函数通知获取相册完成
+	//if ( L!=NULL ){
+	//	lua_getglobal(L, "OnGetAlbumEnd");
+	//	if ( lua_isfunction(L,-1) ){
+	//		int err = lua_pcall( L, 0, 0, 0 );  
+	//		if ( err ){
+	//			const char *szMsg = lua_tostring(L,-1);
+	//			AppendTextV("脚本错误：%s",szMsg);
+	//		}
+	//	}
+	//}
+	//////////////////////////////////////////////////////////////////////////
+
+	return 0;
+}
+
+void CMainDlg::StartDownCSV()
+{
+}
+
+
+
+void CMainDlg::OnNMClickListAlbum(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	LVHITTESTINFO hitinfo;
+
+	//Copy click point
+	hitinfo.pt = pNMListView->ptAction;
+
+	//Make the hit test...
+	int nItem = m_lstCtrl.HitTest(&hitinfo);
+	if ( nItem!=-1 ){
+		// Didn't click on an icon
+		if(hitinfo.flags != LVHT_ONITEMSTATEICON){
+			BOOL bChecked=!m_lstCtrl.GetCheck(nItem);
+			m_lstCtrl.SetCheck(nItem,bChecked);
+		}
+	}
+
+	*pResult = 0;
+}
+
+void CMainDlg::OnNMRClickListAlbum(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	//NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	//*pResult = 0;
+
+	//int nItemCnt=m_lstCtrl.GetItemCount();
+	//if ( nItemCnt<=0 || m_bIsGettingAlbumList==TRUE ){
+	//	return;
+	//}
+	//POSITION pos=m_lstCtrl.GetFirstSelectedItemPosition();
+	//int nItem=0;
+	//BOOL bChecked=FALSE;
+
+	//CMenu m_popmenu;
+	//m_popmenu.LoadMenu(IDR_MENU_LIST);	
+	//CMenu *psub = (CMenu*)m_popmenu.GetSubMenu(0);
+	//CPoint pt;
+	//GetCursorPos(&pt);
+	//psub->EnableMenuItem(ID_COPY_ALBUM_URL,pos==NULL);
+	//psub->EnableMenuItem(ID_NAVIGATE_ALBUM_URL,pos==NULL);
+	//psub->EnableMenuItem(ID_CHECK_SELECTED,pos==NULL);
+	//psub->EnableMenuItem(ID_UNCHECK_SELECTED,pos==NULL);
+	//DWORD dwID =psub->TrackPopupMenu((TPM_LEFTALIGN|TPM_RIGHTBUTTON|TPM_NONOTIFY|TPM_RETURNCMD),
+	//	pt.x,pt.y, this);
+
+	//if ( dwID==ID_COPY_ALBUM_URL ){
+	//	CString strText;
+	//	while ( pos!=NULL ){
+	//		nItem=m_lstCtrl.GetNextSelectedItem(pos);
+	//		if ( nItem<(int)m_vtAlbumList.size() ){
+	//			CBaseAlbumInfo *pAlbum = m_vtAlbumList[nItem];
+	//			if ( pAlbum!=NULL && pAlbum->strAlbumUrl.IsEmpty()==FALSE ){
+	//				strText += pAlbum->strAlbumUrl + "\n";
+	//			}
+	//		}
+	//	}
+	//	Star::Common::CopyToClipboard(strText);
+	//}else if ( dwID==ID_NAVIGATE_ALBUM_URL ){
+	//	while ( pos!=NULL ){
+	//		nItem=m_lstCtrl.GetNextSelectedItem(pos);
+	//		if ( nItem<(int)m_vtAlbumList.size() ){
+	//			CBaseAlbumInfo *pAlbum = m_vtAlbumList[nItem];
+	//			if ( pAlbum!=NULL && pAlbum->strAlbumUrl.IsEmpty()==FALSE ){
+	//				Star::Common::OpenUrl(pAlbum->strAlbumUrl);
+	//			}
+	//		}
+	//	}
+	//}else if ( dwID==ID_CHECK_ALL ){
+	//	for ( int nItem=0; nItem<m_lstCtrl.GetItemCount(); ++nItem ){
+	//		m_lstCtrl.SetCheck(nItem,TRUE);
+	//	}
+	//}else if ( dwID==ID_UNCHECK_ALL ){
+	//	for ( int nItem=0; nItem<nItemCnt; ++nItem ){
+	//		bChecked=!m_lstCtrl.GetCheck(nItem);
+	//		m_lstCtrl.SetCheck(nItem,bChecked);
+	//	}
+	//}else if ( dwID==ID_CHECK_SELECTED ){
+	//	while ( pos!=NULL ){
+	//		nItem=m_lstCtrl.GetNextSelectedItem(pos);
+	//		m_lstCtrl.SetCheck(nItem,TRUE);
+	//	}
+	//}else if ( dwID==ID_UNCHECK_SELECTED ){
+	//	while ( pos!=NULL ){
+	//		nItem=m_lstCtrl.GetNextSelectedItem(pos);
+	//		bChecked=!m_lstCtrl.GetCheck(nItem);
+	//		m_lstCtrl.SetCheck(nItem,bChecked);
+	//	}
+	//}
+
+	//m_popmenu.DestroyMenu();
+
+}
+
+void CMainDlg::OnColumnClickListAlbum(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	m_bSortAsc=!m_bSortAsc;
+	m_lstCtrl.SortItems(CompareFunc,pNMListView->iSubItem);
+
+	*pResult=0;
+}
+
+int CALLBACK CMainDlg::CompareFunc(LPARAM lParam1,LPARAM lParam2,LPARAM lParamSort)
+{
+	int nResult=0;
+	//ITEMINFO* pItem1 = (ITEMINFO*)lParam1;
+	//ITEMINFO* pItem2 = (ITEMINFO*)lParam2;
+
+	//switch ( lParamSort )
+	//{
+	//case 0://编号
+	//	nResult=pItem1->nIndex-pItem2->nIndex;
+	//	break;
+	//case 1://相册名称
+	//	nResult=pItem1->strName.CompareNoCase(pItem2->strName);
+	//	break;
+	//case 2://数量
+	//	nResult=pItem1->nCount-pItem2->nCount;
+	//	break;
+	//case 3://更新日期
+	//	nResult=pItem1->strUpdateTime.CompareNoCase(pItem2->strUpdateTime);
+	//	break;
+	//case 4://访问权限
+	//	nResult=pItem1->strAccess.CompareNoCase(pItem2->strAccess);
+	//	break;
+	//case 5://描述信息
+	//	nResult=pItem1->strDescription.CompareNoCase(pItem2->strDescription);
+	//	break;
+	//}
+
+	//if ( m_bSortAsc==FALSE ){
+	//	nResult=0-nResult;
+	//}
+
+	return nResult;
+}
+
+void CMainDlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	//CString strText;
+	//LV_DISPINFO* pDispInfo = (LV_DISPINFO*) pNMHDR;
+
+	//if ( m_lstCtrl.GetStyle()&LVS_REPORT ){	//详细列表
+	//	if (pDispInfo->item.mask & LVIF_TEXT) {
+	//		ITEMINFO* pItem = (ITEMINFO*) pDispInfo->item.lParam;
+
+	//		switch (pDispInfo->item.iSubItem) {
+
+	//	case 0: //编号
+	//		strText.Format("%d",pItem->nIndex);
+	//		::lstrcpy (pDispInfo->item.pszText, strText);
+	//		break;
+
+	//	case 1: //相册名称
+	//		::lstrcpy (pDispInfo->item.pszText, pItem->strName);
+	//		break;
+
+	//	case 2: //图片数量
+	//		if ( pItem->nCount==-1 ){	//图片数量未知
+	//			::lstrcpy (pDispInfo->item.pszText, "?");
+	//		}else{
+	//			strText.Format("%d",pItem->nCount);
+	//			::lstrcpy (pDispInfo->item.pszText, strText);
+	//		}
+	//		break;
+	//	case 3: //更新日期
+	//		::lstrcpy (pDispInfo->item.pszText, pItem->strUpdateTime);
+	//		break;
+	//	case 4: //访问权限
+	//		::lstrcpy (pDispInfo->item.pszText, pItem->strAccess);
+	//		break;
+	//	case 5: //描述信息
+	//		::lstrcpy (pDispInfo->item.pszText, pItem->strDescription);
+	//		break;
+
+	//		}
+	//	}
+	//}else{	//大图标
+	//	if (pDispInfo->item.mask & LVIF_TEXT) {
+	//		ITEMINFO* pItem = (ITEMINFO*) pDispInfo->item.lParam;
+	//		if ( pItem->nCount==-1 ){
+	//			strText.Format( _T("%s"), pItem->strName );
+	//		}else{
+	//			strText.Format( _T("%s\n共%d张"), pItem->strName, pItem->nCount );
+	//		}
+	//		::lstrcpy (pDispInfo->item.pszText, strText);
+
+	//		//switch (pDispInfo->item.iSubItem) {
+
+	//		// 		case 0: //编号
+	//		// 			strText.Format("%d",pItem->nIndex);
+	//		// 			::lstrcpy (pDispInfo->item.pszText, strText);
+	//		// 			break;
+	//		// 
+	//		// 		case 1: //相册名称
+	//		// 			::lstrcpy (pDispInfo->item.pszText, pItem->strName);
+	//		// 			break;
+	//		// 
+	//		// 		case 2: //图片数量
+	//		// 			strText.Format("%d",pItem->nCount);
+	//		// 			::lstrcpy (pDispInfo->item.pszText, strText);
+	//		// 			break;
+	//		// 		case 3: //更新日期
+	//		// 			::lstrcpy (pDispInfo->item.pszText, pItem->strUpdateTime);
+	//		// 			break;
+	//		// 		case 4: //访问权限
+	//		// 			::lstrcpy (pDispInfo->item.pszText, pItem->strAccess);
+	//		// 			break;
+	//		// 		case 5: //描述信息
+	//		// 			::lstrcpy (pDispInfo->item.pszText, pItem->strDescription);
+	//		// 			break;
+	//		// 
+	//		// 			}
+	//	}
+
+	//}
+
+	*pResult = 0;
+}
+
+void CMainDlg::OnDeleteItemList(NMHDR* pNMHDR, LRESULT* pResult)    
+{   
+	//NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;   
+	//ITEMINFO*pItem=(ITEMINFO*)pNMListView->lParam;   
+	//if ( pItem!=NULL ){
+	//	delete pItem;
+	//} 
+
+	*pResult = 0;   
 }
