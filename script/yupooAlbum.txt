@@ -1,0 +1,475 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'yupooAlbum';
+name_cn = '又拍图片批量下载器';
+prefix = 'YUPO';
+ver = '1.0';
+firstpagename = '又拍网(下载原图需登录)';
+firstpageurl = 'http://www.yupoo.com/account/login/';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+ndowntype = 0
+npicsizemode = 0
+vip=false
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+function GetVipAlbums()
+	local albumcount = 0
+	local bfound = false
+
+	ipage = 1
+	while true do
+		msgprint('正在获取第 ' .. ipage .. ' 页相册信息……')
+		url = string.format('http://v.yupoo.com/photos/%s/albums/page%d/',account,ipage)
+		ipage = ipage + 1
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html)
+		
+		bfound = false
+		for href,src,name,num in string.gfind(html, [[class="Sets.-href="(.-)".-src.-(http[^"^'^%s]-.jpg).-title="(.-)".-<b>(%d+)]]) do
+			bfound = true
+			albumcount = albumcount + 1
+			albums[albumcount].url = 'http://v.yupoo.com'..href;
+			albums[albumcount].preview = src;
+			albums[albumcount].total = tonumber(num);
+			albums[albumcount].name = name;
+		end
+		
+		if bfound==false then
+			break
+		end
+	end
+end
+
+--[[
+获取所有相册
+http://www.yupoo.com/photos/dgxm8233/albums/
+http://v.yupoo.com/photos/zhichengxiefu/
+http://dgxm8233.yupoo.com/
+http://zhichengxiefu.v.yupoo.com/
+]]
+function GetAllAlbums(url)
+	local albumcount = 0
+	local html = nil
+	local bfound = false
+	
+	if string.lower(string.sub(url,1,4))~='http' then
+		url = 'http://' .. url 
+	end
+	
+	if string.find(url,'v.yupoo.com')~=nil then
+		vip=true
+	end
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	if vip==false then
+		_,_,account = string.find(html,[[END HEADER.-http://(.-).yupoo.com]])
+	else
+		_,_,account = string.find(html,[["x%-tabs".-http://(.-).v.yupoo.com]])
+	end
+	
+	if account==nil or account=='' then
+		msgbox('请输入要下载相册的又拍网址')
+		return
+	end
+	SetDirectryName(account);
+	
+	if vip==true then
+		GetVipAlbums()
+		return
+	end
+	
+	ipage = 1
+	while true do
+		msgprint('正在获取第 ' .. ipage .. ' 页相册信息……')
+		url = string.format( "http://www.yupoo.com/photos/%s/albums/page%d/", account, ipage )
+		ipage = ipage + 1
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html)
+		bfound = false
+		for href,src,name,num in string.gfind(html, [[<div class="set%-case.-href.-(http[^"^'^%s]*).-src.-(http[^"^'^%s]-.jpg).-alt="(.-)".-<strong>(.-)</strong>]]) do
+			bfound = true
+			albumcount = albumcount + 1
+			albums[albumcount].url = href;
+			albums[albumcount].preview = src;
+			albums[albumcount].total = tonumber(num);
+			albums[albumcount].name = name;
+		end
+		
+		if bfound==false then
+			break
+		end
+	end
+	
+end
+
+function GetCatAlbums(url)
+	local albumcount = 0
+	local urlformat=nil
+	local html = nil
+	local bfound = false
+	local catname=nil
+	local bfound = false
+	
+	vip=true
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	_,_,catname = string.find(html,[["x%-tab%-in.-"x%-tab%-in.-<span>(.-)</span>]])
+	if catname==nil then
+		catname = '未分类'
+	else
+		catname = star.RemoveFileNameInvalidChar(catname)
+	end
+	SetDirectryName(catname)
+	
+	p = string.find(url,'/page')
+	if p~=nil then
+		url = string.sub(url,1,p-1)
+	end
+	if string.sub(url,-1)=='/' then
+		url = string.sub(url,1,-2)
+	end
+	urlformat = url..'/page'
+	
+	ipage=1
+	while true do 
+		url = urlformat..ipage
+		msgprint('正在获取第 ' .. ipage .. ' 页相册信息……')
+		
+		ipage = ipage + 1
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html)
+		bfound = false
+		for href,src,name,num in string.gfind(html, [[<div class="Sets.-href="(.-)".-src.-(http[^"^'^%s]-.jpg).-title="(.-)".-<b>(%d+)]]) do
+			bfound = true
+			albumcount = albumcount + 1
+			albums[albumcount].url = 'http://v.yupoo.com'..href;
+			albums[albumcount].preview = src;
+			albums[albumcount].total = tonumber(num);
+			albums[albumcount].name = name;
+		end
+		
+		if bfound==false then
+			break
+		end
+	end
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	
+	npicsizemode =math.mod(ntype,10)
+	ndowntype,_ =math.modf(ntype/10)
+	
+	if ndowntype==0 then
+		GetAllAlbums(url)
+	elseif ndowntype==1 then
+		GetCatAlbums(url)
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function randfloatnum()
+	s = '0.'
+	math.randomseed(os.time())
+	for i = 1,16 do
+		s = s .. math.random(0,9);
+	end
+	
+	return s;
+end
+
+function GetOrignImage(id)
+	local orign=nil
+	
+	url = string.format('http://www.yupoo.com/photos/%s/%s/zoom/original/',account,id)
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	if string.find(html,'<h3>很抱歉')~=nil then
+		return	--说明需要登录又拍
+	end
+	
+	_,_,orign = string.find(html,[[<img src="(.-)"]])	
+	return orign
+end
+
+--?style=thumbnail方式显示的一页是8*8=64个
+function GetOneAlbumPhotos(index)
+	local photosperpage = 64
+	local picsizepatten='medish.'	--默认下载预览图
+	local photocount = 0
+	local photos = PHOTOS.new()
+	
+	if npicsizemode==0 or npicsizemode==1 then
+		picsizepatten='medish.'
+	elseif npicsizemode==2 then
+		picsizepatten='medium.'
+	elseif npicsizemode==3 then
+		picsizepatten='small.'
+	elseif npicsizemode==4 then
+		picsizepatten='thumb.'
+	end
+	
+	ipages,_ =math.modf(albums[index].total/photosperpage)
+	rest =math.mod(albums[index].total,photosperpage)
+	ipages = ipages + (rest~=0 and 1 or 0)
+	
+	for ipage = 1,ipages do 
+		msgprint(string.format('正在获取第 %d 个相册的 第 %d/%d 页图片信息……',index,ipage,ipages))
+		star.sleep(math.random(500,1000))
+		
+		url = string.format("%spage%d/?style=thumbnail", albums[index].url,ipage)
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html)
+		
+		for id,href,name,src in string.gfind(html, [[id="thumb_(%d+).-href="(.-)".-title="(.-)".-src.-(http.-.jpg)]]) do
+			if npicsizemode==0 then
+				orign = GetOrignImage(id)
+				if orign~=nil then
+					src = orign
+				end
+			else			
+				src = string.gsub(src,'square.',picsizepatten)
+			end
+			photocount = photocount + 1;
+			photos[photocount].id = id
+			photos[photocount].href = 'http://www.yupoo.com'..href
+			photos[photocount].name = name
+			photos[photocount].preview = src
+			photos[photocount].orign = src
+		end
+	end
+	
+	return photos
+end
+
+function GetVipOrignImage(id)
+	local orign=nil
+	
+	url = string.format('http://v.yupoo.com/photos/%s/%s/zoom/original/',account,id)
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	if string.find(html,'<h3>很抱歉')~=nil then
+		return	--说明需要登录又拍
+	end
+	
+	_,_,orign = string.find(html,[[<img src="(.-)"]])	
+	return orign
+end
+
+--?style=thumbnail方式显示的一页是42个
+function GetOneVipAlbumPhotos(index)
+	local photosperpage = 42
+	local picsizepatten='medish.'	--默认下载预览图
+	local photocount = 0
+	local photos = PHOTOS.new()
+	
+	if npicsizemode==0 or npicsizemode==1 then
+		picsizepatten='medish.'
+	elseif npicsizemode==2 then
+		picsizepatten='medium.'
+	elseif npicsizemode==3 then
+		picsizepatten='small.'
+	elseif npicsizemode==4 then
+		picsizepatten='thumb.'
+	end
+	
+	ipages,_ =math.modf(albums[index].total/photosperpage)
+	rest =math.mod(albums[index].total,photosperpage)
+	ipages = ipages + (rest~=0 and 1 or 0)
+	
+	for ipage = 1,ipages do 
+		msgprint(string.format('正在获取第 %d 个相册的 第 %d/%d 页图片信息……',index,ipage,ipages))
+		star.sleep(math.random(500,1000))
+		
+		url = string.format("%spage%d/?style=thumbnail", albums[index].url,ipage)
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html)
+		
+		for id,href,name,src in string.gfind(html, [[id="thumb_(%d+).-href="(.-)".-title="(.-)".-src.-(http.-.jpg)]]) do
+			if npicsizemode==0 then
+				orign = GetVipOrignImage(id)
+				if orign~=nil then
+					src = orign
+				end
+			else			
+				src = string.gsub(src,'square.',picsizepatten)
+			end
+			photocount = photocount + 1;
+			photos[photocount].id = id
+			photos[photocount].href = 'http://www.yupoo.com'..href
+			photos[photocount].name = name
+			photos[photocount].preview = src
+			photos[photocount].orign = src
+		end
+	end
+	
+	return photos
+end
+
+function GetPhotos(index)
+	local photos = PHOTOS.new()
+	
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	
+	if vip==false then
+		photos = GetOneAlbumPhotos(index)
+	else
+		photos = GetOneVipAlbumPhotos(index)
+	end
+	
+	if ndowntype==0 then	
+	else					
+	end
+	
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--[[
+http://www.yupoo.com/photos/dgxm8233/albums/
+http://v.yupoo.com/photos/zhichengxiefu/
+http://dgxm8233.yupoo.com/
+http://zhichengxiefu.v.yupoo.com/
+--]]
+function test()
+	GetAlbums(0,'http://dgxm8233.yupoo.com/')
+end
+
+--test();

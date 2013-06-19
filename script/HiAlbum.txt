@@ -1,0 +1,517 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'hiAlbum';
+name_cn = '百度空间相册（贴吧相册）批量下载器';
+prefix = 'BDAM';
+ver = '1.8';
+firstpagename = '百度相册';
+firstpageurl = 'http://xiangce.baidu.com';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+--var
+account = '';
+ndowntype = 0;
+albumcount = 0;
+albums = {photos={}};
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+
+tbs = nil
+
+function showphotos(photo)
+     if photo~=nil then
+          print(#photo)
+          for i = 1,#photo do
+               print(photo[i].preview)
+          end
+     end
+end
+
+function showalbum(album)
+     if album~=nil then
+          print(album.id)
+          print(album.name)
+          print(album.preview)
+          showphotos(album.photos)
+     end
+end
+
+function showalbums(albums)
+     if albums~=nil then
+          print(#albums)
+          for i = 1,#albums do
+               showalbum(albums[i]);
+          end
+     end
+end
+
+--获取贴吧相册
+function GetTiebaAlbum(url)
+	local catid = nil
+	local html = nil
+	local bfound = false
+	
+	--贴吧的网址有两种格式，一种是utf的网址：http://tieba.baidu.com/f?ie=utf-8&kw=%E7%BE%8E%E5%A5%B3
+	p1,p2 = string.find(url,'utf%-8')
+	if p1~=nil then
+		html = star.gethtml(url)
+		_,_,account = string.find(html,[[%?.-kw=([^/^&^"^']*)]]);
+	else
+		_,_,account = string.find(url,[[%?.-kw=([^/^&]*)]]);
+		if account==nil then
+			_,_,account = string.find(url,[[tieba.baidu.com/([^/^&]*)]]);
+		end
+	end
+	
+	if account==nil then
+		return
+	end
+	SetDirectryName(account);
+	tbs = nil;
+	
+	url = 'http://tieba.baidu.com/photo/g?kw=' .. account
+	html = star.gethtml(url)
+	if html==nil then
+		return
+	end
+	
+	--get catid
+	for s in string.gfind(html, 'catid([^%p]+)') do
+		--if #s>10 then
+			catid = s
+			break
+		--end
+	end
+	
+	ipage = 1;
+	while true do
+		msgprint('正在获取第 ' .. ipage .. '页相册信息……')
+		--url = string.format('http://tieba.baidu.com/photo/g?kw=%s&cat_id=%s#!/g/catid%s/p%d',account,catid,catid,ipage)
+		url = string.format('http://tieba.baidu.com/photo/g?kw=%s&cat_id=%s&pn=%d',account,catid,ipage)
+		--msgbox(url)
+		ipage = ipage + 1;
+		html = star.gethtml(url)
+		--local file = io.open("result.txt","w+"); file:write(html);
+		if html==nil or html=='' then
+			break
+		end
+		
+		--tbs
+		if tbs==nil then
+			_,_,tbs = string.find(html,[[tbs.-:.-"(.-)"]])
+		end
+		
+		bfound = false
+		for id,src,num,name in string.gfind(html, [[href="/p/(.-)".-src.-(http.-)".-_amount.->(%d+).-title="(.-)"]]) do
+			bfound = true
+			albumcount = albumcount + 1;
+			albums[albumcount] = {};
+			albums[albumcount].preview = src;
+			albums[albumcount].id = id;
+			albums[albumcount].url = 'http://tieba.baidu.com/p/'..id;
+			albums[albumcount].name = name;
+			albums[albumcount].total = tonumber(num);
+			--print(s1,s2,s3,s4)
+		end
+		
+		p1 = string.find(html,'下一页')
+		if p1==nil then
+			break
+		end
+	end
+
+end
+
+--明星贴吧
+function GetStarTiebaAlbum(url)
+	_,_,account = string.find(url,[[%?.-kw=([^/^&]*)]]);
+	if account==nil then
+		_,_,account = string.find(url,[[tieba.baidu.com/([^/^&]*)]]);
+	end
+	if account==nil then
+		return
+	end
+	SetDirectryName(account);
+	tbs = nil;
+	
+	ipage = 1;
+	
+	while true do
+		url = 'http://tieba.baidu.com/photo/bw/album/list?kw='..account..'&tag_id=0&pn='..ipage..'&star=1&_='.. os.time()
+		ipage = ipage + 1;
+		html = star.gethtml(url)
+		bfound = false
+		
+		for s1,s2,s3,s4,s5 in string.gfind(html, [[album_id.-"(%d*).-src.-(http.-.jpg).-pic_amount\">(%d*)<.-href=\"(.-)\".-">(.-)<\/a>]]) do
+			bfound = true
+			s2 = string.gsub(s2,[[\/]],[[/]])
+			s4 = string.gsub(s4,[[\/]],[[/]])
+			s5 = star.DecodeEscapeUsequence(s5)
+			albumcount = albumcount + 1;
+			albums[albumcount] = {};
+			albums[albumcount].id = s1;
+			albums[albumcount].preview = s2;
+			albums[albumcount].total = s3;
+			albums[albumcount].url = 'http://tieba.baidu.com/'..s4;
+			albums[albumcount].name = s5;
+			--print(s1,s2,s3,s4,s5)
+		end
+		
+		if bfound==false then
+			break
+		end
+	end
+	
+end
+
+function GetSpaceAlbum(url)
+	local albumurl = nil;
+	
+	_,_,account = string.find(url,[[hi.baidu.com/([^/]*)]]);
+	if account==nil then
+		p1,p2 = string.find(url,[[xiangce.baidu.com]]);	
+		if p1~=nil then
+			html = star.gethtml(url)
+			html = star.utf8s2ms(html)
+			_,_,username,account = string.find(html,[[owner.-user_name":"(.-)".-user_sign":"(.-)"]])
+			if account~=nil then
+				username = star.DecodeEscapeUsequence(username)
+				SetDirectryName(username)
+				albumurl = 'http://xiangce.baidu.com/u/'..account
+			end
+		end
+	else
+		url = 'http://hi.baidu.com/'..account..'/albums';
+		html = star.gethtml(url)
+		html = star.utf8s2ms(html)
+		
+		--local file = io.open("result.txt","w+")
+		--file:write(html);
+		
+		--html = [[owner: {"user_name":"asmcvc","user_sign":"4161202472","]]
+		_,_,username,account = string.find(html,[[owner.-user_name":"(.-)".-user_sign":"(.-)"]])
+		if account~=nil then
+			username = star.DecodeEscapeUsequence(username)
+			SetDirectryName(username)
+			albumurl = 'http://xiangce.baidu.com/u/'..account
+		end
+	end
+	
+	if albumurl==nil then
+		print('unkown:'..url)
+		return
+	end
+	
+	--start get
+	html = star.gethtml(albumurl)
+	html = star.utf8s2ms(html)
+	pos1,pos2,s = string.find(html,'album%-list.-(.-)</li></ul>');
+	for s1,s2,s3,s4,s5,s6 in string.gfind(s, [[data%-sign='(.-)'.-href="(.-)".-src="(.-)".-total'><span>(%d*)<.-album%-name.-title='(.-)'.-album%-date'>(.-)<]]) do
+		albumcount = albumcount + 1;
+		albums[albumcount] = {};
+		albums[albumcount].id = s1;
+		albums[albumcount].url = 'http://xiangce.baidu.com'..s2;
+		albums[albumcount].preview = s3;
+		albums[albumcount].total = s4;
+		albums[albumcount].name = s5;
+		albums[albumcount].crreatetime = s6;
+		--print(s1,s2,s3,s4)
+	end
+
+	print(account);
+end
+
+function GetAlbums(ntype,url)
+	albums = {};
+	albumcount = 0;
+	ndowntype = ntype;
+	if ntype==0 then
+		GetSpaceAlbum(url)
+	elseif ntype==1 then
+		GetTiebaAlbum(url)
+		if albumcount==0 then
+			GetStarTiebaAlbum(url)
+			if albumcount~=0 then
+				ndowntype = 2;
+			end
+		end
+	end
+	
+	for i = 1,albumcount do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function randfloatnum()
+	s = '0.'
+	math.randomseed(os.time())
+	for i = 1,16 do
+		s = s .. math.random(0,9);
+	end
+	
+	return s;
+end
+
+function GetOrignImageUrl(albumid)
+	local url = nil;
+	local html = nil;
+	
+	url = 'http://xiangce.baidu.com/picture/detail/' .. albumid
+	html = star.gethtml(url);
+	if html==nil or html=='' then
+		return nil
+	end
+	
+	_,_,s = string.find(html,'image%-box.-src.-(http.-.jpg)');
+	if s~=nil then
+		return s
+	else
+		_,_,s = string.find(html,'img%-auto%-item%-wrapper.-src.-(http.-.jpg)');
+	end
+	
+	if s~=nil then
+		return s
+	end
+end
+
+function GetSpaceAlbumPhotos(album)
+	local photocount = 0;
+	album.photos = {};
+	countperpage = 150
+	i = 0;
+	ipage = 1;
+	while true do
+		url = string.format('http://xiangce.baidu.com/picture/album/list/%s?format=json&view_type=cell&size=150&pn=%d&type=default',
+				album.id,i);
+		i = i + countperpage;
+		msgprint('正在获取第 '..ipage..' 页相册照片信息……')
+		ipage = ipage + 1;
+		html = star.gethtml(url);
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html);
+		bfound = false
+		for name,id,src in string.gfind(html, [[picture_name":"(.-)".-picture_sign":"(.-)".-img_src":"(.-)"]]) do
+			bfound = true
+			photocount = photocount + 1;
+			album.photos[photocount] = {};
+			album.photos[photocount].name = star.DecodeEscapeUsequence(name)
+			album.photos[photocount].id = id
+			src = string.gsub(src, [[\/]], "/")
+			msgprint('正在获取第 ' .. photocount .. ' 张图片原图信息……')
+			orignimage = GetOrignImageUrl(id)
+			if orignimage==nil then
+				orignimage = src
+			end
+			album.photos[photocount].preview = orignimage;
+			album.photos[photocount].orign = orignimage;
+			--print(s1,id,orignimage)
+        end
+		if bfound==false or photocount>=album.total then
+			break
+		end
+	end
+	
+	return album;
+end
+
+function gettbs(url)
+	html = star.gethtml(url)
+	_,_,s = string.find(html,[[tbs.-"(.-)"]])
+	--msgbox(s)
+	return s;
+end
+
+function GetTiebaAlbumPhotos(album)
+	local s1,s2,s3
+	local photocount = 0;
+	album.photos = {};
+	ipage = 1;
+
+	--tbs = gettbs(album.url)
+	perpagecount = 200 
+	loopcount = 40 
+	
+	pagecount1,_ =math.modf(album.total/perpagecount)
+    rest = math.mod(album.total,perpagecount)
+    pagecount1 = pagecount1 + (rest~=0 and 1 or 0)
+	
+	pagecount2,_ =math.modf(album.total/loopcount)
+    rest = math.mod(album.total,loopcount)
+    pagecount2 = pagecount2 + (rest~=0 and 1 or 0)
+	
+	
+	for ipage = 1,pagecount1 do
+		
+		startno = 1
+		endno = loopcount
+		
+		thispagecout = 0
+		for jpage = 1,10000 do 
+			url = string.format('http://tieba.baidu.com/photo/g/bw/picture/list?kw=%s&alt=jview&rn=200&tid=%s&pn=%d&ps=%d&pe=%d&info=1&_=%s',
+			account,album.id,ipage,startno,endno,os.time())
+			--msgbox(url)
+			html = star.gethtml(url);
+			if html==nil or html=='' then
+				break
+			end
+			--local file = io.open("result.txt","w+"); file:write(html);
+			
+			bfound = false
+			for id,name,src in string.gfind(html, [[pic_id":"(.-)".-descr":"(.-)".-purl":"(.-)"]]) do
+				bfound = true
+				thispagecout = thispagecout + 1
+				photocount = photocount + 1;
+				album.photos[photocount] = {};
+				album.photos[photocount].id = id
+				src = string.gsub(src,[[\/]],[[/]])
+				album.photos[photocount].preview = src
+				album.photos[photocount].orign = 'http://imgsrc.baidu.com/forum/pic/item/' .. id .. '.jpg';
+				album.photos[photocount].name = star.DecodeEscapeUsequence(name);
+			end
+			startno = photocount + 1
+			endno = photocount + loopcount
+			
+			if thispagecout>=perpagecount or bfound==false then
+				break
+			end
+		end
+	end
+	
+	return album;
+end
+
+--param:album
+function GetStarTiebaAlbumPhotos(album)
+	local photocount = 0;
+	album.photos = {};
+	url = album.url
+	
+	--get tid
+	_,_,tid = string.find(url,'tid=(%d*)')
+
+	--get url_pic_id 
+	---------------------------
+	html = star.gethtml(url)
+	_,_,urlpicid = string.find(html,[[url_pic_id = "(.-)"]])
+	if urlpicid==nil then
+		_,_,urlpicid = string.find(html,[["pic_id".-'(.-)']])
+	end
+	if urlpicid==nil then
+		return
+	end
+	---------------------------
+	
+	while true do
+		--http://tieba.baidu.com/photo/bw/picture/guide?kw=%B2%CC%D2%C0%C1%D6&tid=1941902094&pic_id=b0109313b07eca8017f4f832912397dda0448377&prev=15&next=15&alt=jview&see_lz=0&_=1358426565680
+		url = 'http://tieba.baidu.com/photo/bw/picture/guide?kw='..account..'&tid='..tid..'&pic_id='..urlpicid..'&prev=0&next=15&alt=jview&see_lz=0&_='.. os.time()
+		print(url)
+		html = star.gethtml(url);
+		if html==nil or html=='' then
+			break
+		end
+		--local file = io.open("result.txt","w+"); file:write(html);
+		
+		bfound = false
+		for s1,s2 in string.gfind(html, [["id":"(.-)".-"url":"(.-)"]]) do
+			bfound = true
+			urlpicid = s1
+			s = string.gsub(s2,[[\/]],'/')
+			_,_,s2 = string.find(s,[[/([^/]*.jpg)]])
+			if s2~=nil then
+				s2 = 'http://imgsrc.baidu.com/forum/pic/item/'..s2
+			else 
+				s2 = s
+			end
+			photocount = photocount + 1;
+			album.photos[photocount] = {};
+			album.photos[photocount].id = s1
+			album.photos[photocount].preview = s2
+			album.photos[photocount].orign = s2;
+			album.photos[photocount].name = '';
+        end
+		
+		if bfound==false or photocount>=album.total then
+			break
+		end
+		
+	end
+	
+	return album;
+end
+
+function GetPhotos(index)
+	local album={};
+	
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	if ndowntype==0 then
+		album = GetSpaceAlbumPhotos(albums[index])
+	elseif ndowntype==1 then
+		album = GetTiebaAlbumPhotos(albums[index])
+	elseif ndowntype==2 then
+		album = GetStarTiebaAlbumPhotos(albums[index])
+	else
+	end
+	photos = album.photos;
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+
+
+function test()
+	account = '%B2%CC%D2%C0%C1%D6'
+	album={}
+	album.total=43
+	album.url = 'http://tieba.baidu.com/photo/p?kw=%B2%CC%D2%C0%C1%D6&tid=1941902094'
+	GetStarTiebaAlbumPhotos(album)
+	album={}
+	album.url = 'http://tieba.baidu.com/photo/p?kw=%B2%CC%D2%C0%C1%D6&tid=2025754626'
+	GetTiebaAlbumPhotos(album);
+	--GetStarTiebaAlbum('http://tieba.baidu.com/f?kw=%B2%CC%D2%C0%C1%D6&tab=photo')
+--[[	album={}
+	album.id = 'd31472d27487d95cdab1c821ec2b782bfb0e8186'
+	GetSpaceAlbumPhotos(album)--]]
+	--GetTiebaAlbum('http://tieba.baidu.com/f?kw=%C6%EF%D0%D0&tp=1#!/l/pp1')
+	--showalbums(albums);
+--[[	album={}
+	album.url = 'http://tieba.baidu.com/f/tupian/album?kw=%C6%EF%D0%D0&an=%C6%EF%D3%D1%C5%C4%C9%E3%BC%AF%D6%AE1044998535'
+	GetTiebaAlbumPhotos(album)--]]
+	--GetAlbum(1,[[http://xiangce.baidu.com/ieong188398833]])
+	--GetAlbum(1,[[http://xiangce.baidu.com/u/4161202472]])
+	--GetAlbum(1,[[http://hi.baidu.com/xingxing]])
+	
+	--GetAlbum(1,[[http://hi.baidu.com/xingxing/item/341a28e49b3afbd3ea34c979]])
+	--getalbum(2,'http://item.taobao.com/item.htm?id=10852423445');
+end
+
+--http://item.taobao.com/item.htm?id=10852423445
+
+    
+--test();
