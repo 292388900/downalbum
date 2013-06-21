@@ -63,6 +63,8 @@ static const struct luaL_reg starlib [] = {
 	{"open", run},
 	{"keypress", keypress},
 	{"reversefind", reversefind},
+	{"getimagesize", getimagesize},
+	{"getfilesize", getfilesize},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
