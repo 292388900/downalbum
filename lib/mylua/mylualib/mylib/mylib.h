@@ -39,3 +39,5 @@ int trim(lua_State* L);
 int	run(lua_State* L);
 int keypress(lua_State* L);
 int reversefind(lua_State* L);
+int getimagesize(lua_State* L);
+int getfilesize(lua_State* L);

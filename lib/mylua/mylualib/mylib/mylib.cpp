@@ -4,6 +4,7 @@
 #include <StarLib/Common/common.h>
 #include <StarLib/htmldown/htmldown.h>
 #include <StarLib/MD5/Md5.h>
+#include <atlimage.h>
 #include <string>
 using namespace std;
 
@@ -743,4 +744,52 @@ int reversefind(lua_State* L)
 
 	lua_pushnumber(L,nPos+1);
 	return 1;
+}
+
+int getimagesize(lua_State* L)
+{
+	CString strFileName;
+	int w = -1;
+	int h = -1;
+
+	int n = lua_gettop(L);
+	if ( n>0 ) {
+		if ( lua_isstring(L,1) ) {
+			strFileName = lua_tostring(L,1);
+		}
+
+		CImage img;
+		if ( img.Load(strFileName)==S_OK ) {
+			w = img.GetWidth();
+			h = img.GetHeight();
+		}
+	}
+
+	lua_pushnumber(L,w);
+	lua_pushnumber(L,h);
+	return 2;
+}
+
+int getfilesize(lua_State* L)
+{
+	CString strFileName;
+	LARGE_INTEGER llSize;
+	llSize.LowPart = llSize.HighPart = 0;
+
+	int n = lua_gettop(L);
+	if ( n>0 ) {
+		if ( lua_isstring(L,1) ) {
+			strFileName = lua_tostring(L,1);
+		}
+
+		HANDLE hFile = CreateFile(strFileName,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,NULL,NULL);
+		if ( hFile!=INVALID_HANDLE_VALUE ){
+			GetFileSizeEx(hFile,&llSize);
+			CloseHandle(hFile);
+		}
+	}
+
+	lua_pushnumber(L,llSize.LowPart);
+	lua_pushnumber(L,llSize.HighPart);
+	return 2;
 }
