@@ -9,6 +9,8 @@
 #include <luabind/class.hpp>
 using namespace luabind;
 
+#include <StarLib/File/File.h>
+
 #ifdef _DEBUG
 #pragma comment(lib,"luaD.lib")
 #pragma comment(lib,"luabindD.lib")
@@ -85,6 +87,16 @@ if xls:create() then
 else
 	print(xls:error())
 end
+
+//////////////////////////////////////////////////////////////////////////
+require "star"
+
+dir = star.getluapath()
+ini = star.INI(dir..'config.ini')
+ini:setint('main','x',10)
+print(ini:getint('main','x',0))
+ini:setstring('main','h','11'..1001)
+print(ini:getstring('main','h',''))
 */
 extern "C" __declspec(dllexport) int luaopen_star(lua_State *L) { 
 	// luaL_openlib(L, "mylib", mylib, 0);
@@ -106,7 +118,15 @@ extern "C" __declspec(dllexport) int luaopen_star(lua_State *L) {
 			.def("getrowscount", &CXlsOperator::GetRowsCount)
 			.def("getcolscount", &CXlsOperator::GetColsCount)
 			.def("save", &CXlsOperator::Save)
-			.def("error", &CXlsOperator::GetLastError)
+			.def("error", &CXlsOperator::GetLastError),
+		class_<Star::File::CIni>("INI")
+			.def(constructor<>())
+			.def(constructor<LPCTSTR>())
+			.def("setfile", &Star::File::CIni::SetIniFile)
+			.def("getstring", &Star::File::CIni::GetIniString)
+			.def("setstring", &Star::File::CIni::SetIniString)
+			.def("getint", &Star::File::CIni::GetIniInt)
+			.def("setint", &Star::File::CIni::SetIniInt)
 		//def("a",a),
 		//def("b",b)
 	];
