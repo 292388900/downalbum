@@ -793,3 +793,39 @@ int getfilesize(lua_State* L)
 	lua_pushnumber(L,llSize.HighPart);
 	return 2;
 }
+
+int writeunicodestring(lua_State* L)
+{
+	BOOL bRet = FALSE;
+	CString strFileName;
+	CStringW strText;
+
+	int n = lua_gettop(L);
+	if ( n>0 ) {
+		if ( lua_isstring(L,1) ) {
+			strFileName = lua_tostring(L,1);
+		}
+	}
+	if ( n>1 ) {
+		if ( lua_isstring(L,2) ) {
+			strText = lua_tostring(L,2);
+		}
+	}
+
+	CFile file;
+	const unsigned char LeadBytes[] = {0xFF, 0xFE};
+	UINT nOpenFlags = CFile::modeCreate|CFile::modeReadWrite;
+	if ( GetFileAttributes(strFileName)!=-1 ) {
+		nOpenFlags = CFile::modeReadWrite;
+	}
+	if ( file.Open(strFileName,nOpenFlags) ) {
+		file.SetLength(0);
+		file.Write(LeadBytes,sizeof(LeadBytes));
+		file.Write(strText,strText.GetLength()*sizeof(WCHAR));
+		file.Close();
+		bRet = TRUE;
+	}
+
+	lua_pushboolean(L,bRet);
+	return 1;
+}
