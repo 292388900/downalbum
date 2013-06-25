@@ -84,6 +84,22 @@ namespace Star
 		BOOL SetIniString(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, LPCTSTR value);
 		UINT GetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName,int nDefault=0);
 		BOOL SetIniInt(LPCTSTR fileName,LPCTSTR appName, LPCTSTR keyName, UINT value);
+	
+		class CIni
+		{
+		public:
+			CIni(LPCTSTR lpszFileName);
+			CIni();
+
+			void SetIniFile(LPCTSTR lpszFileName);
+			string GetIniString(LPCTSTR appName, LPCTSTR keyName,LPCTSTR lpszDefault=NULL);
+			BOOL SetIniString(LPCTSTR appName, LPCTSTR keyName, LPCTSTR value);
+			UINT GetIniInt(LPCTSTR appName, LPCTSTR keyName,int nDefault=0);
+			BOOL SetIniInt(LPCTSTR appName, LPCTSTR keyName, UINT value);
+		private:
+			CString m_strFileName;
+		};
+
 		//CString GetRegString(HKEY key, LPCTSTR subKey, LPCTSTR keyName, DWORD maxSize);
 		//bool SetRegString(HKEY key, LPCTSTR subKey, LPCTSTR keyName, LPCTSTR value);
 		//------------------------------------------------------------------------
