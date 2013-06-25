@@ -440,6 +440,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="File"
+				>
+				<File
+					RelativePath="..\..\StarLib\File\File.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\StarLib\File\File.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
