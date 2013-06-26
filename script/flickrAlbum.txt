@@ -6,7 +6,7 @@
 name_en = 'flickrAlbum';
 name_cn = 'flickr相册照片批量下载器';
 prefix = 'FLCR';
-ver = '1.1';
+ver = '1.2';
 firstpagename = 'flickr首页';
 firstpageurl = 'http://www.flickr.com';
 mainwidth = 940;
@@ -133,9 +133,10 @@ function getcatalbum(url)
 	
 	for src,href,name,num in string.gfind(html, [[class="Sets.-(http[^"^']*.jpg).-href="(.-)".-title="(.-)".-<p>.-(.-) ]]) do
 		href = 'http://www.flickr.com' .. href
+		_,_,id = string.find(href,[[/sets/(%d+)]])
 		albumcount = albumcount + 1
 		albums[albumcount] = {}
-		albums[albumcount].id = s1
+		albums[albumcount].id = id
 		albums[albumcount].preview = src
 		albums[albumcount].url = href
 		albums[albumcount].name = name
@@ -166,6 +167,17 @@ function GetAlbums(ntype,url)
 	end
 	
 end
+
+function GetOriginalImage(albumid,photoid)
+	local url=nil
+	local html=nil
+	
+	url = string.format('http://www.flickr.com/photos/%s/%s/sizes/o/in/set-%s/',account,photoid,albumid)
+	html = star.gethtml(url)
+	html = star.utf8s2ms(html)
+	_,_,src = string.find(html,[["allsizes%-photo".-src.-(http.-.jpg)]])
+	return src
+end
     
 function GetOneAbumPhotos(index)
 	local photocount = 0;
@@ -187,13 +199,19 @@ function GetOneAbumPhotos(index)
 		html = star.utf8s2ms(html)
 		
 		for id,href,name,src in string.gfind(html, [[photo%-display%-item.-id=.-(%d+).-href="(.-)".-title="(.-)".-(http[^"^']*.jpg)]]) do
-			src = string.gsub(src,[[\/]],'/')
-			photocount = photocount + 1;
-			photos[photocount].preview = src
-			src = string.gsub(src,'_z.','_b.')
-			photos[photocount].orign = src;
-			photos[photocount].id = id;
-			photos[photocount].name = name
+			if #id>5 then
+				src = string.gsub(src,[[\/]],'/')
+				photocount = photocount + 1;
+				photos[photocount].preview = src
+				src = string.gsub(src,'_z.','_b.')
+				osrc = GetOriginalImage(albums[index].id,id)
+				if osrc~=nil then
+					src = osrc
+				end
+				photos[photocount].orign = src;
+				photos[photocount].id = id;
+				photos[photocount].name = name
+			end
 		end
 		
 	end
@@ -221,14 +239,13 @@ end
 
 --下载相册完毕后程序调用
 function OnDownAlbumEnd()
-	--InputUrl('http://item.taobao.com/item.htm?id=10852423445');
-	--SelectDownType(2);
-	--StartGetAlbum();
+	
 end
-
---[[function test()
+--[[
+function test()
     GetAlbums(0,'http://www.flickr.com/photos/evelynflint/sets/')
-    GetPhotos(5)
+    GetPhotos(4)
 end
 
-test();--]]
+test()
+--]]
