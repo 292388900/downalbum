@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = 'ÌÔ±¦±¦±´Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TBAM';
-ver = '2.2';
+ver = '2.3';
 firstpagename = '¹Ù·½ÌÔ±¦';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -58,10 +58,28 @@ function showalbums(albums)
      end
 end
 
+
+function geturlimagename(url)
+	local name=''
+	if star.reversefind~=nil then
+		p = star.reversefind(url,'/')
+		if p~=nil then
+		  name = string.sub(url,p+1)
+		  if name~='' and string.find(name,'%.')==nil then
+			   name = name..'.jpg'
+		  end
+		end
+	end
+
+	return name
+end
+
 function getitemalbum(url)
-     local html = nil
-     local photocount = 0;
-     local album = {photos={}}
+	local html = nil
+	local dscUrl=nil
+	local fetchDcUrl=nil
+	local photocount = 0;
+	local album = {photos={}}
 	
 	album.url = url;
 	
@@ -115,32 +133,59 @@ function getitemalbum(url)
     end
 	
      --ÏêÇé    
-    pos1,pos2,value1 = string.find(html,[[apiItemDesc.-(http[^%s]-)"]])
-	if value1==nil then
-		pos1,pos2,value1 = string.find(html,[[(http://dsc.[^%s]-)']])
+    pos1,pos2,dscUrl = string.find(html,[[apiItemDesc.-(http[^%s]-)"]])
+	if dscUrl==nil then
+		pos1,pos2,dscUrl = string.find(html,[[(http://dsc.[^%s]-)']])
 	end
-    html = star.gethtml(value1);
-     
-	for value1 in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
-		photocount = photocount + 1;
-		album.photos[photocount] = {};
-		album.photos[photocount].preview = value1;
-		album.photos[photocount].orign = value1;
+	_,_,fetchDcUrl=string.find(html,[["fetchDcUrl".-(http.-)"]])
+	
+    html = star.gethtml(dscUrl)
+	     
+	for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
 	end
 	
-	for value1 in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
-		photocount = photocount + 1;
-		album.photos[photocount] = {};
-		album.photos[photocount].preview = value1;
-		album.photos[photocount].orign = value1;
+	for src in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
 	end
 	
-	for value1 in string.gfind(html, [[src.-(http[^%s]-.png)]]) do
-		photocount = photocount + 1;
-		album.photos[photocount] = {};
-		album.photos[photocount].preview = value1;
-		album.photos[photocount].orign = value1;
+	for src in string.gfind(html, [[src.-(http[^%s]-.png)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
 	end
+	
+	if fetchDcUrl~=nil then
+		html = star.gethtml(fetchDcUrl)
+		for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
+			src = string.gsub(src,[[\/]],'/')
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+		
+		for src in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
+			src = string.gsub(src,[[\/]],'/')
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+	end
+	
 	
 	--[[
 	ÀýÈç±¦±´http://item.taobao.com/item.htm?id=6019035368µÄÃèÊöÎÄ¼þ£º
