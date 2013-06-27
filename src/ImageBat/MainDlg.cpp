@@ -1050,6 +1050,9 @@ LRESULT CMainDlg::OnProcessPhotosEnd(WPARAM wParam,LPARAM lParam)
 
 	m_toolboxDlg.EnableWindow(TRUE);
 
+
+#if 0
+
 	//为了更好地完善软件，您可以捐助作者
 #ifdef _UNICODE
 	TCHAR szjuanzhu[] = { 0x4E3A, 0x4E86, 0x66F4, 0x597D, 0x5730, 0x5B8C, 0x5584, 0x8F6F, 0x4EF6, 0xFF0C, 0x60A8, 0x53EF, 0x4EE5, 0x6350, 0x52A9, 0x4F5C, 0x8005, '\0' };
@@ -1074,6 +1077,8 @@ LRESULT CMainDlg::OnProcessPhotosEnd(WPARAM wParam,LPARAM lParam)
 			file.Close();
 		}
 	}
+
+#endif
 
 	AppendText("批量处理完成");
 
