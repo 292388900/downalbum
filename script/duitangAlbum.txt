@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '堆糖网专辑批量下载器';
 prefix = 'DUIT';
-ver = '1.1';
+ver = '1.2';
 firstpagename = '堆糖网';
 firstpageurl = 'http://www.duitang.com';
 mainwidth = 940;
@@ -180,10 +180,10 @@ function GetZhuanji(url,IsFavalAlbum)
 	for ipage = 1,pages do
 		msgprint('正在获取第 ' .. ipage .. '/' .. pages .. '页专辑信息……' )
 		url = 'http://www.duitang.com/album/list/' .. ipage .. '/12/?user_id=' .. user_id .. '&pic=1' .. strlike
-		html = star.gethtml(url)
+		html = star.gethtml(url) 
 		html = star.utf8s2ms(html)
 		
-		for count,id,name,src in string.gfind(html, [["count":(%d+).-"id":(%d+).-"name":"(.-)".-"pics".-(http.-)"]]) do
+		for count,src,id,name in string.gfind(html, [["count":(%d+).-"pics".-(http.-)".-"id":(%d+).-"name":"(.-)"]]) do
 			src = string.gsub(src,'(%.thumb%.%d+_%d+_c%.)','.')
 			albumcount = albumcount + 1
 			albums[albumcount].id = id;
@@ -346,11 +346,12 @@ function GetAlbumPhotos(album)
 	for ipage = 1,pagecount do
 		url = string.format('http://www.duitang.com/album/%s/masn/p/%d/24/',album.id,ipage)
 		html = star.gethtml(url)
+		html = star.utf8s2ms(html)
 		if html==nil or html=='' then
 			break
 		end
 		
-		for src,name,id in string.gfind(html, [["isrc":"(.-)".-"msg":"(.-)".-"photo_id":(%d+)]]) do
+		for id,src,name in string.gfind(html, [["photo_id":(%d+).-"isrc":"(.-)".-"msg":"(.-)"]]) do
 			src = string.gsub(src,'(%.thumb%.%d+_%d+%.)','.')
 			photocount = photocount + 1;
 			photos[photocount].preview = src
@@ -394,7 +395,7 @@ end
 --[[function test()
 	local url = nil
 	GetAlbums(0,'http://www.duitang.com/people/1723793564/')
-	GetPhotos(8)
+	GetPhotos(4)
 end
 
 test();--]]
