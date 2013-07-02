@@ -19,7 +19,7 @@ s=2,p=57830,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="flickrAlbum" ver="1.2" file="flickrAlbum.txt">
+		<script name="flickrAlbum" ver="1.3" file="flickrAlbum.txt">
 			<url>http://www.xcxzq.com/script/flickrAlbum.txt</url>
 			<url2>http://www.xcxzq.com/script/flickrAlbum.txt</url2>
 		</script>
