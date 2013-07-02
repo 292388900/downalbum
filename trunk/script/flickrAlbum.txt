@@ -119,33 +119,42 @@ function getaccountfromurl(url)
 end
 
 function getcatalbum(url)
-	local nextpageurl = url;
-	local html = nil;
-	local page = 1;
+	local html = nil
+	local ipage = 1
+	local bfound = false
 	
-	url = 'http://www.flickr.com/photos/' .. account .. '/sets/'
-	html = star.gethtml(url)
-	if html==nil or html=='' then
-		msgbox(url)
-		return
-	end
-    html = star.utf8s2ms(html)
-	
-	for src,href,name,num in string.gfind(html, [[class="Sets.-(http[^"^']*.jpg).-href="(.-)".-title="(.-)".-<p>.-(.-) ]]) do
-		href = 'http://www.flickr.com' .. href
-		_,_,id = string.find(href,[[/sets/(%d+)]])
-		albumcount = albumcount + 1
-		albums[albumcount] = {}
-		albums[albumcount].id = id
-		albums[albumcount].preview = src
-		albums[albumcount].url = href
-		albums[albumcount].name = name
-		num = star.trim(num)
-		num = string.gsub(num,',','')
-		albums[albumcount].total = tonumber(num)
+	while true do
+		msgprint('正在获取第 '..ipage..'页相片集……')
+		url = 'http://www.flickr.com/photos/' .. account .. '/sets/?&page=' .. ipage
+		ipage = ipage + 1
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			msgbox(url)
+			return
+		end
+		html = star.utf8s2ms(html)
+		bfound = false
+		
+		for src,href,name,num in string.gfind(html, [[class="Sets.-(http[^"^']*.jpg).-href="(.-)".-title="(.-)".-<p>.-(.-) ]]) do
+			bfound = true
+			href = 'http://www.flickr.com' .. href
+			_,_,id = string.find(href,[[/sets/(%d+)]])
+			albumcount = albumcount + 1
+			albums[albumcount] = {}
+			albums[albumcount].id = id
+			albums[albumcount].preview = src
+			albums[albumcount].url = href
+			albums[albumcount].name = name
+			num = star.trim(num)
+			num = string.gsub(num,',','')
+			albums[albumcount].total = tonumber(num)
+		end
+		
+		if bfound==false then
+			break
+		end
 	end
     
-	--showalbums(albums);
 end
 
 function GetAlbums(ntype,url)
