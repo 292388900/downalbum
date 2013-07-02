@@ -201,9 +201,8 @@ function GetAlbums(ntype,url)
 		getonealbum(url)		
 	elseif ntype==1 then
 		getcatalbum(url)
-	elseif ntype==2 then
-		SetDirectryName('')
-		getitemalbum(url)
+	else
+		star.msgbox('暂不至支持此种下载模式!请联系作者解决')
 	end
 	
 	for i = 1,#albums do
