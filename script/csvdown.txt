@@ -1,0 +1,347 @@
+   
+--require "star"
+
+
+--config
+name_en = 'taobaoAlbum';
+name_cn = '淘宝宝贝图片批量下载器';
+prefix = 'TBAM';
+ver = '2.3';
+firstpagename = '官方淘宝';
+firstpageurl = 'http://www.taobao.com';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+--返回结果
+ndowntype = 0;
+albumcount = 0;
+albums = {photos={}};
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+
+function showphotos(photo)
+     if photo~=nil then
+          print(#photo)
+          for i = 1,#photo do
+               print(photo[i].preview)
+          end
+     end
+end
+
+function showalbum(album)
+     if album~=nil then
+          print(album.id)
+          print(album.name)
+          print(album.preview)
+          showphotos(album.photos)
+     end
+end
+
+function showalbums(albums)
+     if albums~=nil then
+          print(#albums)
+          for i = 1,#albums do
+               showalbum(albums[i]);
+          end
+     end
+end
+
+
+function geturlimagename(url)
+	local name=''
+	if star.reversefind~=nil then
+		p = star.reversefind(url,'/')
+		if p~=nil then
+		  name = string.sub(url,p+1)
+		  if name~='' and string.find(name,'%.')==nil then
+			   name = name..'.jpg'
+		  end
+		end
+	end
+
+	return name
+end
+
+function getitemalbum(url)
+	local html = nil
+	local dscUrl=nil
+	local fetchDcUrl=nil
+	local photocount = 0;
+	local album = {photos={}}
+	
+	album.url = url;
+	
+    html = star.gethtml(url);
+    
+     pos1,pos2,value1,value2 = string.find(html,[[itemId[^%d]*(%d*)".-title":"(.-)"]]);
+	if pos1==nil then
+		_,_,album.name = string.find(html,[[name="title".-"(.-)"]])
+	else
+		 album.id = value1;
+		 album.name = value2;
+	end
+    
+     --预览图
+     pos1,pos2,value1 = string.find(html,[[J_ImgBooth.-src.-(http[^%s]-.jpg)]])
+     album.preview = value1;
+     photocount = photocount + 1;
+     album.photos[photocount] = {};
+     album.photos[photocount].preview = value1;
+     album.photos[photocount].orign = value1;
+     --star.msgbox(pos1,pos2,value1)
+
+     --其他预览图
+	n = 0;    
+	_,_,s = string.find(html,[[J_ZoomIcon.-(.-)</ul>]])
+	if s==nil then
+		_,_,s = string.find(html,[[J_UlThumb.-(.-)</ul>]])
+	end    
+	for value1 in string.gfind(s, [[(http[^"^'^%s]-.jpg)]]) do
+		n = n + 1;
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = value1;
+		album.photos[photocount].orign = value1;
+		album.photos[photocount].name = '预览图'..n;
+	end
+	
+	--获取颜色分类中的图片
+	_,_,s = string.find(html,[[颜.-色(.-)数.-量]])
+	if s==nil then
+		s = html
+	end
+	n = 0;    
+    for value1 in string.gfind(s, [[(http[^"^'^%s]-.jpg)]]) do
+		n = n + 1;
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = value1;
+		album.photos[photocount].orign = value1;
+		album.photos[photocount].name = '颜色分类图'..n;
+    end
+	
+     --详情    
+    pos1,pos2,dscUrl = string.find(html,[[apiItemDesc.-(http[^%s]-)"]])
+	if dscUrl==nil then
+		pos1,pos2,dscUrl = string.find(html,[[(http://dsc.[^%s]-)']])
+	end
+	_,_,fetchDcUrl=string.find(html,[["fetchDcUrl".-(http.-)"]])
+	
+    html = star.gethtml(dscUrl)
+	     
+	for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
+	end
+	
+	for src in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
+	end
+	
+	for src in string.gfind(html, [[src.-(http[^%s]-.png)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
+	end
+	
+	if fetchDcUrl~=nil then
+		html = star.gethtml(fetchDcUrl)
+		for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
+			src = string.gsub(src,[[\/]],'/')
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+		
+		for src in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
+			src = string.gsub(src,[[\/]],'/')
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+	end
+	
+	
+	--[[
+	例如宝贝http://item.taobao.com/item.htm?id=6019035368的描述文件：
+	http://dsc.taobaocdn.com/i4/671/d90/67dd91648457821fdd940dddd73da3a3/T1XGJ2XdXjXXXXXXXX.desc|var%5Edesc%3Bsign%5E3771fc396947db35e4f1542142407ff6%3Blang%5Egbk%3Bt%5E1299235564
+	中background=后面是大图
+	]]
+	 for value1 in string.gfind(html, [[background=.-(http.-)"]]) do
+          photocount = photocount + 1;
+          album.photos[photocount] = {};
+          album.photos[photocount].preview = value1;
+          album.photos[photocount].orign = value1;
+     end
+    
+	albumcount = albumcount + 1;
+	albums[albumcount] = album;
+     --showalbum(album);
+	return album;
+end
+
+function getcatalbum(url)
+     local nextpageurl = url;
+     local html = nil;
+	local page = 1;
+	
+	_,_,homeurl = string.find(url,'/+(.-).t.-.com');
+	if homeurl~=nil then
+		SetDirectryName(homeurl);
+	end
+	--star.msgbox(homeurl)
+	
+    
+     --local file = io.open("result.txt","w+")
+
+     repeat
+          --print(nextpageurl) 
+		  msgprint('正在获取第 '..page..' 页宝贝图片信息...');
+		page = page + 1;  
+          html = star.gethtml(nextpageurl)
+          --file:write(html);
+          --html = star.utf8togbk(html)
+          --pos1,pos2,value = string.find(html,'共搜索到[^%d]*(%d*)');
+          --print(pos1,pos2,value);
+			
+          _,_,s = string.find(html,[[page%-info(.*)pagination]]) 
+			if s==nil then
+				break
+			end
+		--local file = io.open("result.txt","w+"); file:write(s);
+          for s1,s2,s3,s4 in string.gfind(s, [[class="item.-id="?(%d*).-(http[^"^']*.jpg).-href="(.-)".->(.-)</a>]]) do
+               albumcount = albumcount + 1;
+               albums[albumcount] = {};
+               albums[albumcount].id = s1;
+               albums[albumcount].preview = s2;
+               albums[albumcount].url = s3;
+               albums[albumcount].name = s4;
+               print(s1,s2,s3,s4)
+          end
+         
+          --下一页
+		  p1,p2 = string.find(html,'没有下一页');
+		  if p1~=nil then
+			  break
+		  end
+          pos1,pos2,nextpageurl = string.find(html,[[page%-info.-上一页.-(http.-)".-下一页]]);    
+          if nextpageurl==nil or nextpageurl=='' then
+            break
+          end
+          nextpageurl = string.gsub(nextpageurl,"#anchor","");
+		  nextpageurl = string.gsub(nextpageurl,"&amp;","&");
+     until( false )    
+    
+     showalbums(albums);
+end
+
+function gethomeurl(url)
+	local html = nil;
+	local homeurl = nil;
+	
+	html = star.gethtml(url)
+	
+	_,_,homeurl = string.find(html,[[首页.-(http.-.com)]]);
+	return homeurl;
+end
+
+function GetAlbums(ntype,url)
+	ndowntype = ntype;
+	albumcount = 0;
+	albums = {};
+     if ntype==0 then
+		_,_,homeurl = string.find(url,'(.-.taobao.com)')
+		if homeurl==nil then
+			_,_,homeurl = string.find(url,'(.-.tmall.com)')
+			if homeurl==nil then
+				--可能是tmall的单个宝贝网址
+				homeurl = gethomeurl(url)
+			end
+		end
+		
+		if homeurl~=nil then 
+			getcatalbum(homeurl..'/search.htm')
+		else
+			--错误
+		end
+		
+     elseif ntype==1 then
+        getcatalbum(url)
+     elseif ntype==2 then
+		SetDirectryName('')
+        getitemalbum(url)
+     end
+	
+	for i = 1,albumcount do 
+		n = -1
+		if albums[i].photos~=nil then
+			n = table.getn(albums[i].photos)
+		end
+		--albums[i].name = albums[i].id;
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,n);
+	end
+	
+end
+    
+
+
+function GetPhotos(index)
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	album = getitemalbum(albums[index].url)
+	photos = album.photos;
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--获取相册完毕后程序调用
+function OnGetAlbumEnd()
+	--StartDownAlbum();
+end
+
+--下载相册完毕后程序调用
+function OnDownAlbumEnd()
+	--InputUrl('http://item.taobao.com/item.htm?id=10852423445');
+	--SelectDownType(2);
+	--StartGetAlbum();
+end
+
+function test()
+     --GetAlbums(0,[[http://mrcyc.taobao.com/]])
+     --getalbum(2,'http://item.taobao.com/item.htm?id=10852423445');
+end
+
+--http://item.taobao.com/item.htm?id=10852423445
+
+   
+--test();
