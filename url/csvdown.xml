@@ -20,7 +20,7 @@ http://www.sharebank.net.cn/soft/SoftBuy_45667.htm
 
     </soft>
 	<scripts path=".\">
-		<script name="csvdown" ver="1.0" file="csvdown.txt">
+		<script name="csvdown" ver="2.3" file="csvdown.txt">
 			<url>http://www.xcxzq.com/script/csvdown.txt</url>
 			<url2>http://www.xcxzq.com/script/csvdown.txt</url2>
 		</script>
