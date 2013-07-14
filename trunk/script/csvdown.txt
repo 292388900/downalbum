@@ -3,9 +3,9 @@
 
 
 --config
-name_en = 'taobaoAlbum';
-name_cn = '淘宝宝贝图片批量下载器';
-prefix = 'TBAM';
+name_en = 'csvdown';
+name_cn = 'CSV数据包下载工具';
+prefix = 'CSVD';
 ver = '2.3';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
@@ -102,35 +102,6 @@ function getitemalbum(url)
      album.photos[photocount].orign = value1;
      --star.msgbox(pos1,pos2,value1)
 
-     --其他预览图
-	n = 0;    
-	_,_,s = string.find(html,[[J_ZoomIcon.-(.-)</ul>]])
-	if s==nil then
-		_,_,s = string.find(html,[[J_UlThumb.-(.-)</ul>]])
-	end    
-	for value1 in string.gfind(s, [[(http[^"^'^%s]-.jpg)]]) do
-		n = n + 1;
-		photocount = photocount + 1;
-		album.photos[photocount] = {}
-		album.photos[photocount].preview = value1;
-		album.photos[photocount].orign = value1;
-		album.photos[photocount].name = '预览图'..n;
-	end
-	
-	--获取颜色分类中的图片
-	_,_,s = string.find(html,[[颜.-色(.-)数.-量]])
-	if s==nil then
-		s = html
-	end
-	n = 0;    
-    for value1 in string.gfind(s, [[(http[^"^'^%s]-.jpg)]]) do
-		n = n + 1;
-		photocount = photocount + 1;
-		album.photos[photocount] = {}
-		album.photos[photocount].preview = value1;
-		album.photos[photocount].orign = value1;
-		album.photos[photocount].name = '颜色分类图'..n;
-    end
 	
      --详情    
     pos1,pos2,dscUrl = string.find(html,[[apiItemDesc.-(http[^%s]-)"]])
@@ -165,39 +136,6 @@ function getitemalbum(url)
 		album.photos[photocount].name = geturlimagename(src)
 	end
 	
-	if fetchDcUrl~=nil then
-		html = star.gethtml(fetchDcUrl)
-		for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
-			src = string.gsub(src,[[\/]],'/')
-			photocount = photocount + 1
-			album.photos[photocount] = {}
-			album.photos[photocount].preview = src
-			album.photos[photocount].orign = src
-			album.photos[photocount].name = geturlimagename(src)
-		end
-		
-		for src in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
-			src = string.gsub(src,[[\/]],'/')
-			photocount = photocount + 1
-			album.photos[photocount] = {}
-			album.photos[photocount].preview = src
-			album.photos[photocount].orign = src
-			album.photos[photocount].name = geturlimagename(src)
-		end
-	end
-	
-	
-	--[[
-	例如宝贝http://item.taobao.com/item.htm?id=6019035368的描述文件：
-	http://dsc.taobaocdn.com/i4/671/d90/67dd91648457821fdd940dddd73da3a3/T1XGJ2XdXjXXXXXXXX.desc|var%5Edesc%3Bsign%5E3771fc396947db35e4f1542142407ff6%3Blang%5Egbk%3Bt%5E1299235564
-	中background=后面是大图
-	]]
-	 for value1 in string.gfind(html, [[background=.-(http.-)"]]) do
-          photocount = photocount + 1;
-          album.photos[photocount] = {};
-          album.photos[photocount].preview = value1;
-          album.photos[photocount].orign = value1;
-     end
     
 	albumcount = albumcount + 1;
 	albums[albumcount] = album;
@@ -309,7 +247,6 @@ function GetAlbums(ntype,url)
 end
     
 
-
 function GetPhotos(index)
 	if albums[index].name~=nil then
 		msgprint('正在获取图片信息： '..albums[index].name);
@@ -323,6 +260,175 @@ function GetPhotos(index)
 		end
 	end
 end
+
+function GetskuProps(s)
+    local r = ''
+    _,_,s = string.find(s,[["skus":{(.-)},"]])
+    print(s)
+    for price,properties,quantity in string.gfind(s, [["price":"(.-)".-"properties":"(.-)".-"quantity":(%d+)]]) do
+        r = r .. price..':'..quantity..'::'..properties..';'
+    end
+    
+    r = '"'..r..'"'
+    return r
+end
+
+
+function OnGetItemData(index,s)
+	local id = albums[index].id
+	
+    _,_,title = string.find(s,[["title":(".-")]])
+    print(title)
+    
+    _,_,cid = string.find(s,[["cid":(%d+)]])
+    print(cid)
+    
+    _,_,seller_cids = string.find(s,[["seller_cids":(".-")]])
+    print(seller_cids)
+    
+    _,_,stuff_status = string.find(s,[["stuff_status":"(.-)"]])
+    if stuff_status=='new' then
+        stuff_status = 1
+    else
+        stuff_status = 0
+    end
+    print(stuff_status)
+    
+    _,_,location_state = string.find(s,[["state":(".-")]])
+    _,_,location_city = string.find(s,[["city":(".-")]])
+    print(location_state)
+    print(location_city)
+    
+    item_type = 1        --?    
+    _,_,price = string.find(s,[["price":"(.-)"]])
+    print(price)
+    
+    auction_increment = 0    --?    
+    _,_,num = string.find(s,[["num":(%d+)]])
+    print(num)
+    
+    _,_,valid_thru = string.find(s,[["valid_thru":(%d+)]])
+    print(valid_thru)
+    
+    _,_,freight_payer = string.find(s,[["freight_payer":"(.-)"]])
+    if freight_payer=='seller' then
+        freight_payer = 1
+    else
+        freight_payer = 2
+    end
+    print(freight_payer)
+    
+    _,_,post_fee = string.find(s,[["post_fee":"(.-)"]])
+    print(post_fee)    
+    
+    _,_,ems_fee = string.find(s,[["ems_fee":"(.-)"]])
+    print(ems_fee)
+    
+    _,_,express_fee = string.find(s,[["express_fee":"(.-)"]])
+    print(express_fee)
+    
+    _,_,has_invoice = string.find(s,[["has_invoice":(.-),]])
+    if has_invoice=='false' then
+        has_invoice = 0
+    else
+        has_invoice = 1
+    end
+    print(has_invoice)
+    
+    _,_,has_warranty = string.find(s,[["has_warranty":(.-),]])
+    if has_warranty=='false' then
+        has_warranty = 0
+    else
+        has_warranty = 1
+    end
+    print(has_warranty)
+    
+    _,_,approve_status = string.find(s,[["approve_status":"(.-)"]])
+    if approve_status=='onsale' then
+        approve_status = 0
+    else
+        approve_status = 1
+    end
+    print(approve_status)
+    
+    _,_,has_showcase = string.find(s,[["has_showcase":(.-),]])
+    if has_showcase=='false' then
+        has_showcase = 0
+    else
+        has_showcase = 1
+    end
+    print(has_showcase)
+    
+    _,_,list_time = string.find(s,[["list_time":(".-")]])
+    print(list_time)
+    
+    _,_,desc = string.find(s,[["desc":(".-"),"]])
+    --star.msgbox(desc)    
+    _,_,cateProps = string.find(s,[["props":(".-")]])
+    print(cateProps)
+    
+    _,_,postage_id = string.find(s,[["postage_id":(%d+)]])
+    print(postage_id)
+    
+    _,_,has_discount = string.find(s,[["has_discount":(.-),]])
+    if has_discount=='false' then
+        has_discount = 0
+    else
+        has_discount = 1
+    end
+    print(has_discount)
+            
+    _,_,modified = string.find(s,[["modified":(".-")]])
+    print(modified)
+    
+    upload_fail_msg = 200    --?    
+    picture_status = ''    --?    
+    _,_,auction_point = string.find(s,[["auction_point":(%d+)]])
+    print(auction_point)
+    
+    picture = "548bff1fa5a94ce6b58583eef0a8fdb4:1:0:|;dba6fa4083a54841a1be801e87a4137e:1:1:|;0d3c7a3d329443f185fc919d8f65a796:1:2:|;828c4d74b8b6442ba4381f62b1d28bd6:1:3:|;a521259f6434406b85c42093055b6f1e:1:4:|;"
+    video = [[""]]
+    
+    skuProps = GetskuProps(s)
+    print(skuProps)
+    
+    inputPids = [[""]]
+    inputValues = [[""]]
+    outer_id = [[""]]
+    
+    _,_,propAlias = string.find(s,[["property_alias":(".-")]])
+    print(propAlias)
+    
+    auto_fill = [["0"]]
+    
+    _,_,num_id = string.find(s,[["num_iid":(%d+)]])
+    print(num_id)
+    
+    local_cid = 0
+    
+    _,_,navigation_type = string.find(s,[["type":"(.-)"]])
+    if navigation_type=='fixed' then
+        navigation_type = 2
+    else
+        navigation_type = 1
+    end
+    print(navigation_type)
+    
+    user_name = ''
+    
+    syncStatus = 1
+    
+    is_lighting_consigment = 0
+    
+    is_xinpin = 0
+    
+    foodparame = ''
+    
+    
+    data = title..'\t'..cid..'\t'..seller_cids..'\t'..stuff_status..'\t'..location_state..'\t'..location_city..'\t'..item_type..'\t'..price..'\t'..auction_increment..'\t'..num..'\t'..valid_thru..'\t'..freight_payer..'\t'..post_fee..'\t'..ems_fee..'\t'..express_fee..'\t'..has_invoice..'\t'..has_warranty..'\t'..approve_status..'\t'..has_showcase..'\t'..list_time..'\t'..desc..'\t'..cateProps..'\t'..postage_id..'\t'..has_discount..'\t'..modified..'\t'..upload_fail_msg..'\t'..picture_status..'\t'..auction_point..'\t'..picture..'\t'..video..'\t'..skuProps..'\t'..inputPids..'\t'..inputValues..'\t'..outer_id..'\t'..propAlias..'\t'..auto_fill..'\t'..num_id..'\t'..local_cid..'\t'..navigation_type..'\t'..user_name..'\t'..syncStatus..'\t'..is_lighting_consigment..'\t'..is_xinpin..'\t'..foodparame..'\n'
+    return data    
+end
+
 
 --获取相册完毕后程序调用
 function OnGetAlbumEnd()
