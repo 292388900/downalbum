@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '¶ÑÌÇÍø×¨¼­ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'DUIT';
-ver = '1.2';
+ver = '1.3';
 firstpagename = '¶ÑÌÇÍø';
 firstpageurl = 'http://www.duitang.com';
 mainwidth = 940;
@@ -139,7 +139,7 @@ function GetNickyFromHomePage(url)
 	end
 	html = star.utf8s2ms(html)
 	
-	_,_,username = string.find(html,[[</span><h1.->(.-)<span]])
+	_,_,username = string.find(html,[[</span>.-h1.->(.-)<span]])
 	_,_,user_id = string.find(html,[["id":"(%d+)"]])
 	return username
 end
@@ -155,7 +155,7 @@ function GetZhuanji(url,IsFavalAlbum)
 		
 	homeurl = GetHomePageFromUrl(url)
 	username = GetNickyFromHomePage(homeurl)
-	SetDirectryName(username);
+	SetDirectryName(username)msgbox(username)
 	
 	url = homeurl .. '#!album'
 	html = star.gethtml(url)

@@ -7,7 +7,7 @@
 name_en = 'yupooAlbum';
 name_cn = '又拍图片批量下载器';
 prefix = 'YUPO';
-ver = '1.0';
+ver = '1.2';
 firstpagename = '又拍网(下载原图需登录)';
 firstpageurl = 'http://www.yupoo.com/account/login/';
 mainwidth = 940;
@@ -103,6 +103,7 @@ account = '';
 ndowntype = 0
 npicsizemode = 0
 vip=false
+needlogin=false
 albums = ALBUMS.new() 
 ---------------------------------------------------------------------------
 
@@ -272,6 +273,7 @@ function GetAlbums(ntype,url)
 	
 	npicsizemode =math.mod(ntype,10)
 	ndowntype,_ =math.modf(ntype/10)
+	needlogin = false
 	
 	if ndowntype==0 then
 		GetAllAlbums(url)
@@ -306,6 +308,7 @@ function GetOrignImage(id)
 	html = star.utf8s2ms(html)
 	
 	if string.find(html,'<h3>很抱歉')~=nil then
+		needlogin = true
 		return	--说明需要登录又拍
 	end
 	
@@ -346,20 +349,22 @@ function GetOneAlbumPhotos(index)
 		html = star.utf8s2ms(html)
 		
 		for id,href,name,src in string.gfind(html, [[id="thumb_(%d+).-href="(.-)".-title="(.-)".-src.-(http.-.jpg)]]) do
+			orign = src
 			if npicsizemode==0 then
 				orign = GetOrignImage(id)
-				if orign~=nil then
-					src = orign
+				if orign==nil then
+					orign = string.gsub(src,'square.',picsizepatten)
 				end
 			else			
-				src = string.gsub(src,'square.',picsizepatten)
+				orign = string.gsub(src,'square.',picsizepatten)
 			end
+			
 			photocount = photocount + 1;
 			photos[photocount].id = id
 			photos[photocount].href = 'http://www.yupoo.com'..href
 			photos[photocount].name = name
 			photos[photocount].preview = src
-			photos[photocount].orign = src
+			photos[photocount].orign = orign
 		end
 	end
 	
@@ -377,6 +382,7 @@ function GetVipOrignImage(id)
 	html = star.utf8s2ms(html)
 	
 	if string.find(html,'<h3>很抱歉')~=nil then
+		needlogin = true
 		return	--说明需要登录又拍
 	end
 	
@@ -417,20 +423,21 @@ function GetOneVipAlbumPhotos(index)
 		html = star.utf8s2ms(html)
 		
 		for id,href,name,src in string.gfind(html, [[id="thumb_(%d+).-href="(.-)".-title="(.-)".-src.-(http.-.jpg)]]) do
+			orign = src
 			if npicsizemode==0 then
 				orign = GetVipOrignImage(id)
-				if orign~=nil then
-					src = orign
+				if orign==nil then
+					orign = src
 				end
 			else			
-				src = string.gsub(src,'square.',picsizepatten)
+				orign = string.gsub(src,'square.',picsizepatten)
 			end
 			photocount = photocount + 1;
 			photos[photocount].id = id
 			photos[photocount].href = 'http://www.yupoo.com'..href
 			photos[photocount].name = name
 			photos[photocount].preview = src
-			photos[photocount].orign = src
+			photos[photocount].orign = orign
 		end
 	end
 	
@@ -438,7 +445,8 @@ function GetOneVipAlbumPhotos(index)
 end
 
 function GetPhotos(index)
-	local photos = PHOTOS.new()
+	local photos = PHOTOS.new()	
+	needlogin=false
 	
 	if albums[index].name~=nil then
 		msgprint('正在获取图片信息： '..albums[index].name);
@@ -459,6 +467,10 @@ function GetPhotos(index)
 		if ok==0 then
 			break
 		end
+	end
+	
+	if needlogin==true then
+		msgbox('很抱歉，登录前无法查看该照片的原图哦！\n\n您需要在软件的”又拍网（下载原图需要登录）“页面登录您的又拍账号!')
 	end
 end
 
