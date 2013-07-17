@@ -4,13 +4,6 @@
 #include <vector>
 using namespace std;
 
-//为软件投票
-typedef struct VOTEINFO
-{
-	int nSiteNo;				//网站编号
-	CString strSoftid;			//软件编号
-	BOOL bVoted;				//已经投过了
-}*PVOTEINFO;
 
 //脚本信息
 typedef struct SCRIPTINFO {
@@ -37,7 +30,6 @@ typedef struct UPDATEINFO
 	CString strAllsoft;			//所有软件
 	CString strScriptPath;		//脚本存放相对路径
 	vector<SCRIPTINFO>vtScripts;//脚本列表
-	vector<VOTEINFO>vtVotes;	//为软件投票
 }*PUPDATEINFO;
 
 

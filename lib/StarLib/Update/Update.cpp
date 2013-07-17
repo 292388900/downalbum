@@ -166,7 +166,6 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 	int nEnd=0;
 
 	stUpdateInfo.vtScripts.clear();
-	stUpdateInfo.vtVotes.clear();
 
 	DWORD dwHttpStatus=GetHttpFileContent(strUrl,strHtml);
 	//Star::Common::ConvertUtf8ToGBK(strHtml);
@@ -272,42 +271,8 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
-	nPos1=strHtml.Find(_T("<votes>"));
-	if ( nPos1!=-1 ){
-		stUpdateInfo.vtVotes.clear();
-		nEnd=strHtml.Find(_T("</"),nPos1);
-		if ( nEnd==-1 ){
-			nEnd=strHtml.GetLength();
-		}
-
-		VOTEINFO stVote;
-		nPos2=nPos1+7;
-		while ( TRUE ){
-			nPos1=strHtml.Find(_T("s="),nPos2);
-			if ( nPos1==-1 ){
-				break;
-			}
-			nPos2=strHtml.Find(',',nPos1+2);
-			strText=strHtml.Mid(nPos1+2,nPos2-nPos1-2).Trim();
-			stVote.nSiteNo=StrToInt(strText);
-			if ( stVote.nSiteNo==0 ){
-				continue;
-			}
-
-			nPos1=strHtml.Find(_T("p="),nPos2);
-			if ( nPos1==-1 ){
-				break;
-			}
-			nPos2=strHtml.Find(',',nPos1+2);
-			stVote.strSoftid=strHtml.Mid(nPos1+2,nPos2-nPos1-2).Trim();
-			stVote.bVoted = FALSE;
-
-			stUpdateInfo.vtVotes.push_back(stVote);
-		}
-	}
 
 	bSucceed=TRUE;
-	//////////////////////////////////////////////////////////////////////////
 	return bSucceed;
 }
 
