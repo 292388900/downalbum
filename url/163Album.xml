@@ -21,4 +21,10 @@ s=2,p=58822,
 </votes>
 -->
     </soft>
+	<scripts path=".\">
+		<script name="163Album" ver="1.4" file="163Album.txt">
+			<url>http://www.xcxzq.com/script/163Album.txt</url>
+			<url2>http://www.xcxzq.com/script/163Album.txt</url2>
+		</script>
+	</scripts>
 </data>

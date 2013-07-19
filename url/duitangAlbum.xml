@@ -3,12 +3,12 @@
         <name>duitangAlbum</name>
         <version>1.2</version>
 	<scriptver>1.4</scriptver>
-        <downurl>http://l13.yunpan.cn/lk/QkJ8vi6NzqbnX</downurl>
-        <downurl2>http://l13.yunpan.cn/lk/QkJ82SQuEjT9h</downurl2>
+        <downurl>http://yunpan.cn/QkJ8kFPkSIsJS</downurl>
+        <downurl2>http://yunpan.cn/QkJ8kvUm4FLk7</downurl2>
 	<scripturl>http://www.xcxzq.com/script/duitangAlbum.txt</scripturl>
 	<scripturl2>http://www.xcxzq.com/script/duitangAlbum.txt</scripturl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37186.htm</regurl>
-        <help>http://www.xcxzq.com/help/hialbum.html</help>
+        <help>http://www.xcxzq.com/help/duitangAlbum.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
         <pswd></pswd>
       	<news>v3.0版本全新升级内核，建议下载最新版!</news>
@@ -22,4 +22,10 @@ s=2,p=57829,
 </votes>
 -->
     </soft>
+	<scripts path=".\">
+		<script name="duitangAlbum" ver="1.4" file="duitangAlbum.txt">
+			<url>http://www.xcxzq.com/script/duitangAlbum.txt</url>
+			<url2>http://www.xcxzq.com/script/duitangAlbum.txt</url2>
+		</script>
+	</scripts>
 </data>
