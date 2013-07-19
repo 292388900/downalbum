@@ -21,4 +21,10 @@ s=2,p=63113,
 </votes>
 -->
     </soft>
+	<scripts path=".\">
+		<script name="taobaoAlbum" ver="2.3" file="taobaoAlbum.txt">
+			<url>http://www.xcxzq.com/script/taobaoAlbum.txt</url>
+			<url2>http://www.xcxzq.com/script/taobaoAlbum.txt</url2>
+		</script>
+	</scripts>
 </data>

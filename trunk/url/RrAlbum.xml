@@ -23,4 +23,10 @@ s=2,p=61291,
 </votes>
 -->
     </soft>
+	<scripts path=".\">
+		<script name="RrAlbum" ver="1.7" file="RrAlbum.txt">
+			<url>http://www.xcxzq.com/script/RrAlbum.txt</url>
+			<url2>http://www.xcxzq.com/script/RrAlbum.txt</url2>
+		</script>
+	</scripts>
 </data>

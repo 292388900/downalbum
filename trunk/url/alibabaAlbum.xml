@@ -21,4 +21,10 @@ s=2,p=61348,
 </votes>
 -->
     </soft>
+	<scripts path=".\">
+		<script name="alibabaAlbum" ver="2.4" file="alibabaAlbum.txt">
+			<url>http://www.xcxzq.com/script/alibabaAlbum.txt</url>
+			<url2>http://www.xcxzq.com/script/alibabaAlbum.txt</url2>
+		</script>
+	</scripts>
 </data>
