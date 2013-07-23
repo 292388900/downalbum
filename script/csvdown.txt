@@ -22,6 +22,7 @@ albumcount = 0;
 albums = {photos={}}
 g_data=''
 g_replace={}
+g_itemimages={photos={}}
 
 --c∫Ø ˝≥ı ºªØ
 msgprint = msgprint or print
@@ -95,40 +96,37 @@ function getitemalbum(url)
 		 album.name = value2;
 	end
     
-     --‘§¿¿Õº
-     pos1,pos2,value1 = string.find(html,[[J_ImgBooth.-src.-(http[^%s]-.jpg)]])
-     album.preview = value1;
-     photocount = photocount + 1;
-     album.photos[photocount] = {};
-     album.photos[photocount].preview = value1;
-     album.photos[photocount].orign = value1;
-     --star.msgbox(pos1,pos2,value1)
-	
-	--∆‰À˚‘§¿¿Õº
-	n = 0;    
-	_,_,s = string.find(html,[[J_ZoomIcon.-(.-)</ul>]])
-	if s==nil then
-		_,_,s = string.find(html,[[J_UlThumb.-(.-)</ul>]])
-	end    
-	for src in string.gfind(s, [[(http[^"^'^%s]-.jpg)]]) do
-		n = n + 1;
-		photocount = photocount + 1;
+	s = g_data
+    --‘§¿¿Õº
+	n = 0
+	_,_,s1 = string.find(s,'item_imgs(.-)}]},')
+	for src in string.gfind(s1,[[(http.-)"]]) do 
+		n = n + 1
+		photocount = photocount + 1
+		name = geturlimagename(src)
 		album.photos[photocount] = {}
-		album.photos[photocount].preview = src;
-		album.photos[photocount].orign = src;
-		album.photos[photocount].name = '‘§¿¿Õº'..n;
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = name
+		
+		g_itemimages[n] = {}
+		g_itemimages[n].preview = src
+		g_itemimages[n].orign = src
+		g_itemimages[n].name = name
 	end
+	
+	
+	
 
 	
-     --œÍ«È    
-    s = g_data
-	--msgbox(s)
+    --œÍ«È
+	n = 0
 	for src in string.gfind(s, [[src.-(http.-)"]]) do
 		n = n + 1
-		photocount = photocount + 1;
+		photocount = photocount + 1
 		album.photos[photocount] = {}
-		g_replace[photocount] = {}
-		g_replace[photocount].html = src
+		g_replace[n] = {}
+		g_replace[n].html = src
 		src = string.gsub(src,'\\','')
 		album.photos[photocount].preview = src
 		album.photos[photocount].orign = src
@@ -248,6 +246,8 @@ end
     
 
 function GetPhotos(index)
+	g_replace = {}
+	g_itemimages = {}
 	if albums[index].name~=nil then
 		msgprint('’˝‘⁄ªÒ»°Õº∆¨–≈œ¢£∫ '..albums[index].name);
 	end
@@ -278,28 +278,9 @@ end
 function FormatPictures(photos)
 	local s = ''
 	local res = ''
-	local count = table.getn(photos)
-	local nPreviewPhotoCnt = 0
-	local t = {}
 	
-	if count > 6 then
-		count = 6
-	end
-	
-	for i=1,count do
-		if photos[i].name~=nil and string.find(photos[i].name,'‘§¿¿Õº')~=nil then
-			nPreviewPhotoCnt = nPreviewPhotoCnt + 1
-			t[nPreviewPhotoCnt] = photos[i].name
-		end
-	end
-	
-	if nPreviewPhotoCnt==0 then
-		nPreviewPhotoCnt = nPreviewPhotoCnt + 1
-		t[nPreviewPhotoCnt] = photos[1].name
-	end
-	
-	for i=1,table.getn(t) do
-		s = t[i]..':1:'..(i-1)..':|;'
+	for i=1,table.getn(g_itemimages) do
+		s = g_itemimages[i].name..':1:'..(i-1)..':|;'
 		res = res..s
 	end
 	
@@ -308,17 +289,22 @@ end
 
 function FormatDesc(desc)
 	local s = desc
+	local i = table.getn(g_itemimages) + 1
 	
-	for i=1,table.getn(g_replace) do
-		if g_replace[i]~=nil then
-			msgbox(g_replace[i].html)
-			msgbox('file:///'..g_replace[i].file)
-			s = string.gsub(s,g_replace[i].html,'file:///'..g_replace[i].file)
-			msgbox(s)
-			return s
+	while true do
+		p1,p2 = string.find(s,[[src.-(http.-)"]])
+		if p1~=nil then
+			s = string.sub(s,1,p1-1)..'src="file:///'..g_replace[i].file..'\"'..string.sub(s,p2+1)
+		else
+			break
 		end
+		
+		i = i + 1
 	end
 	
+	s= string.gsub(s,'\\\"','\"\"')
+	s= string.gsub(s,'\/','/')
+
 	return s
 end
 
@@ -485,9 +471,14 @@ function FormatCSV(index)
 end
 
 
-function OnDownOnePhotoEnd(albumindex,photoindex,src,filepath)
+function OnDownOnePhotoEnd(albumindex,photoindex,src,filepath,name)
 	if g_replace[photoindex]~=nil then
 		g_replace[photoindex].file = filepath
+	end
+	
+	if photoindex<=table.getn(g_itemimages) then
+		g_itemimages[photoindex].file = filepath
+		g_itemimages[photoindex].name = name
 	end
 end
 
