@@ -95,7 +95,15 @@ function getitemalbum(url)
 		 album.id = value1;
 		 album.name = value2;
 	end
-    
+
+	if g_data==nil or g_data=='' then
+		album.total = -1
+		albumcount = albumcount + 1
+		albums[albumcount] = album
+		return album
+	end
+		
+	
 	s = g_data
     --‘§¿¿Õº
 	n = 0
@@ -115,13 +123,8 @@ function getitemalbum(url)
 		g_itemimages[n].name = name
 	end
 	
-	
-	
-
-	
     --œÍ«È
-	n = 0
-	for src in string.gfind(s, [[src.-(http.-)"]]) do
+	for src in string.gfind(s, [[src=\"(http[^"]-.jpg)\"]]) do
 		n = n + 1
 		photocount = photocount + 1
 		album.photos[photocount] = {}
@@ -133,7 +136,6 @@ function getitemalbum(url)
 		album.photos[photocount].name = geturlimagename(src)
 		
 	end
-	
     
 	albumcount = albumcount + 1;
 	albums[albumcount] = album;
@@ -238,6 +240,9 @@ function GetAlbums(ntype,url)
 		if albums[i].photos~=nil then
 			n = table.getn(albums[i].photos)
 		end
+		if n==0 then
+			n = -1
+		end
 		--albums[i].name = albums[i].id;
 		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,n);
 	end
@@ -292,9 +297,9 @@ function FormatDesc(desc)
 	local i = table.getn(g_itemimages) + 1
 	
 	while true do
-		p1,p2 = string.find(s,[[src.-(http.-)"]])
-		if p1~=nil then
-			s = string.sub(s,1,p1-1)..'src="file:///'..g_replace[i].file..'\"'..string.sub(s,p2+1)
+		p1,p2,src = string.find(s,[[src=\"(http[^"]-.jpg)"]])
+		if p1~=nil and g_replace[i]~=nil then
+			s = string.sub(s,1,p1-1)..'src=""file:///'..g_replace[i].file..'\"'..string.sub(s,p2+1)
 		else
 			break
 		end
