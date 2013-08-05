@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = '淘宝宝贝图片批量下载器';
 prefix = 'TBAM';
-ver = '2.3';
+ver = '2.4';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -229,19 +229,18 @@ function getcatalbum(url)
           --pos1,pos2,value = string.find(html,'共搜索到[^%d]*(%d*)');
           --print(pos1,pos2,value);
 			
-          _,_,s = string.find(html,[[page%-info(.*)pagination]]) 
+          _,_,s = string.find(html,[[ui%-page%-s(.*)pagination]]) 
 			if s==nil then
 				break
 			end
 		--local file = io.open("result.txt","w+"); file:write(s);
-          for s1,s2,s3,s4 in string.gfind(s, [[class="item.-id="?(%d*).-(http[^"^']*.jpg).-href="(.-)".->(.-)</a>]]) do
+          for id,href,name,src in string.gfind(s, [[class="item.-id="?(%d*).-href="(.-)".-alt="(.-)".-(http[^"^']*.jpg)]]) do
                albumcount = albumcount + 1;
                albums[albumcount] = {};
-               albums[albumcount].id = s1;
-               albums[albumcount].preview = s2;
-               albums[albumcount].url = s3;
-               albums[albumcount].name = s4;
-               print(s1,s2,s3,s4)
+               albums[albumcount].id = id
+               albums[albumcount].preview = src
+               albums[albumcount].url = href
+               albums[albumcount].name = name
           end
          
           --下一页
@@ -249,9 +248,14 @@ function getcatalbum(url)
 		  if p1~=nil then
 			  break
 		  end
-          pos1,pos2,nextpageurl = string.find(html,[[page%-info.-上一页.-(http.-)".-下一页]]);    
+          pos1,pos2,nextpageurl = string.find(html,[[ui%-page%-s%-nex(.-)</p>]]);    
           if nextpageurl==nil or nextpageurl=='' then
             break
+		  else
+			pos1,pos2,nextpageurl = string.find(nextpageurl,[[(http.-)"]])
+			if nextpageurl==nil or nextpageurl=='' then
+				break
+			end
           end
           nextpageurl = string.gsub(nextpageurl,"#anchor","");
 		  nextpageurl = string.gsub(nextpageurl,"&amp;","&");
