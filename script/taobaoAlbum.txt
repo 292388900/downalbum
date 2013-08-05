@@ -208,7 +208,8 @@ end
 function getcatalbum(url)
      local nextpageurl = url;
      local html = nil;
-	local page = 1;
+	local page = 1
+	local bistmall = true
 	
 	_,_,homeurl = string.find(url,'/+(.-).t.-.com');
 	if homeurl~=nil then
@@ -231,7 +232,12 @@ function getcatalbum(url)
 			
           _,_,s = string.find(html,[[ui%-page%-s(.*)pagination]]) 
 			if s==nil then
-				break
+				_,_,s = string.find(html,[[page%-info(.-)pagination]])
+				if s==nil then
+					break
+				else
+					bistmall = false
+				end
 			end
 		--local file = io.open("result.txt","w+"); file:write(s);
           for id,href,name,src in string.gfind(s, [[class="item.-id="?(%d*).-href="(.-)".-alt="(.-)".-(http[^"^']*.jpg)]]) do
@@ -248,6 +254,9 @@ function getcatalbum(url)
 		  if p1~=nil then
 			  break
 		  end
+		
+		if bistmall==true then
+		
           pos1,pos2,nextpageurl = string.find(html,[[ui%-page%-s%-nex(.-)</p>]]);    
           if nextpageurl==nil or nextpageurl=='' then
             break
@@ -257,6 +266,15 @@ function getcatalbum(url)
 				break
 			end
           end
+		
+		else
+			pos1,pos2,nextpageurl = string.find(html,[[page%-info.-上一页.-(http.-)".-下一页]]);    
+          if nextpageurl==nil or nextpageurl=='' then
+            break
+          end
+		
+		end
+		
           nextpageurl = string.gsub(nextpageurl,"#anchor","");
 		  nextpageurl = string.gsub(nextpageurl,"&amp;","&");
      until( false )    
