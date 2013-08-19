@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = 'Ã‘±¶±¶±¥Õº∆¨≈˙¡øœ¬‘ÿ∆˜';
 prefix = 'TBAM';
-ver = '2.4';
+ver = '2.5';
 firstpagename = 'πŸ∑ΩÃ‘±¶';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -135,10 +135,10 @@ function getitemalbum(url)
      --œÍ«È    
     pos1,pos2,dscUrl = string.find(html,[[apiItemDesc.-(http[^%s]-)"]])
 	if dscUrl==nil then
-		pos1,pos2,dscUrl = string.find(html,[[(http://dsc.[^%s]-)']])
+		pos1,pos2,dscUrl = string.find(html,[[(http://dsc.[^%s^'^"]*)]])
 	end
 	_,_,fetchDcUrl=string.find(html,[["fetchDcUrl".-(http.-)"]])
-	
+
     html = star.gethtml(dscUrl)
 	     
 	for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
