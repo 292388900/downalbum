@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>QQAlbum</name>
-        <version>4.0</version>
+        <version>4.1</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ85BYd69ADz</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ85bGCiHbsc</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37093.htm</regurl>
@@ -22,7 +22,7 @@ s=2,p=61291,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="QQAlbum" ver="1.0" file="QQAlbum.txt">
+		<script name="QQAlbum" ver="1.1" file="QQAlbum.txt">
 			<url>http://www.xcxzq.com/script/QQAlbum.txt</url>
 			<url2>http://www.xcxzq.com/script/QQAlbum.txt</url2>
 		</script>
