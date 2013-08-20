@@ -7,7 +7,7 @@
 name_en = 'QQAlbum';
 name_cn = 'QQ相册批量下载器';
 prefix = 'QABM';
-ver = '1.0';
+ver = '1.1';
 firstpagename = 'QQ空间';
 firstpageurl = 'http://user.qzone.qq.com';
 mainwidth = 940;
@@ -29,6 +29,8 @@ hostUin = ''	--输入的要下载的qq
 strAlbumRoute = ''
 strPhotoRoute_NU = ''
 strPhotoRoute_S = ''
+idcNum = 1
+
 
 
 --c函数初始化
@@ -92,7 +94,7 @@ function GetQQAlbums(url)
 		return
 	end
 	
-	strAlbumRoute,strPhotoRoute_NU,strPhotoRoute_S = getroute(hostUin)
+	strAlbumRoute,strPhotoRoute_NU,strPhotoRoute_S,idcNum = getroute(hostUin)
 	--msgbox(strPhotoRoute_NU) msgbox(strPhotoRoute_S)
 
 	url = string.format('http://%s/fcgi-bin/fcg_list_album_v2?inCharset=gbk&outCharset=gbk&hostUin=%s&notice=0&callbackFun=&format=jsonp&plat=qzone&source=qzone&appid=4&uin=%s&t=%s&g_tk=%s',strAlbumRoute,hostUin,uin,randfloatnum(),g_tk)
@@ -122,6 +124,11 @@ function GetAlbums(ntype,url)
 	ndowntype = ntype
 	GetQQAlbums(url)
 	
+	if albumcount==0 then
+		msgbox('请在第一页面登陆您自己的QQ空间!!!')
+		return
+	end
+	
 	for i = 1,albumcount do 
 		albums[i].total = tonumber(albums[i].total)
 		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total,albums[i].desc,albums[i].question,albums[i].createtime,albums[i].updatetime,albums[i].private)
@@ -148,8 +155,8 @@ function GetOneAlbumPhotos(album)
 			thispagecount = rest
 		end
 		
-		url = string.format('http://%s/fcgi-bin/cgi_list_photo?g_tk=%s&callback=shine0_Callback&t=%s&mode=0&idcNum=2&hostUin=%s&topicId=%s&noTopic=0&uin=%s&pageStart=%d&pageNum=%d&singleurl=1&notice=0&appid=4&inCharset=gbk&outCharset=gbk&source=qzone&plat=qzone&outstyle=json&format=jsonp&json_esc=1&callbackFun=shine0&_=%s',
-		strPhotoRoute_S, g_tk,star.getcurrenttime(1),hostUin,album.id,uin,startno,perpagecount,star.getcurrenttime(2))
+		url = string.format('http://%s/fcgi-bin/cgi_list_photo?g_tk=%s&callback=shine0_Callback&t=%s&mode=0&idcNum=%d&hostUin=%s&topicId=%s&noTopic=0&uin=%s&pageStart=%d&pageNum=%d&singleurl=1&notice=0&appid=4&inCharset=gbk&outCharset=gbk&source=qzone&plat=qzone&outstyle=json&format=jsonp&json_esc=1&callbackFun=shine0&_=%s',
+		strPhotoRoute_S, g_tk,star.getcurrenttime(1),idcNum,hostUin,album.id,uin,startno,perpagecount,star.getcurrenttime(2))
 		--msgbox(url)
 		
 		html = star.gethtml(url)
@@ -157,14 +164,6 @@ function GetOneAlbumPhotos(album)
 			break
 		end
 		
-		if string.find(html,'name')==nil then
-			url = string.format('http://%s/fcgi-bin/cgi_list_photo?g_tk=%s&callback=shine0_Callback&t=%s&mode=0&idcNum=1&hostUin=%s&topicId=%s&noTopic=0&uin=%s&pageStart=%d&pageNum=%d&singleurl=1&notice=0&appid=4&inCharset=gbk&outCharset=gbk&source=qzone&plat=qzone&outstyle=json&format=jsonp&json_esc=1&callbackFun=shine0&_=%s',
-			strPhotoRoute_S, g_tk,star.getcurrenttime(1),hostUin,album.id,uin,startno,perpagecount,star.getcurrenttime(2))
-			html = star.gethtml(url)
-			if html==nil or html=='' then
-				break
-			end
-		end
 		
 		for name,origin,pre,url in string.gfind(html,[[name".-"(.-)".-origin_url".-"(.-)".-pre".-"(.-)".-"url".-"(.-)"]]) do
 			if origin=='' then
