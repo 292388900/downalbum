@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = '淘宝宝贝图片批量下载器';
 prefix = 'TBAM';
-ver = '2.5';
+ver = '2.6';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -239,16 +239,32 @@ function getcatalbum(url)
 					bistmall = false
 				end
 			end
-		--local file = io.open("result.txt","w+"); file:write(s);
-          for id,href,name,src in string.gfind(s, [[class="item.-id="?(%d*).-href="(.-)".-alt="(.-)".-(http[^"^']*.jpg)]]) do
-               albumcount = albumcount + 1;
-               albums[albumcount] = {};
-               albums[albumcount].id = id
-               albums[albumcount].preview = src
-               albums[albumcount].url = href
-               albums[albumcount].name = name
-          end
-         
+			
+		if string.find(s,[[<div class="desc">]])~=nil then
+			for id,src,href,name in string.gfind(s, [[class="item.-id=.-(%d+).-(http[^"^']*.jpg).-href="(.-)".->(.-)</a>]]) do
+				   albumcount = albumcount + 1;
+				   albums[albumcount] = {};
+				   albums[albumcount].id = id
+				   albums[albumcount].preview = src
+				   albums[albumcount].url = href
+				   albums[albumcount].name = name
+			  end
+		
+		else
+		
+			
+			--local file = io.open("result.txt","w+"); file:write(s);
+			  for id,href,name,src in string.gfind(s, [[class="item.-id=.-(%d+).-href="(.-)".-alt="(.-)".-(http[^"^']*.jpg)]]) do
+				   albumcount = albumcount + 1;
+				   albums[albumcount] = {};
+				   albums[albumcount].id = id
+				   albums[albumcount].preview = src
+				   albums[albumcount].url = href
+				   albums[albumcount].name = name
+			  end
+		
+		end
+		
           --下一页
 		  p1,p2 = string.find(html,'没有下一页');
 		  if p1~=nil then
@@ -277,6 +293,7 @@ function getcatalbum(url)
 		
           nextpageurl = string.gsub(nextpageurl,"#anchor","");
 		  nextpageurl = string.gsub(nextpageurl,"&amp;","&");
+		
      until( false )    
     
      showalbums(albums);

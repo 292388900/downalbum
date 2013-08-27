@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '阿里巴巴图片批量下载器';
 prefix = 'ALBB';
-ver = '2.4';
+ver = '2.5';
 firstpagename = '阿里巴巴';
 firstpageurl = 'http://china.alibaba.com';
 mainwidth = 940;
@@ -118,7 +118,7 @@ function GetOneItemAlbum(url)
 	_,_,id = string.find(html,'offerId.-=(%d*)')
 
 	--get name	
-	_,_,name = string.find(html,[[mod%-detail%-hd.-<h1>(.-)</h1>]])
+	_,_,name = string.find(html,[[mod%-detail%-hd.-<h1.->(.-)</h1>]])
 
 	if id==nil or name==nil then
 		msgbox('请输入单个产品网址!')
