@@ -1,0 +1,239 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'yinshi178';
+name_cn = 'yinshi178图片批量下载器';
+prefix = 'YINS';
+ver = 'zhuanban';
+firstpagename = 'yinshi178';
+firstpageurl = 'http://www.yinshi178.com/';
+inputurl = 'http://www.yinshi178.com/?product-431.html';
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+downtypes = {
+'下载单个宝贝图片--银饰批发网',
+'下载分类宝贝图片--银饰批发网'
+}
+
+--c函数初始化
+msgprint = msgprint or print
+msgbox = msgbox or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+star.utf8s2ms = star.utf8s2ms or print
+
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+ndowntype = 0;
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+
+function GetOneItemAlbum(url)
+	local html = nil
+	local index = 0
+    local photocount = 0
+	local albumcount = 0
+    local album = {photos={}}
+	
+	album.url = url
+    html = star.gethtml(url)
+	html = star.utf8s2ms(html)
+	
+	_,_,name = string.find(html,[[goodsname.->(.-)<]])
+	SetDirectryName('')
+	
+	--预览图
+	index = 0
+	for src in string.gfind(html,[[c_src="(.-)"]]) do
+		index = index + 1
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = '预览图_' .. index
+	end
+	
+	--详情图片
+	_,_,s = string.find(html,[["goods%-intro"(.-)"商品评论]])
+	for src in string.gfind(s,[[src.-(http[^"^'^%s]-.jpg)]]) do
+		photocount = photocount + 1;
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src;
+		album.photos[photocount].orign = src;
+	end
+	
+	if photocount>0 then
+		album.preview = album.photos[1].preview
+	end
+	
+	albumcount = albumcount + 1
+	albums[albumcount] = album
+	albums[albumcount].total = photocount
+	albums[albumcount].name = name
+	
+	return album;
+end
+
+function GetCatItemsAlbum(url)
+	local albumcount = 0
+	local html = nil
+	local ipage = 1
+	local name = ''
+	
+	html = star.gethtml(url)
+	html = star.utf8s2ms(html)
+	
+	_,_,s = string.find(html,[[您当前的位置：(.-)GoodsSelector]])
+	for n in string.gfind(s,[[title=".->(.-)<]]) do
+		name = n
+	end
+	name = star.trim(name)
+	
+	SetDirectryName(name)
+	
+	while true do
+		msgprint('正在获取第 '..ipage..' 页宝贝信息……')
+		
+		for href,src,name in string.gfind(html,[[items%-gallery.-href="(.-)".-src="(.-)".-alt="(.-)"]]) do
+			albumcount = albumcount + 1
+			albums[albumcount].url = href
+			albums[albumcount].preview = src
+			albums[albumcount].total = -1
+			albums[albumcount].name = name
+		end
+		
+		
+		if string.find(html,'已经是最后一页')~=nil then
+			break
+		end
+		ipage = ipage + 1
+		_,_,url = string.find(html,[["pager".-"prev".-href="(.-)"]])
+		html = star.gethtml(url)
+		html = star.utf8s2ms(html)
+	end
+	
+	
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	ndowntype = ntype
+	
+	if ntype==0 then
+		GetOneItemAlbum(url)
+	elseif ntype==1 then
+		GetCatItemsAlbum(url)
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total);
+	end
+end
+
+function GetPhotos(index)
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	album = GetOneItemAlbum(albums[index].url)
+	photos = album.photos;
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--http://item.rakuten.co.jp/dreamworld777/c/0000000157/?p=3
+--[[function test()
+	local url = nil
+	GetAlbums(0,'http://item.rakuten.co.jp/dreamworld777/c/0000000157/?p=3')
+	GetPhotos(1)
+end
+
+test();--]]
