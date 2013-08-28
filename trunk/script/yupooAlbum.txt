@@ -4,18 +4,18 @@
 
 
 --config
-name_en = 'yupooAlbum';
-name_cn = '又拍图片批量下载器';
-prefix = 'YUPO';
-ver = '1.2';
-firstpagename = '又拍网(下载原图需登录)';
-firstpageurl = 'http://www.yupoo.com/account/login/';
-mainwidth = 940;
-mainheight = 700;
-imagewidth = 120;
-imageheight = 92;
-maxalbumsperpage = 20;
-maxphotosperpage = 24;
+name_en = 'yupooAlbum'
+name_cn = '又拍图片批量下载器'
+prefix = 'YUPO'
+ver = '1.3'
+firstpagename = '又拍网(下载原图需登录)'
+firstpageurl = 'http://www.yupoo.com/account/login/'
+mainwidth = 940
+mainheight = 700
+imagewidth = 120
+imageheight = 92
+maxalbumsperpage = 20
+maxphotosperpage = 24
 
 
 --c函数初始化
@@ -150,31 +150,7 @@ function GetAllAlbums(url)
 	local html = nil
 	local bfound = false
 	
-	if string.lower(string.sub(url,1,4))~='http' then
-		url = 'http://' .. url 
-	end
 	
-	if string.find(url,'v.yupoo.com')~=nil then
-		vip=true
-	end
-	
-	html = star.gethtml(url)
-	if html==nil or html=='' then
-		return
-	end
-	html = star.utf8s2ms(html)
-	
-	if vip==false then
-		_,_,account = string.find(html,[[END HEADER.-http://(.-).yupoo.com]])
-	else
-		_,_,account = string.find(html,[["x%-tabs".-http://(.-).v.yupoo.com]])
-	end
-	
-	if account==nil or account=='' then
-		msgbox('请输入要下载相册的又拍网址')
-		return
-	end
-	SetDirectryName(account);
 	
 	if vip==true then
 		GetVipAlbums()
@@ -274,6 +250,34 @@ function GetAlbums(ntype,url)
 	npicsizemode =math.mod(ntype,10)
 	ndowntype,_ =math.modf(ntype/10)
 	needlogin = false
+	
+	
+	if string.lower(string.sub(url,1,4))~='http' then
+		url = 'http://' .. url 
+	end
+	
+	if string.find(url,'v.yupoo.com')~=nil then
+		vip=true
+	end
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	if vip==false then
+		_,_,account = string.find(html,[[END HEADER.-http://(.-).yupoo.com]])
+	else
+		_,_,account = string.find(html,[["x%-tabs".-http://(.-).v.yupoo.com]])
+	end
+	
+	if account==nil or account=='' then
+		msgbox('请输入要下载相册的又拍网址')
+		return
+	end
+	SetDirectryName(account);
+	
 	
 	if ndowntype==0 then
 		GetAllAlbums(url)
