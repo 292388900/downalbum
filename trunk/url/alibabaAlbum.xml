@@ -2,7 +2,7 @@
     <soft>
         <name>alibabaAlbum</name>
         <version>3.1</version>
-	<scriptver>2.4</scriptver>
+	<scriptver>2.6</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ8BVYYMVRjn</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8B3WvJZSGg</downurl2>
 	<scripturl>http://www.xcxzq.com/script/alibabaAlbum.txt</scripturl>
@@ -22,7 +22,7 @@ s=2,p=61348,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="alibabaAlbum" ver="2.4" file="alibabaAlbum.txt">
+		<script name="alibabaAlbum" ver="2.6" file="alibabaAlbum.txt">
 			<url>http://www.xcxzq.com/script/alibabaAlbum.txt</url>
 			<url2>http://www.xcxzq.com/script/alibabaAlbum.txt</url2>
 		</script>
