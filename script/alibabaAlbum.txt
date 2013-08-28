@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '阿里巴巴图片批量下载器';
 prefix = 'ALBB';
-ver = '2.5';
+ver = '2.6';
 firstpagename = '阿里巴巴';
 firstpageurl = 'http://china.alibaba.com';
 mainwidth = 940;
@@ -163,7 +163,8 @@ function GetCatAlbum(url)
 		
 		if catname==nil then
 			--获取分类名以及该分类下的产品个数
-			_,_,catname,count = string.find(html,[[selected.-name">([^"^'^/]+)</span>.-num(%d*)]])
+			--_,_,catname,count = string.find(html,[[selected.-name">([^"^'^/]+)</span>.-num(%d*)]])
+			_,_,catname = string.find(html,[[<title>.-keywords.-content="(.-)"]])
 			catname = trim(catname)
 			catname = string.gsub(catname, "|", "")
 			SetDirectryName(catname);
@@ -325,11 +326,11 @@ function GetOneItemPhotos(album)
 
 	--预览图
 	bfound = false
-	for src in string.gfind(html, [[original.-(http.-.jpg)]]) do
+	for src in string.gfind(html, [[original.-(http[^"^'^%s]+)]]) do
 		bfound = true
 		photocount = photocount + 1;
 		photos[photocount].preview = src
-		photos[photocount].orign = src;
+		photos[photocount].orign = src
 	end
 	
 	--如果没有获取到预览图则获取封面图
