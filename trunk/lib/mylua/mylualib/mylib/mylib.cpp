@@ -142,6 +142,17 @@ int utf8s2ms(lua_State *L)
 	return 1;
 }
 
+//获取应用程序启动路径，带斜杠
+int getstartpath(lua_State *L)
+{
+	TCHAR szTemp[MAX_PATH*4]={0};
+	GetModuleFileName(NULL,szTemp,sizeof(szTemp)/sizeof(TCHAR));
+	_tcsrchr(szTemp,'\\')[1]=0;
+
+	lua_pushstring(L,szTemp);
+	return 1;
+}
+
 //获取当前lua脚本的路径,返回3个结果:脚本路径,脚本全文件名,脚本文件名
 //参考:http://cjbskysea.blogbus.com/logs/68708391.html
 int getluapath(lua_State *L)
