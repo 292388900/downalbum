@@ -40,6 +40,7 @@ static const struct luaL_reg starlib [] = {
 	{"dbgprint", dbgprint},
 	{"gethtml", gethtml},
 	{"utf8s2ms", utf8s2ms},
+	{"getstartpath", getstartpath},
 	{"getluapath", getluapath},
 	{"downloadfile", downloadfile},
 	{"openurl", openurl},
