@@ -7,7 +7,7 @@
 name_en = 'QQAlbum';
 name_cn = 'QQ相册批量下载器';
 prefix = 'QABM';
-ver = '1.1';
+ver = '1.2';
 firstpagename = 'QQ空间';
 firstpageurl = 'http://user.qzone.qq.com';
 mainwidth = 940;
@@ -99,7 +99,7 @@ function GetQQAlbums(url)
 
 	url = string.format('http://%s/fcgi-bin/fcg_list_album_v2?inCharset=gbk&outCharset=gbk&hostUin=%s&notice=0&callbackFun=&format=jsonp&plat=qzone&source=qzone&appid=4&uin=%s&t=%s&g_tk=%s',strAlbumRoute,hostUin,uin,randfloatnum(),g_tk)
 	html = star.gethtml(url)
-	--msgbox(url)
+	--msgbox(html)
 	
 	--msgbox(url)
 	for createtime,id,updatetime,name,pre,private,total in string.gfind(html,[[createtime.-(%d+).-id".-"(.-)".-modifytime.-(%d+).-name".-"(.-)".-pre".-"(.-)".-priv".-(%d+).-total".-(%d+)]]) do
@@ -131,7 +131,7 @@ function GetAlbums(ntype,url)
 	
 	for i = 1,albumcount do 
 		albums[i].total = tonumber(albums[i].total)
-		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total,albums[i].desc,albums[i].question,albums[i].createtime,albums[i].updatetime,albums[i].private)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total,albums[i].desc,albums[i].question,albums[i].createtime,albums[i].createtime,albums[i].private)
 	end
 end
 
