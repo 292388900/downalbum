@@ -193,6 +193,68 @@ function getonealbum(url)
 	albums[albumcount].total = tonumber(num)	
 end
 
+--只支持单页输入，不支持翻页，因为图片太多，显示太缓慢
+function getallpictures(url)
+	local html = nil
+	local albumcount = 0
+	local t = {}
+	local i = 0
+	local preview = ''
+	local origin = ''
+	
+	html = star.gethtml(url)
+	html = star.utf8s2ms(html)
+	if html==nil or html=='' then
+		msgbox(url)
+		return
+	end
+	
+	--Y.listData = {"photos"
+	_,_,html = string.find(html,[[listData(.-)FlickrAppPhotostream]])
+	if html==nil then
+		return
+	end
+	
+	for name,sq in string.gfind(html,[["name":"(.-)",.-{"sq":(.-)}},]]) do
+		t = {}
+		i = 0
+		for src in string.gfind(sq,[[(http.-.jpg)]]) do
+			if src~='' then
+				src = string.gsub(src,[[\/]],'/')
+				i = i + 1
+				t[i] = src
+			end
+		end
+		
+		if #t>0 then
+			preview = t[1]
+			origin = t[#t]
+		else
+			preview = ''
+			origin = ''
+		end
+		
+		albumcount = albumcount + 1
+		albums[albumcount] = {}
+		albums[albumcount].preview = preview
+		albums[albumcount].origin = origin
+		albums[albumcount].url = origin
+		albums[albumcount].name = name
+		albums[albumcount].total = -1
+	end
+end
+
+function getallpictures_photo(index)
+	local photocount = 0
+	local photos = PHOTOS.new()
+	
+	photocount = photocount + 1
+	photos[photocount].preview = albums[index].origin
+	photos[photocount].origin = albums[index].origin
+	photos[photocount].name = albums[index].name
+	return photos
+end
+
 function GetAlbums(ntype,url)
 	ndowntype = ntype
 	albums = {}
@@ -201,6 +263,8 @@ function GetAlbums(ntype,url)
 		getonealbum(url)		
 	elseif ntype==1 then
 		getcatalbum(url)
+	elseif ntype==3 then
+		getallpictures(url)
 	else
 		star.msgbox('暂不至支持此种下载模式!请联系作者解决')
 	end
@@ -315,7 +379,13 @@ function GetPhotos(index)
 	if albums[index].name~=nil then
 		msgprint('正在获取图片信息： '..albums[index].name);
 	end
-	photos = GetOneAbumPhotos(index)
+	
+	if ndowntype==3 then
+		photos = getallpictures_photo(index)
+	else
+		photos = GetOneAbumPhotos(index)
+	end
+	
 	num = table.getn(photos)
 	print(num)
 	for i = 1,num do
