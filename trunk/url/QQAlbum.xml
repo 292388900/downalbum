@@ -22,7 +22,7 @@ s=2,p=61291,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="QQAlbum" ver="1.1" file="QQAlbum.txt">
+		<script name="QQAlbum" ver="1.2" file="QQAlbum.txt">
 			<url>http://www.xcxzq.com/script/QQAlbum.txt</url>
 			<url2>http://www.xcxzq.com/script/QQAlbum.txt</url2>
 		</script>
