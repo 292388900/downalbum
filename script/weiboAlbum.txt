@@ -1,0 +1,202 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'weiboAlbum';
+name_cn = '新浪微博图片批量下载器';
+prefix = 'TSNA';
+ver = '1.0';
+firstpagename = '新浪微博';
+firstpageurl = 'http://weibo.com/'
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+--var
+account = '';
+ndowntype = 0;
+albumcount = 0;
+albums = {photos={}};
+uid = ''
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+star.DecodeEscapeUsequence = star.DecodeEscapeUsequence or function(x) return x end
+
+tbs = nil
+
+function showphotos(photo)
+     if photo~=nil then
+          print(#photo)
+          for i = 1,#photo do
+               print(photo[i].preview)
+          end
+     end
+end
+
+function showalbum(album)
+     if album~=nil then
+          print(album.id)
+          print(album.name)
+          print(album.preview)
+          showphotos(album.photos)
+     end
+end
+
+function showalbums(albums)
+     if albums~=nil then
+          print(#albums)
+          for i = 1,#albums do
+               showalbum(albums[i]);
+          end
+     end
+end
+
+function GetZhuanjiAlbum(url)
+	local html = nil
+	local page_id = nil
+	local domain = nil
+	
+	html = star.gethtml(url)
+	if html==nil and html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	_,_,uid = string.find(html,[['oid']='(.-)']])
+	_,_,page_id = string.find(html,[[page_id.-='(.-)']])
+	_,_,domain = string.find(html,[[page_id.-domain.-='(.-)']])
+	if uid==nil or page_id==nil or domain==nil then
+		return
+	end
+	SetDirectryName(uid)
+	
+	url = string.format('http://weibo.com/p/%s/album?from=page_%s&mod=TAB&ajaxpagelet=1',page_id,domain)
+	html = star.gethtml(url)
+	if html==nil and html=='' then
+		return
+	end
+	html = star.utf8s2ms(html)
+	
+	for href,src,num,name in string.gfind(html,[[img_box.-href.-(http.-)".-src.-(http.-)".-共(%d+).-<strong>(.-)<\/strong>]]) do
+		_,_,id = string.find(href,[[album_id\/(%d+)]])
+		if id==nil then
+			id = ''
+		end
+		href = string.gsub(href,[[\]],'')
+		src = string.gsub(src,[[\]],'')
+		albumcount = albumcount + 1
+		albums[albumcount] = {}
+		albums[albumcount].url = href
+		albums[albumcount].preview = src
+		albums[albumcount].total = tonumber(num)
+		albums[albumcount].id = id
+		albums[albumcount].name = name
+	end
+	
+end
+
+function GetAlbums(ntype,url)
+	albums = {}
+	albumcount = 0
+	ndowntype = ntype
+	
+	GetZhuanjiAlbum(url)
+	
+	for i = 1,albumcount do 
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total)
+	end
+end
+
+function randfloatnum()
+	s = '0.'
+	math.randomseed(os.time())
+	for i = 1,16 do
+		s = s .. math.random(0,9);
+	end
+	
+	return s;
+end
+
+function GetZhuanjiPhotos(album)
+	local photocount = 0
+	local pages = 0
+	local url = nil 
+	local html = nil
+	local ntype = 24
+	album.photos = {};
+	countperpage = 30
+
+	pages,_ = math.modf(album.total/countperpage)
+	rest = math.mod(album.total,countperpage)
+	pages = pages + (rest~=0 and 1 or 0)
+
+	for ipage=1,pages do
+		s = string.format('正在获取相册：%s 的第 %d/%d 页图片信息……',album.name,ipage,pages)
+		msgprint(s)
+		if album.id==nil or album.id=='' then
+			--微博配图
+			html = star.gethtml(album.url)
+			html = star.utf8s2ms(html)
+			_,_,album.id = string.find(html,[[page_album_id:(%d+)]])
+			ntype = 3
+		end
+		
+		url = string.format('http://photo.weibo.com/photos/get_all?uid=%s&album_id=%s&count=%d&page=%d&type=%d',uid,album.id,countperpage,ipage,ntype)
+		html = star.gethtml(url)
+		if html==nil or html=='' then
+			break
+		end
+		html = star.utf8s2ms(html)
+		
+		for s in string.gfind(html,[[photo_id(.-)}}]]) do
+			_,_,name = string.find(s,[[caption_render":"(.-)"]])
+			if name==nil then
+				name = ''
+			end
+			_,_,pic_host = string.find(s,[[pic_host":"(.-)"]])
+			_,_,pic_name = string.find(s,[[pic_name":"(.-)"]])
+			pic_host = string.gsub(pic_host,[[\]],'')
+			
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].name = star.DecodeEscapeUsequence(name)
+			orignimage = pic_host..'/large/'..pic_name
+			album.photos[photocount].preview = orignimage
+			album.photos[photocount].orign = orignimage
+		end
+	end
+	
+	return album
+end
+
+function GetPhotos(index)
+	local album={};
+	
+	album = GetZhuanjiPhotos(albums[index])
+	
+	photos = album.photos;
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+
+function test()
+end
+--test();
