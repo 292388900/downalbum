@@ -25,7 +25,7 @@ s=2,p=57829,
 	<scripts path=".\">
 		<script name="duitangAlbum" ver="1.4" file="duitangAlbum.txt">
 			<url>http://www.xcxzq.com/script/duitangAlbum.txt</url>
-			<url2>http://www.xcxzq.com/script/duitangAlbum.txt</url2>
+			<url2>http://downalbum.googlecode.com/svn/trunk/script/duitangAlbum.txt</url2>
 		</script>
 	</scripts>
 </data>

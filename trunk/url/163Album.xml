@@ -24,7 +24,7 @@ s=2,p=58822,
 	<scripts path=".\">
 		<script name="163Album" ver="1.4" file="163Album.txt">
 			<url>http://www.xcxzq.com/script/163Album.txt</url>
-			<url2>http://www.xcxzq.com/script/163Album.txt</url2>
+			<url2>http://downalbum.googlecode.com/svn/trunk/script/163Album.txt</url2>
 		</script>
 	</scripts>
 </data>

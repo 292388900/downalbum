@@ -25,7 +25,7 @@ s=2,p=57829,
 	<scripts path=".\">
 		<script name="HiAlbum" ver="1.7" file="HiAlbum.txt">
 			<url>http://www.xcxzq.com/script/HiAlbum.txt</url>
-			<url2>http://www.xcxzq.com/script/HiAlbum.txt</url2>
+			<url2>http://downalbum.googlecode.com/svn/trunk/script/HiAlbum.txt</url2>
 		</script>
 	</scripts>
 </data>

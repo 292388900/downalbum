@@ -24,7 +24,7 @@ s=2,p=61291,
 	<scripts path=".\">
 		<script name="QQAlbum" ver="1.2" file="QQAlbum.txt">
 			<url>http://www.xcxzq.com/script/QQAlbum.txt</url>
-			<url2>http://www.xcxzq.com/script/QQAlbum.txt</url2>
+			<url2>http://downalbum.googlecode.com/svn/trunk/script/QQAlbum.txt</url2>
 		</script>
 	</scripts>
 </data>
