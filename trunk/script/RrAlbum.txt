@@ -7,7 +7,7 @@
 name_en = 'RrAlbum';
 name_cn = '小林人人网相册批量下载器';
 prefix = 'RRAM';
-ver = '1.7';
+ver = '1.8';
 firstpagename = '人人网(必须登录)';
 firstpageurl = 'http://www.renren.com';
 mainwidth = 940;
@@ -412,32 +412,30 @@ function GetFriendAlbumPhotos(album)
 	local photocount = 0;
 	local photos = PHOTOS.new()
 	
-	pagecount,_ =math.modf(album.total/20) 
-	rest =math.mod(album.total,20)
+	pagecount,_ =math.modf(album.total/40) 
+	rest =math.mod(album.total,40)
 	pagecount = pagecount + (rest~=0 and 1 or 0)
 	
-	for ipage = 0,pagecount-1 do
-		url = string.format('http://photo.renren.com/photo/%s/album-%s/bypage/ajax?curPage=%d&pagenum=%d',
-			account,album.id,ipage,pagecount)
-		msgprint('正在获取第 ' .. ipage+1 .. '页图片信息……')
+	for ipage = 1,pagecount do
+		url = string.format('http://photo.renren.com/photo/%s/album-%s?frommyphoto#page%d',account,album.id,ipage)
+		--url = string.format('http://photo.renren.com/photo/%s/album-%s/bypage/ajax?curPage=%d&pagenum=%d',
+		--	account,album.id,ipage,pagecount)
+		msgprint('正在获取第 ' .. ipage .. '页图片信息……')
+		--msgbox(url)
 		html = star.gethtml(url);
 		html = star.utf8s2ms(html)
 		--local file = io.open("result.txt","w+"); file:write(html);
 		bfound = false
-		for orign,name in string.gfind(html, [[largeUrl.-(http.-.jpg).-title":"(.-)"]]) do
+		for orign,name in string.gfind(html, [[data%-info.-,large:'(.-)'.-descript">(.-)</]]) do
 			bfound = true
-			photocount = photocount + 1;
+			photocount = photocount + 1
 			photos[photocount].preview = orign
-			photos[photocount].orign = orign;
-			photos[photocount].name = name;
-		end
-		
-		if photocount>=album.total then
-			break
+			photos[photocount].orign = orign
+			photos[photocount].name = name
 		end
 	end
 	
-	return photos;
+	return photos
 end
 
 function GetZhanPhotos(album)
