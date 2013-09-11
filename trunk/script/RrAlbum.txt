@@ -7,7 +7,7 @@
 name_en = 'RrAlbum';
 name_cn = '小林人人网相册批量下载器';
 prefix = 'RRAM';
-ver = '1.8';
+ver = '1.9';
 firstpagename = '人人网(必须登录)';
 firstpageurl = 'http://www.renren.com';
 mainwidth = 940;
@@ -162,23 +162,31 @@ function GetFriendAlbum(url)
 	--convert to num
 	count = tonumber(count)
 	
-	_,_,s = string.find(html,'album%-list(.-)end of album%-list')
-	if s==nil then
-		msgbox('获取相册信息失败!')
-		return
-	end
-	for src,num,href,name in string.gfind(s, [[src.-(http[^"^'^%s]-.jpg).-photo%-num">(.-)<.-href.-(http[^"^'^%s]*).-album%-name.->([^"^'^/]+)</span>]]) do	
-		_,_,id = string.find(href,'album%-(%d*)')
-		albumcount = albumcount + 1
-		albums[albumcount].id = id;
-		albums[albumcount].url = href;
-		albums[albumcount].preview = src;
-		albums[albumcount].total = tonumber(num);
-		albums[albumcount].name = name;
+	
+	pagecount,_ = math.modf(count/20) 
+	rest =math.mod(count,20)
+	pagecount = pagecount + (rest~=0 and 1 or 0)
+	offset = 0
+	
+	for ipage=1,pagecount do
+		url = string.format('http://photo.renren.com/photo/%s/album/relatives/ajax?offset=%d&limit=20', account, offset)
+		offset = offset + 20
+		s = string.format('正在获取第 %d/%d 页相册信息……',ipage,pagecount)
+		msgprint(s)
 		
-		if albumcount>=count then
-			break
+		html = star.gethtml(url)
+		html = star.utf8s2ms(html)
+		
+		for src,num,href,name in string.gfind(html,[[data%-preview.-url%((.-)%).-num">(%d+).-href="(.-)".-name">(.-)</]]) do
+			_,_,id = string.find(href,'album%-(%d*)')
+			albumcount = albumcount + 1
+			albums[albumcount].id = id
+			albums[albumcount].url = href
+			albums[albumcount].preview = src
+			albums[albumcount].total = tonumber(num)
+			albums[albumcount].name = star.trim(name)
 		end
+		
 	end
 	
 end
@@ -494,18 +502,3 @@ function GetPhotos(index)
 		end
 	end
 end
-
-
-
---获取单个相册，分享相册
---[[
-http://photo.renren.com/photo/325923976/album-421485541?frommyphoto
-http://photo.renren.com/getalbum.do?id=390246977&owner=327644830&ref=newsfeed&sfet=103&fin=18&ff_id=277757404
-
---]]
-function test()
-	--GetAlbums(0,'http://www.renren.com/325923976/profile#palbum')
-	--GetOneAlbum('http://photo.renren.com/photo/325923976/album-421485541?frommyphoto')
-end
-
---test();
