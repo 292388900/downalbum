@@ -2,7 +2,7 @@
     <soft>
         <name>RrAlbum</name>
         <version>3.2</version>
-	<scriptver>1.8</scriptver>
+	<scriptver>1.9</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ85TaJ6mG2k</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8eQLpNUqUh</downurl2>
 	<scripturl>http://www.xcxzq.com/script/RrAlbum.txt</scripturl>
@@ -24,7 +24,7 @@ s=2,p=61291,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="RrAlbum" ver="1.7" file="RrAlbum.txt">
+		<script name="RrAlbum" ver="1.9" file="RrAlbum.txt">
 			<url>http://www.xcxzq.com/script/RrAlbum.txt</url>
 			<url2>http://downalbum.googlecode.com/svn/trunk/script/RrAlbum.txt</url2>
 		</script>
