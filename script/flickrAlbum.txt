@@ -20,6 +20,7 @@ maxphotosperpage = 24;
 ndowntype = 0;
 albumcount = 0;
 albums = {photos={}};
+g_mc = 'FLCR00235ABA9A7C86569C40'
 
 --c函数初始化
 msgprint = msgprint or print
@@ -201,6 +202,10 @@ function getallpictures(url)
 	local i = 0
 	local preview = ''
 	local origin = ''
+
+	if getmachinecode==nil or getmachinecode()~=g_mc then
+		return
+	end
 	
 	html = star.gethtml(url)
 	html = star.utf8s2ms(html)
@@ -264,6 +269,7 @@ function GetAlbums(ntype,url)
 	elseif ntype==1 then
 		getcatalbum(url)
 	elseif ntype==3 then
+		msgbox('因为所有相片太多，不支持多页下载，请输入单页网址，例如：\nhttp://www.flickr.com/photos/evelynflint/page3/')
 		getallpictures(url)
 	else
 		star.msgbox('暂不至支持此种下载模式!请联系作者解决')
