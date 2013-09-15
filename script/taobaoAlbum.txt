@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = 'ÌÔ±¦±¦±´Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TBAM';
-ver = '2.6';
+ver = '2.7';
 firstpagename = '¹Ù·½ÌÔ±¦';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -165,6 +165,14 @@ function getitemalbum(url)
 		album.photos[photocount].name = geturlimagename(src)
 	end
 	
+	for src in string.gfind(html, [[src.-(http[^%s]-.gif)]]) do
+		photocount = photocount + 1
+		album.photos[photocount] = {}
+		album.photos[photocount].preview = src
+		album.photos[photocount].orign = src
+		album.photos[photocount].name = geturlimagename(src)
+	end
+	
 	if fetchDcUrl~=nil then
 		html = star.gethtml(fetchDcUrl)
 		for src in string.gfind(html, [[src.-(http[^%s]-.jpg)]]) do
@@ -177,6 +185,15 @@ function getitemalbum(url)
 		end
 		
 		for src in string.gfind(html, [[src.-(http[^%s]-.JPG)]]) do
+			src = string.gsub(src,[[\/]],'/')
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+		
+		for src in string.gfind(html, [[src.-(http[^%s]-.gif)]]) do
 			src = string.gsub(src,[[\/]],'/')
 			photocount = photocount + 1
 			album.photos[photocount] = {}
