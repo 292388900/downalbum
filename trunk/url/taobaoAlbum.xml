@@ -2,7 +2,7 @@
     <soft>
         <name>taobaoAlbum</name>
         <version>2.3</version>
-	<scriptver>2.7</scriptver>
+	<scriptver>2.8</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ8eTdSHiwvT</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8tw8jtEtrA</downurl2>
 	<scripturl>http://www.xcxzq.com/script/taobaoAlbum.txt</scripturl>
@@ -23,7 +23,7 @@ s=2,p=63113,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="taobaoAlbum" ver="2.7" file="taobaoAlbum.txt">
+		<script name="taobaoAlbum" ver="2.8" file="taobaoAlbum.txt">
 			<url>http://www.xcxzq.com/script/taobaoAlbum.txt</url>
 			<url2>http://downalbum.googlecode.com/svn/trunk/script/taobaoAlbum.txt</url2>
 		</script>

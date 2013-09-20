@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = 'ÌÔ±¦±¦±´Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TBAM';
-ver = '2.7';
+ver = '2.8';
 firstpagename = '¹Ù·½ÌÔ±¦';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -258,6 +258,7 @@ function getcatalbum(url)
 			end
 			
 		if string.find(s,[[<div class="desc">]])~=nil then
+			--old version
 			for id,src,href,name in string.gfind(s, [[class="item.-id=.-(%d+).-(http[^"^']*.jpg).-href="(.-)".->(.-)</a>]]) do
 				   albumcount = albumcount + 1;
 				   albums[albumcount] = {};
@@ -268,10 +269,8 @@ function getcatalbum(url)
 			  end
 		
 		else
-		
-			
-			--local file = io.open("result.txt","w+"); file:write(s);
-			  for id,href,name,src in string.gfind(s, [[class="item.-id=.-(%d+).-href="(.-)".-alt="(.-)".-(http[^"^']*.jpg)]]) do
+			--new version
+			  for id,name,src,href in string.gfind(s, [[class="item.-id=.-(%d+).-alt="(.-)".-(http[^"^']*.jpg).-href="(.-)"]]) do
 				   albumcount = albumcount + 1;
 				   albums[albumcount] = {};
 				   albums[albumcount].id = id
