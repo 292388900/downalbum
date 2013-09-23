@@ -6,7 +6,7 @@
 name_en = 'taobaoAlbum';
 name_cn = 'ÌÔ±¦±¦±´Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TBAM';
-ver = '2.8';
+ver = '2.9';
 firstpagename = '¹Ù·½ÌÔ±¦';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -270,7 +270,7 @@ function getcatalbum(url)
 		
 		else
 			--new version
-			  for id,name,src,href in string.gfind(s, [[class="item.-id=.-(%d+).-alt="(.-)".-(http[^"^']*.jpg).-href="(.-)"]]) do
+			  for id,name,src,href in string.gfind(s, [[class="item.-id=.-(%d+).-alt="(.-)".-(http[^"^']*.jpg).-href="(http.-)"]]) do
 				   albumcount = albumcount + 1;
 				   albums[albumcount] = {};
 				   albums[albumcount].id = id
