@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '阿里巴巴图片批量下载器';
 prefix = 'ALBB';
-ver = '2.6';
+ver = '2.7';
 firstpagename = '阿里巴巴';
 firstpageurl = 'http://china.alibaba.com';
 mainwidth = 940;
@@ -214,9 +214,12 @@ function GetProductAlbum(url)
 	
 	--获取member_id
 	url = string.lower(url)
-	_,_,account = string.find(url,'([%w]+).cn.')
+	_,_,account = string.find(url,'//(.-.com)')
+	if account==nil then
+		_,_,account = string.find(url,'(.-.com)')
+	end
 	if account~=nil then
-		url = 'http://' .. account .. '.cn.alibaba.com'
+		url = 'http://' .. account
 	end
 	html = star.gethtml(url)
 	if html==nil or html=='' then
@@ -225,9 +228,6 @@ function GetProductAlbum(url)
 
 	_,_,member_id = string.find(html,[[member_id:.-([^'^"]+)]])
 	SetDirectryName(member_id)
-	if account==nil then
-		_,_,account = string.find(html,'([%w]+).cn.alibaba.com')
-	end
 	
 	repeat 
 		url = 'http://picman.china.alibaba.com/open/ajax/RecommendAlbumDetailList.json?memberId=' .. member_id .. '&hasAlbums=true&start=' .. albumstart .. '&end=' .. albumend
@@ -382,7 +382,7 @@ function GetProductPhotos(album)
 	pagecount = pagecount + (rest~=0 and 1 or 0)
 	
 	for ipage = 1,pagecount do
-		url = string.format('http://%s.cn.alibaba.com/event/app/albumGuide/imageList.htm?albumId=%s&pageNum=%d',
+		url = string.format('http://%s/event/app/albumGuide/imageList.htm?albumId=%s&pageNum=%d',
 			account,album.id,ipage)
 		html = star.gethtml(url)
 		if html==nil or html=='' then
