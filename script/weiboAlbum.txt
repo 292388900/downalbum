@@ -7,7 +7,7 @@
 name_en = 'weiboAlbum';
 name_cn = '新浪微博图片批量下载器';
 prefix = 'TSNA';
-ver = '1.0';
+ver = '1.1';
 firstpagename = '新浪微博';
 firstpageurl = 'http://weibo.com/'
 mainwidth = 940;
@@ -83,27 +83,24 @@ function GetZhuanjiAlbum(url)
 	end
 	SetDirectryName(uid)
 	
-	url = string.format('http://weibo.com/p/%s/album?from=page_%s&mod=TAB&ajaxpagelet=1',page_id,domain)
+	url = string.format('http://photo.weibo.com/albums/get_all?uid=%s&page=1&count=20',uid)
 	html = star.gethtml(url)
 	if html==nil and html=='' then
 		return
 	end
-	html = star.utf8s2ms(html)
 	
-	for href,src,num,name in string.gfind(html,[[img_box.-href.-(http.-)".-src.-(http.-)".-共(%d+).-<strong>(.-)<\/strong>]]) do
-		_,_,id = string.find(href,[[album_id\/(%d+)]])
-		if id==nil then
-			id = ''
-		end
-		href = string.gsub(href,[[\]],'')
+	for id,name,src,num in string.gfind(html,[[album_id":"(%d+).-caption":"(.-)".-_pic":"(.-)".-photos":(%d+)]]) do
 		src = string.gsub(src,[[\]],'')
+		if src=='' then
+			--src = 'http://img.t.sinajs.cn/t4/appstyle/photo/images/common/status_0.png'
+		end
 		albumcount = albumcount + 1
 		albums[albumcount] = {}
-		albums[albumcount].url = href
+		--albums[albumcount].url = href
 		albums[albumcount].preview = src
 		albums[albumcount].total = tonumber(num)
 		albums[albumcount].id = id
-		albums[albumcount].name = name
+		albums[albumcount].name = star.DecodeEscapeUsequence(name)
 	end
 	
 end
