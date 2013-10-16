@@ -7,7 +7,7 @@
 name_en = 'weiboAlbum';
 name_cn = 'ĞÂÀËÎ¢²©Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TSNA';
-ver = '1.1';
+ver = '1.2';
 firstpagename = 'ĞÂÀËÎ¢²©';
 firstpageurl = 'http://weibo.com/'
 mainwidth = 940;
@@ -135,6 +135,10 @@ function GetZhuanjiPhotos(album)
 	local ntype = 24
 	album.photos = {};
 	countperpage = 30
+	
+	if album.name=='Î¢²©ÅäÍ¼' then
+		ntype = 3
+	end
 
 	pages,_ = math.modf(album.total/countperpage)
 	rest = math.mod(album.total,countperpage)
