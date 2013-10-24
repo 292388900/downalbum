@@ -7,7 +7,7 @@
 name_en = 'alibabaAlbum';
 name_cn = '阿里巴巴图片批量下载器';
 prefix = 'ALBB';
-ver = '2.7';
+ver = '2.8';
 firstpagename = '阿里巴巴';
 firstpageurl = 'http://china.alibaba.com';
 mainwidth = 940;
@@ -345,15 +345,7 @@ function GetOneItemPhotos(album)
 	end
 	
 	--获取描述中的图片
-	for s in string.gfind(html, [[data%-url.-(http[^"^'^%s]*)]]) do
-		url = s
-		if string.find(url,'alibaba.com')~=nil then
-			break
-		end
-	end
-	
-	--http://laputa.china.alibaba.com/offer/ajax/OfferDesc.do?offerId=1019516444&callback=rnd13107180989315
-	url = url .. '?offerId=' .. album.id .. '&callback=rnd' .. os.time();
+	_,_,url = string.find(html,[[data%-tfs%-url.-(http[^"^'^%s]*)]])
 	html = star.gethtml(url)
 	if html==nil or html=='' then
 		return
