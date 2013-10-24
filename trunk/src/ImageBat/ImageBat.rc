@@ -471,18 +471,19 @@ IDR_MENU_ADD_TAG MENU
 BEGIN
     POPUP "0"
     BEGIN
-        MENUITEM "序号：<no>",                     ID_ADDTAG_NO
-        MENUITEM "相机生产商：<maker>",               ID_ADDTAG_MAKER
-        MENUITEM "相机型号：<model>",                ID_ADDTAG_MODEL
-        MENUITEM "拍摄日期：<photodate>",            ID_ADDTAG_PHOTODATE
-        MENUITEM "快门速度：<s>",                    ID_ADDTAG_SHUTTER
-        MENUITEM "光圈：<a>",                      ID_ADDTAG_APERTURE
-        MENUITEM "曝光补偿：<bias>",                 ID_ADDTAG_BIAS
-        MENUITEM "ISO：<iso>",                   ID_ADDTAG_ISO
-        MENUITEM "曝光程序：<program>",              ID_ADDTAG_PROGRAM
-        MENUITEM "白平衡：<wb>",                    ID_ADDTAG_WB
-        MENUITEM "是否开启闪光灯：<flash>",             ID_ADDTAG_FLASHUSED
-        MENUITEM "原始文件名：<originalname>",        ID_ADDTAG_ORIGINALNAME
+        MENUITEM "序号：<no>",					ID_ADDTAG_NO
+        MENUITEM "相机生产商：<maker>",			ID_ADDTAG_MAKER
+        MENUITEM "相机型号：<model>",			ID_ADDTAG_MODEL
+        MENUITEM "拍摄日期：<photodate>",		ID_ADDTAG_PHOTODATE
+        MENUITEM "快门速度：<s>",				ID_ADDTAG_SHUTTER
+        MENUITEM "光圈：<a>",                   ID_ADDTAG_APERTURE
+        MENUITEM "曝光补偿：<bias>",            ID_ADDTAG_BIAS
+        MENUITEM "ISO：<iso>",                  ID_ADDTAG_ISO
+        MENUITEM "曝光程序：<program>",         ID_ADDTAG_PROGRAM
+        MENUITEM "白平衡：<wb>",                ID_ADDTAG_WB
+        MENUITEM "是否开启闪光灯：<flash>",     ID_ADDTAG_FLASHUSED
+        MENUITEM "原始文件名：<originalname>",  ID_ADDTAG_ORIGINALNAME
+        MENUITEM "文件MD5：<md5>",				ID_ADDTAG_FILEMD5
     END
 END
 

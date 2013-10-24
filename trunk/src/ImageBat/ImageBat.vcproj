@@ -715,6 +715,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Md5"
+				>
+				<File
+					RelativePath="..\..\lib\StarLib\MD5\Md5.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\lib\StarLib\MD5\Md5.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="ImageHelper"
