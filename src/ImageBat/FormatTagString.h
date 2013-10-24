@@ -65,6 +65,9 @@ public:
 	//<flash>
 	CString FormatFlashused(ITEMINFO *pItem);
 
+	//<md5>
+	CString FormatFileMd5(ITEMINFO *pItem);
+
 private:
 	//根据个数动态生成格式化，是%2d %3d 还是%4d
 	CString m_strIdexFormat;

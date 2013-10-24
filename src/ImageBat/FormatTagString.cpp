@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "FormatTagString.h"
+#include <StarLib/MD5/Md5.h>
 
 
 
@@ -50,6 +51,7 @@ void CFormatTagString::ParaseTags(const CString&strRules)
 		{ "program", &CFormatTagString::FormatExposureProgram },
 		{ "wb", &CFormatTagString::FormatWhiteBalance },
 		{ "flash", &CFormatTagString::FormatFlashused },
+		{ "md5", &CFormatTagString::FormatFileMd5 },
 	};
 
 
@@ -209,4 +211,10 @@ CString CFormatTagString::FormatFlashused(ITEMINFO *pItem)
 	CString str;
 	str.Format("%d",pItem->nFlashUsed);
 	return str;
+}
+
+//<md5>
+CString CFormatTagString::FormatFileMd5(ITEMINFO *pItem)
+{
+	return Md5File(pItem->strFilePath);
 }

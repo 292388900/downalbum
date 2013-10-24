@@ -46,6 +46,8 @@ void CTagAdder::AddTagTo(CString&strRules)
 		strTag = "<flash>";
 	}else if ( dwID==ID_ADDTAG_ORIGINALNAME ){
 		strTag = "<originalname>";
+	}else if ( dwID==ID_ADDTAG_FILEMD5 ) {
+		strTag = "<md5>";
 	}
 
 	//如果规则中已经有tag了就不再添加，否则追加

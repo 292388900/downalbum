@@ -164,7 +164,7 @@
 #define ID_ADDTAG_WB                    32828
 #define ID_ADDTAG_FLASHUSED             32829
 #define ID_ADDTAG_ORIGINALNAME          32830
-#define ID_32831                        32831
+#define ID_ADDTAG_FILEMD5               32831
 #define ID_32832                        32832
 #define ID_32833                        32833
 #define ID_32834                        32834
