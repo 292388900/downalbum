@@ -7,7 +7,7 @@
 name_en = 'weiboAlbum';
 name_cn = 'ÐÂÀËÎ¢²©Í¼Æ¬ÅúÁ¿ÏÂÔØÆ÷';
 prefix = 'TSNA';
-ver = '1.2';
+ver = '1.3';
 firstpagename = 'ÐÂÀËÎ¢²©';
 firstpageurl = 'http://weibo.com/'
 mainwidth = 940;
@@ -68,6 +68,7 @@ function GetZhuanjiAlbum(url)
 	local html = nil
 	local page_id = nil
 	local domain = nil
+	local nicky = nil
 	
 	html = star.gethtml(url)
 	if html==nil and html=='' then
@@ -77,11 +78,18 @@ function GetZhuanjiAlbum(url)
 	
 	_,_,uid = string.find(html,[['oid']='(.-)']])
 	_,_,page_id = string.find(html,[[page_id.-='(.-)']])
+	_,_,nicky = string.find(html,[[onick.-='(.-)']])
 	_,_,domain = string.find(html,[[page_id.-domain.-='(.-)']])
 	if uid==nil or page_id==nil or domain==nil then
 		return
 	end
-	SetDirectryName(uid)
+	
+	if nicky~=nil then
+		nicky = star.RemoveFileNameInvalidChar(nicky)
+		SetDirectryName(nicky)
+	else
+		SetDirectryName(uid)
+	end
 	
 	url = string.format('http://photo.weibo.com/albums/get_all?uid=%s&page=1&count=20',uid)
 	html = star.gethtml(url)
@@ -92,7 +100,7 @@ function GetZhuanjiAlbum(url)
 	for id,name,src,num in string.gfind(html,[[album_id":"(%d+).-caption":"(.-)".-_pic":"(.-)".-photos":(%d+)]]) do
 		src = string.gsub(src,[[\]],'')
 		if src=='' then
-			--src = 'http://img.t.sinajs.cn/t4/appstyle/photo/images/common/status_0.png'
+			src = 'http://img.t.sinajs.cn/t4/appstyle/photo/images/common/status_0.png'
 		end
 		albumcount = albumcount + 1
 		albums[albumcount] = {}
