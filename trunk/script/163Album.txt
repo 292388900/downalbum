@@ -7,7 +7,7 @@
 name_en = '163Album';
 name_cn = '163网易相册批量下载器';
 prefix = 'NETE';
-ver = '1.4';
+ver = '1.5';
 firstpagename = '我的网易博客';
 firstpageurl = 'http://blog.163.com';
 mainwidth = 940;
@@ -200,17 +200,22 @@ function GetAlbumByOtherSort(html)
 					preview = s
 				end
 			end
+			
+			
+			albumcount = albumcount + 1
+			albums[albumcount].id = id;
+			albums[albumcount].name = trim(name);
+			albums[albumcount].prviate = private; 
+			albums[albumcount].total = count;
+			albums[albumcount].url = href;
+			albums[albumcount].preview = preview;
+			albums[albumcount].createtime = createtime;
+			albums[albumcount].updatetime = updatetime;
+		
+		else
+			--有密码或者设置隐私，这里不再考虑
 		end
 		
-		albumcount = albumcount + 1
-		albums[albumcount].id = id;
-		albums[albumcount].name = trim(name);
-		albums[albumcount].prviate = private; 
-		albums[albumcount].total = count;
-		albums[albumcount].url = href;
-		albums[albumcount].preview = preview;
-		albums[albumcount].createtime = createtime;
-		albums[albumcount].updatetime = updatetime;
 	end
 	
 	if _albumSort~=8 then
@@ -252,17 +257,20 @@ function GetAlbumByCustomSort(albumids,html)
 					preview = s
 				end
 			end
+			
+			
+			albumcount = albumcount + 1
+			albums[albumcount].id = albumids[i];
+			albums[albumcount].name = trim(name);
+			albums[albumcount].prviate = private; 
+			albums[albumcount].total = count;
+			albums[albumcount].url = href;
+			albums[albumcount].preview = preview;
+			albums[albumcount].createtime = createtime;
+			albums[albumcount].updatetime = updatetime;
+		else
+			--有密码或者设置隐私，这里不再考虑
 		end
-		
-		albumcount = albumcount + 1
-		albums[albumcount].id = albumids[i];
-		albums[albumcount].name = trim(name);
-		albums[albumcount].prviate = private; 
-		albums[albumcount].total = count;
-		albums[albumcount].url = href;
-		albums[albumcount].preview = preview;
-		albums[albumcount].createtime = createtime;
-		albums[albumcount].updatetime = updatetime;
 		
 	end
 end
