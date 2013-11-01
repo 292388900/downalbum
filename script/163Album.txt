@@ -7,7 +7,7 @@
 name_en = '163Album';
 name_cn = '163网易相册批量下载器';
 prefix = 'NETE';
-ver = '1.5';
+ver = '1.6';
 firstpagename = '我的网易博客';
 firstpageurl = 'http://blog.163.com';
 mainwidth = 940;
@@ -398,13 +398,27 @@ function GetCloudAlbum(url)
 	
 end
 
-function trim(s)
-	local from = '';
-	if s==nil then
-		return '';
+function Get163PPAlbum(url)
+	local albumcount = 0
+	
+	_,_,account = string.find(url,[[([^:^/]-).pp.163.com]])
+	SetDirectryName(account)
+	
+	url = 'http://'..account..'.pp.163.com'
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return ''
 	end
-	from = s:match"^%s*()"
-	return from > #s and "" or s:match(".*%S", from)
+	
+	_,_,s = string.find(html,'p_homeset(.-)homeSlidePager')
+	for href,name,src,num in string.gfind(s,[[w%-cover.-href="(.-)".-title="(.-)".-(http.-)".-<em>.-%[(.-)张]]) do
+		albumcount = albumcount + 1
+		albums[albumcount].name = star.trim(name)
+		albums[albumcount].total = tonumber(num)
+		albums[albumcount].url = href
+		albums[albumcount].preview = src
+	end
+	
 end
 
 function GetAlbums(ntype,url)
@@ -414,11 +428,18 @@ function GetAlbums(ntype,url)
 		msgbox('请您勾选下载模式：下载网易云相册图片')
 		ntype = 1
 	end
-	ndowntype = ntype;
-	if ntype==0 then
+	ndowntype = ntype
+
+	if string.find(url,'.pp.163.com')~=nil then
+		ndowntype = 2
+	end
+	
+	if ndowntype==0 then
 		Get163blogAlbum(url)
-	elseif ntype==1 then
+	elseif ndowntype==1 then
 		GetCloudAlbum(url)
+	elseif ndowntype==2 then
+		Get163PPAlbum(url)
 	end
 	
 	for i = 1,#albums do 
@@ -426,7 +447,7 @@ function GetAlbums(ntype,url)
 		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total,'','',albums[i].createtime,albums[i].updatetime,albums[i].prviate);
 	end
 	
-	if _albumtotals~=#albums then
+	if ndowntype==0 and _albumtotals~=#albums then
 		s = "本相册器只能查看下载公开的相册照片，对于加密的和私有的相册请先设置公开，下载完毕后再设置回去。给您带来不便敬请理解!";
 		msgprint(s);
 		msgtip(s);
@@ -516,6 +537,26 @@ function GetAlbumPhotos(album)
 	return photos;
 end
 
+function Get163ppPhotos(album)
+	local html = ''
+	local photocount = 0
+	local photos = PHOTOS.new()
+	
+	html = star.gethtml(album.url)
+	if html==nil or html=='' then
+		return photos
+	end	
+	
+	for name,src in string.gfind(html,[[pic%-area.-alt="(.-)".-lazyload%-src="(.-)"]]) do
+		photocount = photocount + 1
+		photos[photocount].preview = src
+		photos[photocount].orign = src
+		photos[photocount].name = name
+	end
+	
+	return photos
+end
+
 function GetPhotos(index)
 	local photos = PHOTOS.new()
 	
@@ -526,6 +567,8 @@ function GetPhotos(index)
 		photos = GetAlbumPhotos(albums[index])
 	elseif ndowntype==1 then
 		photos = GetAlbumPhotos(albums[index])
+	elseif ndowntype==2 then
+		photos = Get163ppPhotos(albums[index])
 	end
 	
 	for i = 1,table.getn(photos) do
