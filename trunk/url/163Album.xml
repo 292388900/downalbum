@@ -2,7 +2,7 @@
     <soft>
         <name>163Album</name>
         <version>3.1</version>
-	<scriptver>1.6</scriptver>
+	<scriptver>1.7</scriptver>
         <downurl>http://l13.yunpan.cn/lk/QkJ8RygBhjJyh</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8RPRDZZKw2</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_38627.htm</regurl>
@@ -23,7 +23,7 @@ s=2,p=58822,
 -->
     </soft>
 	<scripts path=".\">
-		<script name="163Album" ver="1.6" file="163Album.txt">
+		<script name="163Album" ver="1.7" file="163Album.txt">
 			<url>http://www.xcxzq.com/script/163Album.txt</url>
 			<url2>http://downalbum.googlecode.com/svn/trunk/script/163Album.txt</url2>
 		</script>
