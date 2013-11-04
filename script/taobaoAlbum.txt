@@ -195,11 +195,13 @@ function getitemalbum(url)
 		
 		for src in string.gfind(html, [[src.-(http[^%s]-.gif)]]) do
 			src = string.gsub(src,[[\/]],'/')
-			photocount = photocount + 1
-			album.photos[photocount] = {}
-			album.photos[photocount].preview = src
-			album.photos[photocount].orign = src
-			album.photos[photocount].name = geturlimagename(src)
+			if string.find(src,'/s.gif')==nil and string.find(src,'/spaceball.gif')==nil then 
+				photocount = photocount + 1
+				album.photos[photocount] = {}
+				album.photos[photocount].preview = src
+				album.photos[photocount].orign = src
+				album.photos[photocount].name = geturlimagename(src)
+			end
 		end
 	end
 	
