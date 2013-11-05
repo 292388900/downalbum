@@ -840,3 +840,24 @@ int writeunicodestring(lua_State* L)
 	lua_pushboolean(L,bRet);
 	return 1;
 }
+
+int renamefile(lua_State* L)
+{
+	BOOL bRet = FALSE;
+	CString strExistingFileName;
+	CString strNewFileName;
+
+	int n = lua_gettop(L);
+	if ( n>=2 ) {
+		if ( lua_isstring(L,1) ) {
+			strExistingFileName = lua_tostring(L,1);
+		}
+		if ( lua_isstring(L,2) ) {
+			strNewFileName = lua_tostring(L,2);
+		}
+		bRet = ::MoveFileEx(strExistingFileName,strNewFileName,MOVEFILE_REPLACE_EXISTING);
+	}
+
+	lua_pushboolean(L,bRet);
+	return 1;
+}

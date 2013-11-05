@@ -43,3 +43,4 @@ int reversefind(lua_State* L);
 int getimagesize(lua_State* L);
 int getfilesize(lua_State* L);
 int writeunicodestring(lua_State* L);
+int renamefile(lua_State* L);
