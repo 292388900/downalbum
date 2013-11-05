@@ -123,18 +123,20 @@ function getitemalbum(url)
 		g_itemimages[n].name = name
 	end
 	
-    --ÏêÇé
-	for src in string.gfind(s, [[src=\"(http[^"]-.jpg)\"]]) do
-		n = n + 1
-		photocount = photocount + 1
-		album.photos[photocount] = {}
-		g_replace[n] = {}
-		g_replace[n].html = src
-		src = string.gsub(src,'\\','')
-		album.photos[photocount].preview = src
-		album.photos[photocount].orign = src
-		album.photos[photocount].name = geturlimagename(src)
-		
+	if false then
+		--ÏêÇé
+		for src in string.gfind(s, [[src=\"(http[^"]-.jpg)\"]]) do
+			n = n + 1
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			g_replace[n] = {}
+			g_replace[n].html = src
+			src = string.gsub(src,'\\','')
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+			
+		end
 	end
     
 	albumcount = albumcount + 1;
@@ -296,6 +298,9 @@ function FormatDesc(desc)
 	local s = desc
 	local i = table.getn(g_itemimages) + 1
 	
+	--s= string.gsub(s,'\\\"','\"')
+	--s= string.gsub(s,'\\/','/')
+	
 	while true do
 		p1,p2,src = string.find(s,[[src=\"(http[^"]-.jpg)"]])
 		if p1~=nil and g_replace[i]~=nil then
@@ -307,15 +312,13 @@ function FormatDesc(desc)
 		i = i + 1
 	end
 	
-	s= string.gsub(s,'\\\"','\"\"')
-	s= string.gsub(s,'\/','/')
-
 	return s
 end
 
 
 function OnGetItemData(index,s)
-	g_data = s
+	s = string.gsub(s,'\\\"','\"')
+	g_data = string.gsub(s,'\\/','/')
 end
 
 function FormatCSV(index)
@@ -476,14 +479,20 @@ function FormatCSV(index)
 end
 
 
-function OnDownOnePhotoEnd(albumindex,photoindex,src,filepath,name)
+function OnDownOnePhotoEnd(albumindex,photoindex,src,parentpath,filepath)
+	local name = nil
+	local newfile = nil
+	
 	if g_replace[photoindex]~=nil then
 		g_replace[photoindex].file = filepath
 	end
 	
 	if photoindex<=table.getn(g_itemimages) then
-		g_itemimages[photoindex].file = filepath
+		name = star.md5file(filepath)
 		g_itemimages[photoindex].name = name
+		newfile = parentpath..name..'.tbi'
+		star.renamefile(filepath,newfile)
+		g_itemimages[photoindex].file = newfile
 	end
 end
 
