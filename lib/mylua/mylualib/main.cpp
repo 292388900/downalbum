@@ -69,6 +69,7 @@ static const struct luaL_reg starlib [] = {
 	{"getimagesize", getimagesize},
 	{"getfilesize", getfilesize},
 	{"writeunicodestring", writeunicodestring},
+	{"renamefile", renamefile},
 	{NULL, NULL} /* sentinel */ 
 }; 
 
