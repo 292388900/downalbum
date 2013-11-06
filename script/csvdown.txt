@@ -23,6 +23,7 @@ albums = {photos={}}
 g_data=''
 g_replace={}
 g_itemimages={photos={}}
+g_itempreviewimagedownloaded = false
 
 --c函数初始化
 msgprint = msgprint or print
@@ -141,6 +142,7 @@ function getitemalbum(url)
     
 	albumcount = albumcount + 1;
 	albums[albumcount] = album;
+	g_itempreviewimagedownloaded = false
      --showalbum(album);
 	return album;
 end
@@ -312,6 +314,10 @@ function FormatDesc(desc)
 		i = i + 1
 	end
 	
+	if isreged()~=true then
+		s = '您当前使用的是试用版,部分功能被限制,请购买正式版:url<br/>'..s
+	end
+	
 	return s
 end
 
@@ -478,7 +484,6 @@ function FormatCSV(index)
     return data    
 end
 
-
 function OnDownOnePhotoEnd(albumindex,photoindex,src,parentpath,filepath)
 	local name = nil
 	local newfile = nil
@@ -488,11 +493,18 @@ function OnDownOnePhotoEnd(albumindex,photoindex,src,parentpath,filepath)
 	end
 	
 	if photoindex<=table.getn(g_itemimages) then
-		name = star.md5file(filepath)
-		g_itemimages[photoindex].name = name
-		newfile = parentpath..name..'.tbi'
-		star.renamefile(filepath,newfile)
-		g_itemimages[photoindex].file = newfile
+		
+		if g_itempreviewimagedownloaded==false then
+			name = star.md5file(filepath)
+			g_itemimages[photoindex].name = name
+			newfile = parentpath..name..'.tbi'
+			star.renamefile(filepath,newfile)
+			g_itemimages[photoindex].file = newfile
+		end
+		
+		if isreged()==false then
+			g_itempreviewimagedownloaded = true
+		end
 	end
 end
 
