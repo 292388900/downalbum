@@ -21,6 +21,8 @@ ndowntype = 0;
 albumcount = 0;
 albums = {photos={}}
 g_data=''
+g_desc=''
+budaotu=true
 g_replace={}
 g_itemimages={photos={}}
 g_itempreviewimagedownloaded = false
@@ -84,6 +86,8 @@ function getitemalbum(url)
 	local fetchDcUrl=nil
 	local photocount = 0;
 	local album = {photos={}}
+	local p1=0
+	local p2=0
 	
 	album.url = url;
 	
@@ -105,11 +109,10 @@ function getitemalbum(url)
 	end
 		
 	
-	s = g_data
     --预览图
 	n = 0
-	_,_,s1 = string.find(s,'item_imgs(.-)}]},')
-	for src in string.gfind(s1,[[(http.-)"]]) do 
+	_,_,s = string.find(g_data,'item_imgs(.-)}]},')
+	for src in string.gfind(s,[[(http.-)"]]) do 
 		n = n + 1
 		photocount = photocount + 1
 		name = geturlimagename(src)
@@ -124,8 +127,32 @@ function getitemalbum(url)
 		g_itemimages[n].name = name
 	end
 	
+	--详情
+	if budaotu==true then
+		n = 0
+		p1=1
+		p2=1
+		while true do
+			p1,p2,src = string.find(g_desc,[[src="(.-)"]],p2)
+			if p1==nil then
+				break
+			end
+			
+			n = n + 1
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			g_replace[n] = {}
+			g_replace[n].html = src
+			g_replace[n].p1=p1+5	--src="
+			g_replace[n].p2=p2-1	--"
+			--src = string.gsub(src,'\\','')
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+	end
+	
 	if false then
-		--详情
 		for src in string.gfind(s, [[src=\"(http[^"]-.jpg)\"]]) do
 			n = n + 1
 			photocount = photocount + 1
@@ -136,9 +163,9 @@ function getitemalbum(url)
 			album.photos[photocount].preview = src
 			album.photos[photocount].orign = src
 			album.photos[photocount].name = geturlimagename(src)
-			
 		end
 	end
+
     
 	albumcount = albumcount + 1;
 	albums[albumcount] = album;
@@ -296,23 +323,26 @@ function FormatPictures(photos)
 	return res
 end
 
-function FormatDesc(desc)
-	local s = desc
+function FormatDesc()
+	local s = ''
+	local p1=0
 	local i = table.getn(g_itemimages) + 1
 	
-	--s= string.gsub(s,'\\\"','\"')
-	--s= string.gsub(s,'\\/','/')
-	
-	while true do
-		p1,p2,src = string.find(s,[[src=\"(http[^"]-.jpg)"]])
-		if p1~=nil and g_replace[i]~=nil then
-			s = string.sub(s,1,p1-1)..'src=""file:///'..g_replace[i].file..'\"'..string.sub(s,p2+1)
-		else
-			break
+	if budaotu==true then
+		if g_desc==nil then
+			_,_,g_desc = string.find(g_data,[["desc":(".-"),"]])
 		end
 		
-		i = i + 1
+		for i=1,#g_replace do
+			s = s .. string.sub(g_desc,p1+1,g_replace[i].p1-1) .. "file:///" .. g_replace[i].file
+			p1=g_replace[i].p2
+		end
+		s = s .. string.sub(g_desc,p1+1)
+	else
+		s = g_desc
 	end
+	
+	--msgbox('FormatDesc'..s)
 	
 	if isreged()~=true then
 		s = '您当前使用的是试用版,部分功能被限制,请购买正式版:url<br/>'..s
@@ -325,6 +355,7 @@ end
 function OnGetItemData(index,s)
 	s = string.gsub(s,'\\\"','\"')
 	g_data = string.gsub(s,'\\/','/')
+	_,_,g_desc = string.find(g_data,[["desc":(".-"),"]])
 end
 
 function FormatCSV(index)
@@ -416,9 +447,7 @@ function FormatCSV(index)
     _,_,list_time = string.find(s,[["list_time":(".-")]])
     print(list_time)
     
-    _,_,desc = string.find(s,[["desc":(".-"),"]])
-    --star.msgbox(desc)
-	desc = FormatDesc(desc)    
+	desc = FormatDesc()    
     _,_,cateProps = string.find(s,[["props":(".-")]])
     print(cateProps)
     
@@ -480,19 +509,17 @@ function FormatCSV(index)
     foodparame = ''
     
     
-    data = title..'\t'..cid..'\t'..seller_cids..'\t'..stuff_status..'\t'..location_state..'\t'..location_city..'\t'..item_type..'\t'..price..'\t'..auction_increment..'\t'..num..'\t'..valid_thru..'\t'..freight_payer..'\t'..post_fee..'\t'..ems_fee..'\t'..express_fee..'\t'..has_invoice..'\t'..has_warranty..'\t'..approve_status..'\t'..has_showcase..'\t'..list_time..'\t'..desc..'\t'..cateProps..'\t'..postage_id..'\t'..has_discount..'\t'..modified..'\t'..upload_fail_msg..'\t'..picture_status..'\t'..auction_point..'\t'..picture..'\t'..video..'\t'..skuProps..'\t'..inputPids..'\t'..inputValues..'\t'..outer_id..'\t'..propAlias..'\t'..auto_fill..'\t'..num_id..'\t'..local_cid..'\t'..navigation_type..'\t'..user_name..'\t'..syncStatus..'\t'..is_lighting_consigment..'\t'..is_xinpin..'\t'..foodparame..'\n'
-    return data    
+    data = title..'\t'..cid..'\t'..seller_cids..'\t'..stuff_status..'\t'..location_state..'\t'..location_city..'\t'..item_type..'\t'..price..'\t'..auction_increment..'\t'..num..'\t'..valid_thru..'\t'..freight_payer..'\t'..post_fee..'\t'..ems_fee..'\t'..express_fee..'\t'..has_invoice..'\t'..has_warranty..'\t'..approve_status..'\t'..has_showcase..'\t'..list_time..'\t'..desc..'\t'..cateProps..'\t'..postage_id..'\t'..has_discount..'\t'..modified..'\t'..upload_fail_msg..'\t'..picture_status..'\t'..auction_point..'\t'..picture..'\t'..video..'\t'..skuProps..'\t'..inputPids..'\t'..inputValues..'\t'..outer_id..'\t'..propAlias..'\t'..auto_fill..'\t'..num_id..'\t'..local_cid..'\t'..navigation_type..'\t'..user_name..'\t'..syncStatus..'\t'..is_lighting_consigment..'\t'..is_xinpin..'\t'..foodparame..'\t'
+	data = data..''..'\t'..'0'..'\t'..'-1'..'\t'..''..'\t'..'1'..'\t'..''..'\t'..''..'\t'..'1'..'\t'..''..'\n'
+	return data    
 end
 
 function OnDownOnePhotoEnd(albumindex,photoindex,src,parentpath,filepath)
 	local name = nil
 	local newfile = nil
+	local nPreviewCnt = table.getn(g_itemimages)
 	
-	if g_replace[photoindex]~=nil then
-		g_replace[photoindex].file = filepath
-	end
-	
-	if photoindex<=table.getn(g_itemimages) then
+	if photoindex<=nPreviewCnt then
 		
 		if g_itempreviewimagedownloaded==false then
 			name = star.md5file(filepath)
@@ -505,6 +532,9 @@ function OnDownOnePhotoEnd(albumindex,photoindex,src,parentpath,filepath)
 		if isreged()==false then
 			g_itempreviewimagedownloaded = true
 		end
+		
+	elseif g_replace[photoindex-nPreviewCnt]~=nil then
+		g_replace[photoindex-nPreviewCnt].file = filepath	
 	end
 end
 
