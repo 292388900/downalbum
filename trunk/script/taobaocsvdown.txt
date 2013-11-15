@@ -3,9 +3,9 @@
 
 
 --config
-name_en = 'csvdown';
-name_cn = 'CSV数据包下载工具';
-prefix = 'CSVD';
+name_en = 'taobaocsvdown';
+name_cn = '淘宝店铺宝贝复制数据包下载工具';
+prefix = 'TCSV';
 ver = '2.3';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
