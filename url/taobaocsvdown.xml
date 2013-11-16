@@ -21,7 +21,7 @@ http://www.sharebank.net.cn/soft/SoftBuy_45667.htm
 
     </soft>
 	<scripts path=".\">
-		<script name="csvdown" ver="2.3" file="taobaocsvdown.txt">
+		<script name="taobaocsvdown" ver="2.3" file="taobaocsvdown.txt">
 			<url>http://www.xcxzq.com/script/taobaocsvdown.txt</url>
 			<url2>http://downalbum.googlecode.com/svn/trunk/script/taobaocsvdown.txt</url2>
 		</script>
