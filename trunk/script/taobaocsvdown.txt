@@ -6,7 +6,7 @@
 name_en = 'taobaocsvdown';
 name_cn = '淘宝店铺宝贝复制数据包下载工具';
 prefix = 'TCSV';
-ver = '2.3';
+ver = '2.4';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -301,10 +301,11 @@ end
 function GetskuProps(s)
     local r = ''
     _,_,s = string.find(s,[["skus":{(.-)},"]])
-    print(s)
-    for price,properties,quantity in string.gfind(s, [["price":"(.-)".-"properties":"(.-)".-"quantity":(%d+)]]) do
-        r = r .. price..':'..quantity..'::'..properties..';'
-    end
+	if s~=nil then
+		for price,properties,quantity in string.gfind(s, [["price":"(.-)".-"properties":"(.-)".-"quantity":(%d+)]]) do
+			r = r .. price..':'..quantity..'::'..properties..';'
+		end
+	end
     
     r = '"'..r..'"'
     return r
