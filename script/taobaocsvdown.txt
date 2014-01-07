@@ -6,7 +6,7 @@
 name_en = 'taobaocsvdown';
 name_cn = '淘宝店铺宝贝复制数据包下载工具';
 prefix = 'TCSV';
-ver = '2.4';
+ver = '2.6';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -80,6 +80,15 @@ function geturlimagename(url)
 	return name
 end
 
+function validName(name)
+	if name~=nil then
+		name = string.gsub(name,'\\','＼')
+		name = string.gsub(name,'/','／')
+	end
+	
+	return name
+end
+
 function getitemalbum(url)
 	local html = nil
 	local dscUrl=nil
@@ -100,6 +109,7 @@ function getitemalbum(url)
 		 album.id = value1;
 		 album.name = value2;
 	end
+	album.name = validName(album.name)
 
 	if g_data==nil or g_data=='' then
 		album.total = -1
@@ -210,6 +220,7 @@ function getcatalbum(url)
                albums[albumcount].preview = s2;
                albums[albumcount].url = s3;
                albums[albumcount].name = s4;
+			   albums[albumcount].name = validName(albums[albumcount].name)
                print(s1,s2,s3,s4)
           end
          
@@ -329,7 +340,7 @@ function FormatDesc()
 	local p1=0
 	local i = table.getn(g_itemimages) + 1
 	
-	if budaotu==true then
+	if budaotu==true and isreged()==true then
 		if g_desc==nil then
 			_,_,g_desc = string.find(g_data,[["desc":(".-"),"]])
 		end
@@ -346,7 +357,7 @@ function FormatDesc()
 	--msgbox('FormatDesc'..s)
 	
 	if isreged()~=true then
-		s = '您当前使用的是试用版,部分功能被限制,请购买正式版:url<br/>'..s
+		s = [[<a href="http://www.sharebank.net.cn/soft/SoftBuy_38435.htm" target="_blank">您当前使用的是试用版,部分功能被限制,请购买正式版</a><br/>]]..s
 	end
 	
 	return s
@@ -519,7 +530,7 @@ function OnDownOnePhotoEnd(albumindex,photoindex,src,parentpath,filepath)
 	local name = nil
 	local newfile = nil
 	local nPreviewCnt = table.getn(g_itemimages)
-	
+
 	if photoindex<=nPreviewCnt then
 		
 		if g_itempreviewimagedownloaded==false then
