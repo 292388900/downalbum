@@ -199,7 +199,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\luabind;..\..\lua"
+				AdditionalIncludeDirectories="..\..\luabind;..\..\lua;F:\open\lib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MYLUALIB_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
