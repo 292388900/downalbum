@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin\tinyxml.lib"
+				OutputFile="..\2005bin\tinyxml.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -143,7 +143,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\bin\tinyxmld.lib"
+				OutputFile="..\2005bin\tinyxmld.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
