@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "XlsOperator.h"
+#include <WTypes.h>
 
 //#pragma comment(lib,"libxl.lib")
 
