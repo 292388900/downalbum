@@ -6,7 +6,7 @@
 name_en = 'taobaocsvdown';
 name_cn = '淘宝店铺宝贝复制数据包下载工具';
 prefix = 'TCSV';
-ver = '2.6';
+ver = '2.7';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -346,6 +346,9 @@ function FormatDesc()
 		end
 		
 		for i=1,#g_replace do
+			if g_replace[i].file==nil then
+				g_replace[i].file=''
+			end
 			s = s .. string.sub(g_desc,p1+1,g_replace[i].p1-1) .. "file:///" .. g_replace[i].file
 			p1=g_replace[i].p2
 		end
@@ -368,6 +371,7 @@ function OnGetItemData(index,s)
 	s = string.gsub(s,'\\\"','\"')
 	g_data = string.gsub(s,'\\/','/')
 	_,_,g_desc = string.find(g_data,[["desc":(".-"),"]])
+	--msgbox(g_desc)
 end
 
 function FormatCSV(index)
