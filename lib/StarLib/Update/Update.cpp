@@ -248,6 +248,14 @@ BOOL CheckUpdateInfoIni(const CString&strUrl,UPDATEINFO&stUpdateInfo)
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
+	nPos1=strHtml.Find(_T("<mailme>"));
+	if ( nPos1!=-1 ){
+		nPos2=strHtml.Find(_T("</"),nPos1+8);
+		if ( nPos2!=-1 ){
+			stUpdateInfo.strMailMeUrl=strHtml.Mid(nPos1+8,nPos2-nPos1-8);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	nPos1 = strHtml.Find(_T("<scripts"));
 	if ( nPos1!=-1 ) {
 		nPos2 = strHtml.Find(_T("</scripts"),nPos1);

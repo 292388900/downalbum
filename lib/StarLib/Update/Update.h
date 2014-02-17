@@ -26,6 +26,7 @@ typedef struct UPDATEINFO
 	CString strBBS;				//官方论坛
 	CString strNews;			//最新版本信息，可以提示修复的错误，广告，新特征等
 	CString strAdsUrl;			//广告配置信息的文件地址
+	CString strMailMeUrl;		//邮我
 	CString strUrgent;			//应急措施
 	CString strScriptPath;		//脚本存放相对路径
 	CString strScriptRoot;		//服务器脚本存放目录
