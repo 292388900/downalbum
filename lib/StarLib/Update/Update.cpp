@@ -111,15 +111,24 @@ void GetScriptInfo(CString&strHtml,UPDATEINFO&stUpdateInfo)
 	int nPos2 = 0;
 	SCRIPTINFO stScript;
 
-	nPos1 = strHtml.Find(_T("path=\""));
+	nPos1 = strHtml.Find("path=\"");
 	if ( nPos1!=-1 ) {
 		nPos2 = strHtml.Find('\"',nPos1+6);
 		stUpdateInfo.strScriptPath = strHtml.Mid(nPos1+6,nPos2-nPos1-6).Trim();
-		if ( stUpdateInfo.strScriptPath.GetLength()>1 && stUpdateInfo.strScriptPath.Right(1)!=_T("\\") ) {
-			stUpdateInfo.strScriptPath += _T("\\");
-		}
+		Star::Common::PathWithSlash(stUpdateInfo.strScriptPath);
 	}else{
 		stUpdateInfo.strScriptPath = _T(".\\");
+	}
+
+	nPos1 = strHtml.Find("root=\"", nPos2);
+	if ( nPos1!=-1 ) {
+		nPos2 = strHtml.Find('\"', nPos1+6);
+		stUpdateInfo.strScriptRoot = strHtml.Mid(nPos1+6, nPos2-nPos1-6).Trim();
+	}
+	nPos1 = strHtml.Find("root2=\"", nPos2);
+	if ( nPos1!=-1 ) {
+		nPos2 = strHtml.Find('\"', nPos1+7);
+		stUpdateInfo.strScriptRoot2 = strHtml.Mid(nPos1+7, nPos2-nPos1-7).Trim();
 	}
 
 	nPos2 = 0;
@@ -135,22 +144,14 @@ void GetScriptInfo(CString&strHtml,UPDATEINFO&stUpdateInfo)
 		}
 		nPos2 = strHtml.Find('\"',nPos1+6);
 		stScript.strScriptName = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		stScript.strLocalFileName = stScript.strScriptName + ".txt";
 
 		nPos1 = strHtml.Find(_T("ver=\""),nPos1);
 		nPos2 = strHtml.Find('\"',nPos1+5);
 		stScript.strScriptVer = strHtml.Mid(nPos1+5,nPos2-nPos1-5);
 
-		nPos1 = strHtml.Find(_T("file=\""),nPos1);
-		nPos2 = strHtml.Find('\"',nPos1+6);
-		stScript.strLocalFileName = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
-
-		nPos1 = strHtml.Find(_T("<url>"),nPos1);
-		nPos2 = strHtml.Find("</",nPos1+5);
-		stScript.strScriptUrl = strHtml.Mid(nPos1+5,nPos2-nPos1-5);
-
-		nPos1 = strHtml.Find(_T("<url2>"),nPos1);
-		nPos2 = strHtml.Find("</",nPos1+6);
-		stScript.strScriptUrl2 = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		stScript.strScriptUrl = stUpdateInfo.strScriptRoot + stScript.strLocalFileName;
+		stScript.strScriptUrl2 = stUpdateInfo.strScriptRoot2 + stScript.strLocalFileName;
 
 		stUpdateInfo.vtScripts.push_back(stScript);
 	}
