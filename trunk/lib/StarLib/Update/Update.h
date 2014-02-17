@@ -29,6 +29,8 @@ typedef struct UPDATEINFO
 	CString strUrgent;			//应急措施
 	CString strAllsoft;			//所有软件
 	CString strScriptPath;		//脚本存放相对路径
+	CString strScriptRoot;		//服务器脚本存放目录
+	CString strScriptRoot2;		//服务器脚本存放目录2
 	vector<SCRIPTINFO>vtScripts;//脚本列表
 }*PUPDATEINFO;
 
