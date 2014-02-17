@@ -10,10 +10,8 @@
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_40022.htm</regurl>
         <help>http://www.xcxzq.com/help/alibabaalbum.html</help>
         <bbs>http://www.xcxzq.com</bbs>
-        <pswd></pswd>
       	<news>v3.0版本修全新内核，强烈建议更新软件</news>
-	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
-	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 <!--
 <votes>

@@ -10,10 +10,8 @@
 	<scripturl2>http://www.xcxzq.com/script/163Album.txt</scripturl2>
         <help>http://www.xcxzq.com/help/163album.html</help>
         <bbs>http://www.xcxzq.com</bbs>
-        <pswd></pswd>
       	<news>v3.0全新内核升级，建议更新升级到最新!</news>
-	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
-	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 <!--
 <votes>

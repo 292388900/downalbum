@@ -7,10 +7,8 @@
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_43880.htm</regurl>
 	<help>http://www.xcxzq.com/help/tqqAlbumDown.html</help>
         <bbs>http://www.xcxzq.com</bbs>
-        <pswd></pswd>
         <news>v2.1修复了获取相册无数多个的bug，强烈建议用户升级到最新版本。</news>
-	<urgent></urgent><allsoft>http://www.xcxzq.com/</allsoft>
-	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 
 <!--
