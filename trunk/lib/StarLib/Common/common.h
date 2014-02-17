@@ -129,5 +129,18 @@ namespace Star
 		void PopExplorerMenu(HWND hWnd, const CString&strFilePath, const CPoint&pt);
 
 		CString FormatLastError(DWORD dwError = -1);
+
+		void PathWithSlash(CString&strPath);
+		CString GetFileExt(const CString&strFilePath);
+		void CreateDirRecursively(const CString&strRoot,const CString&strSubDir);
+		void DeleteDirectory(LPCTSTR lpszDirPath);
+		void Run(LPCTSTR lpszCmdLine, DWORD dwMilliseconds = INFINITE);
+
+		//在指定目录lpszDirPath中查找后缀为lpszFilter的文件，如果lpszFilter指定了扩展名则查找不支持递归子目录，如果没有指定扩展名则查找*.*
+		void FindFileRecursively(OUT vector<CString>&vtFiles, IN LPCTSTR lpszDirPath, IN LPCTSTR lpszFilter = NULL);
+		
+		LONGLONG GetFileSize(LPCTSTR lpszFileName);
+		DWORD GetFileSize(HANDLE hFile,LPDWORD lpFileSizeHigh);
+
 	}
 }
