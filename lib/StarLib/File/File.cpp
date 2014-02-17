@@ -685,7 +685,7 @@ void Star::File::ChangeIcon(LPCTSTR szFileName,LPCTSTR szIconFile, LPCTSTR szRes
 	//change all frames'resource
 	for(i=0;i<FileGrp->idHeader.idCount;i++)
 	{
-		p=(void *)((DWORD)filemem+FileGrp->idEntries[i].lImageOffset);
+		p=(void *)((PBYTE)filemem+FileGrp->idEntries[i].lImageOffset);
 		//change every frame
 		UpdateResource(hUpdateRes,RT_ICON,MAKEINTRESOURCE(FileGrp->idEntries[i].lImageOffset),
 			MakeLangID(), p,    FileGrp->idEntries[i].lBYTEsInRes);  
