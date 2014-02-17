@@ -24,14 +24,8 @@ s=2,p=57829,
 -->
 	</soft>
 
-	<scripts path=".\script\">
-		<script name="rakuten" ver="1.1" file="rakuten.txt">
-			<url>http://www.xcxzq.com/script/rakuten.txt</url>
-			<url2>http://downalbum.googlecode.com/svn/trunk/script/rakuten.txt</url2>
-		</script>
-		<script name="webimagedown" ver="1.0" file="webimagedown.txt">
-			<url>http://www.xcxzq.com/script/webimagedown.txt</url>
-			<url2>http://downalbum.googlecode.com/svn/trunk/script/webimagedown.txt</url2>
-		</script>
+	<scripts path=".\script\" root="http://www.xcxzq.com/script/" root2="http://downalbum.googlecode.com/svn/trunk/script/">
+		<script name="1Ã¨ÆËmop" ver="1.1"/>
+		<script name="¹þ¹þ¹þ" ver="1.2"/>
 	</scripts>
 </data>
