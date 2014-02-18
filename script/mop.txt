@@ -1,0 +1,278 @@
+   
+   
+--require "star"
+
+
+--config
+name_en = 'mop';
+name_cn = '猫扑图片下载';
+prefix = 'NETE';
+ver = '1.1';
+firstpagename = '猫扑';
+firstpageurl = 'http://www.mop.com/'
+example = 'http://dzh.mop.com/whbm/20140218/0/O3g8SSI2cdc57aF7.shtml'
+mainwidth = 940;
+mainheight = 700;
+imagewidth = 120;
+imageheight = 92;
+maxalbumsperpage = 20;
+maxphotosperpage = 24;
+
+
+downtypes = {
+'下载猫扑大杂烩图片',
+'下载猫扑贴贴图片'
+}
+
+
+--c函数初始化
+msgprint = msgprint or print
+SetDirectryName = SetDirectryName or print
+AddOneAlbum = AddOneAlbum or print
+AddOnePhoto = AddOnePhoto or print
+InputUrl = InputUrl or print
+StartGetAlbum = StartGetAlbum or print
+StartDownAlbum = StartDownAlbum or print
+SelectDownType = SelectDownType or print
+---------------------------------------------------------------------------
+--1.最小单位：图片
+--photo是一个表，可以使用的字段：id,name,preview,orign,url,等
+PHOTO = {mt={}}
+
+--创建一个图片,为其设置元表
+function PHOTO.new()
+     local photo = {}
+     setmetatable(photo,PHOTO.mt)
+     return photo
+end
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+--2.次小单位：图片数组
+PHOTOS = {mt={}}
+
+--当访问图片数组的某索引不存在图片时，创建之
+PHOTOS.mt.__index = function(t,index)
+          local photo = PHOTO.new()
+          t[index] = photo
+          return photo;
+end
+
+--创建一个图片数组,为其设置元表
+function PHOTOS.new()
+     local photos = {}
+     setmetatable(photos,PHOTOS.mt)
+     return photos
+end
+
+---------------------------------------------------------------------------
+--3.相册，一个相册是一个表，内部包含一个图片数组：PHOTOS
+--可使用字段：id,name,url,preview,photos
+ALBUM = {mt={}}
+
+--创建一个相册,为其设置元表
+function ALBUM.new()
+     local album = {}
+     album.photos = PHOTOS.new()
+     setmetatable(album,ALBUM.mt)
+     return album
+end
+
+---------------------------------------------------------------------------
+--4.相册数组：ALBUMS
+ALBUMS = {mt={}}
+
+--当访问相册数组的某索引不存在相册时，创建之
+ALBUMS.mt.__index = function(t,index)
+     local album = ALBUM.new()
+     album.photos = PHOTOS.new()
+     --print('访问')
+     t[index] = album
+     return album;
+end
+
+--创建一个相册数组,为其设置元表
+function ALBUMS.new()
+     local albums = {}
+     setmetatable(albums,ALBUMS.mt)
+     return albums
+end
+
+---------------------------------------------------------------------------
+--your codes
+---------------------------------------------------------------------------
+
+--var
+username = '';
+account = '';
+photo_account = ''
+user_id = ''
+ndowntype = 0;
+INT_MAX = 2147483647;
+_albumtotals = 0;
+_photototals = 0;
+_cacheFileUrl = '';
+_albumSort = 0;
+albums = ALBUMS.new() 
+---------------------------------------------------------------------------
+
+function geturlimagename(url)
+	local name=''
+	if star.reversefind~=nil then
+		p = star.reversefind(url,'/')
+		if p~=nil then
+		  name = string.sub(url,p+1)
+		  if name~='' and string.find(name,'%.')==nil then
+			   name = name..'.jpg'
+		  end
+		end
+	end
+
+	return name
+end
+
+
+function getdazahuialbum(url)
+	local albumcount = 0
+	local photocount = 0;
+	local album = {photos={}}
+	album.url = url
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return ''
+	end
+	html = star.utf8s2ms(html)
+	
+	_,_,title = string.find(html,[[id="title">(.-)</span>]])
+	title = star.unescapexml(title)
+	album.name = title
+	
+	for content in string.gfind(html,[["type":"CONTENT"(.-)baidu_tc block_end]]) do
+		for src in string.gfind(content,[[src="(.-)"]]) do
+			if string.find(src,'mopimg.cn/')==nil then
+				photocount = photocount + 1
+				album.photos[photocount] = {}
+				album.photos[photocount].preview = src
+				album.photos[photocount].orign = src
+				album.photos[photocount].name = geturlimagename(src)
+			end
+		end
+	end
+	
+	albumcount = albumcount + 1
+	albums[albumcount] = album
+	albums[albumcount].total = photocount
+	if photocount>0 then
+		album.preview = album.photos[1].preview
+	end
+	return album
+end
+
+function gettietiealbum(url)
+	local albumcount = 0
+	local photocount = 0;
+	local album = {photos={}}
+	album.url = url
+	
+	html = star.gethtml(url)
+	if html==nil or html=='' then
+		return ''
+	end
+	--html = star.utf8s2ms(html)
+	
+	_,_,title = string.find(html,[[<h1 title="(.-)"]])
+	--title = star.unescapexml(title)
+	album.name = title
+	
+	_,_,s = string.find(html,[["js%-sub%-body"(.-)MopWidget]])
+	for src in string.gfind(s,[[src="(.-)"]]) do
+		if string.find(src,'mopimg.cn/')==nil then
+			photocount = photocount + 1
+			album.photos[photocount] = {}
+			album.photos[photocount].preview = src
+			album.photos[photocount].orign = src
+			album.photos[photocount].name = geturlimagename(src)
+		end
+	end
+	
+	albumcount = albumcount + 1
+	albums[albumcount] = album
+	albums[albumcount].total = photocount
+	if photocount>0 then
+		album.preview = album.photos[1].preview
+	end
+	return album
+end
+
+function GetAlbums(ntype,url)
+	albums = ALBUMS.new()
+	
+	ndowntype = ntype
+
+	if string.find(url,'mop.com')==nil then
+		msgbox('请输入猫扑mop网址')
+		return
+	end
+	SetDirectryName("猫扑mop")
+	
+	if string.find(url,'dzh.mop.com/')~=nil then
+		ndowntype = 0
+	elseif string.find(url,'tt.mop.com/')~=nil then
+		ndowntype = 1
+	end
+	
+	if ndowntype==0 then
+		getdazahuialbum(url)		
+	elseif ndowntype==1 then
+		gettietiealbum(url)
+	elseif ndowntype==2 then
+		
+	end
+	
+	for i = 1,#albums do 
+		albums[i].total = tonumber(albums[i].total)
+		AddOneAlbum(albums[i].id,albums[i].name,albums[i].url,albums[i].preview,albums[i].total,'','',albums[i].createtime,albums[i].updatetime,albums[i].prviate);
+	end
+	
+end
+
+function randfloatnum()
+	s = '0.'
+	math.randomseed(os.time())
+	for i = 1,16 do
+		s = s .. math.random(0,9);
+	end
+	
+	return s;
+end
+
+function GetPhotos(index)
+	if albums[index].name~=nil then
+		msgprint('正在获取图片信息： '..albums[index].name);
+	end
+	
+	if ndowntype==0 then
+		album = getdazahuialbum(albums[index].url)	
+	elseif ndowntype==1 then
+		album = gettietiealbum(albums[index].url)	
+	elseif ndowntype==2 then
+		
+	end
+	photos = album.photos
+	
+	for i = 1,table.getn(photos) do
+		ok = AddOnePhoto(photos[i].id,photos[i].name,photos[i].preview,photos[i].orign);
+		if ok==0 then
+			break
+		end
+	end
+end
+
+--[[function test()
+	local url = nil
+	GetAlbums(0,'')
+	GetPhotos(8)
+end
+
+test();--]]
