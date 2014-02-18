@@ -9,13 +9,18 @@ name_cn = 'QQ相册批量下载器';
 prefix = 'QABM';
 ver = '1.2';
 firstpagename = 'QQ空间';
-firstpageurl = 'http://user.qzone.qq.com';
+firstpageurl = 'http://user.qzone.qq.com'
+example = '1329324533'
 mainwidth = 940;
 mainheight = 700;
 imagewidth = 120;
 imageheight = 92;
 maxalbumsperpage = 20;
 maxphotosperpage = 24;
+
+downtypes = {
+'下载QQ空间相册'
+}
 
 --var
 account = '';
@@ -100,6 +105,10 @@ function GetQQAlbums(url)
 	url = string.format('http://%s/fcgi-bin/fcg_list_album_v2?inCharset=gbk&outCharset=gbk&hostUin=%s&notice=0&callbackFun=&format=jsonp&plat=qzone&source=qzone&appid=4&uin=%s&t=%s&g_tk=%s',strAlbumRoute,hostUin,uin,randfloatnum(),g_tk)
 	html = star.gethtml(url)
 	--msgbox(html)
+	if html==nil or html=='' then
+		url = string.format('http://%s/fcgi-bin/fcg_list_album_v2?inCharset=gbk&outCharset=gbk&hostUin=%s&notice=0&callbackFun=&format=jsonp&plat=qzone&source=qzone&appid=4&uin=%s&filter=1&handset=4&t=%s&g_tk=%s',strAlbumRoute,hostUin,uin,randfloatnum(),g_tk)
+		html = star.gethtml(url)
+	end
 	
 	--msgbox(url)
 	for createtime,id,updatetime,name,pre,private,total in string.gfind(html,[[createtime.-(%d+).-id".-"(.-)".-modifytime.-(%d+).-name".-"(.-)".-pre".-"(.-)".-priv".-(%d+).-total".-(%d+)]]) do
