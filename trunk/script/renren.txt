@@ -9,14 +9,17 @@ name_cn = '小林人人网相册批量下载器';
 prefix = 'RRAM';
 ver = '2.0';
 firstpagename = '人人网(必须登录)';
-firstpageurl = 'http://www.renren.com';
-mainwidth = 940;
-mainheight = 700;
-imagewidth = 120;
-imageheight = 92;
+firstpageurl = 'http://www.renren.com'
+example = 'http://www.renren.com/profile.do?id=325923976'
 maxalbumsperpage = 20;
 maxphotosperpage = 24;
 
+downtypes = {
+'下载自己、好友、非好友公开的相册',
+'下载单个相册、分享相册（不是分享照片）',
+'下载公共主页的相册',
+'下载人人站点图片',
+}
 
 --c函数初始化
 msgprint = msgprint or print
