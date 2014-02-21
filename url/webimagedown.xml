@@ -21,8 +21,8 @@ s=2,p=57829,
 	</soft>
 
 	<scripts path=".\script\" root="http://www.xcxzq.com/script/" root2="http://downalbum.googlecode.com/svn/trunk/script/">
-		<script name="QQ" ver="1.2"/>
-		<script name="renren" ver="2.0"/>
+		<script name="1_QQ" ver="1.2"/>
+		<script name="2_renren" ver="2.0"/>
 		<script name="mop" ver="1.1"/>
 	</scripts>
 </data>
