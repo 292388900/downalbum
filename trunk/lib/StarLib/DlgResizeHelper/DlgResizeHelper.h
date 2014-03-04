@@ -21,6 +21,7 @@
 class CDlgResizeHelper
 {
 public:
+	CDlgResizeHelper();
 
 	// fix horizontal dimension/position
 	enum EHFix {

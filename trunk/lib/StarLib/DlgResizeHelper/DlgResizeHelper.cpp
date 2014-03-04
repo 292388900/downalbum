@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "DlgResizeHelper.h"
 
+CDlgResizeHelper::CDlgResizeHelper()
+{
+	m_hParent = NULL;
+}
+
 void CDlgResizeHelper::Init(HWND a_hParent) {
 	m_hParent = a_hParent;
 	m_ctrls.clear();
