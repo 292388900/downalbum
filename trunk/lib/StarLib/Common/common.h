@@ -49,6 +49,7 @@ namespace Star
 		CString GetWindowsPath();
 		CString GetSystemPath();
 		CString GetDesktopPath();
+		CString GetMypicturesPath();
 
 		BOOL MsgSleep(IN DWORD dwMillseconds);
 		LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);
