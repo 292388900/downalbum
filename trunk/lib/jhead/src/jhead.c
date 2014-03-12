@@ -768,7 +768,7 @@ void FileTimeAsString(char * TimeStr)
 {
     struct tm ts;
     ts = *localtime(&ImageInfo.FileDateTime);
-    strftime(TimeStr, 20, "%Y:%m:%d %H:%M:%S", &ts);
+    strftime(TimeStr, 20, "%Y-%m-%d %H:%M:%S", &ts);
 }
 
 //--------------------------------------------------------------------------
