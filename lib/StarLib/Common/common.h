@@ -135,6 +135,7 @@ namespace Star
 		CString GetFileExt(const CString&strFilePath);
 		void CreateDirRecursively(const CString&strRoot,const CString&strSubDir);
 		void DeleteDirectory(LPCTSTR lpszDirPath);
+		BOOL DeleteFileToRecycle(LPCTSTR lpszFilePath);
 		void Run(LPCTSTR lpszCmdLine, DWORD dwMilliseconds = INFINITE);
 
 		//在指定目录lpszDirPath中查找后缀为lpszFilter的文件，如果lpszFilter指定了扩展名则查找不支持递归子目录，如果没有指定扩展名则查找*.*
