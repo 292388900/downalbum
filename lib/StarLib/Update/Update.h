@@ -7,7 +7,8 @@ using namespace std;
 
 //脚本信息
 typedef struct SCRIPTINFO {
-	CString strScriptName;		//脚本名称
+	CString strScriptName;		//脚本名称：英文
+	CString strScriptDesc;		//脚本描述：中文
 	CString strScriptVer;		//脚本版本	
 	CString strLocalFileName;	//脚本保存到本地的文件名
 	CString strScriptUrl;		//脚本下载地址
