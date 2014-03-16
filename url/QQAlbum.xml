@@ -1,13 +1,13 @@
 <data>
     <soft>
         <name>QQAlbum</name>
-        <version>2014</version>
+        <version>2014.3</version>
         <downurl>http://www.xcxzq.com/soft/webimagedown.rar</downurl>
         <downurl2>http://www.xcxzq.com/soft/webimagedown2.rar</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37093.htm</regurl>
 	<help>http://www.xcxzq.com/help/qqalbum.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
-        <news>v2014版本全新升级内核，建议下载最新版!</news>
+        <news>v2014.3版本支持输入密码下载QQ空间相册，建议升级到最新版!</news>
 <ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 <!--
@@ -20,10 +20,7 @@ s=2,p=61291,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="QQAlbum" ver="1.2" file="QQAlbum.txt">
-			<url>http://www.xcxzq.com/script/QQAlbum.txt</url>
-			<url2>http://downalbum.googlecode.com/svn/trunk/script/QQAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="http://downalbum.googlecode.com/svn/trunk/script/">
+		<script name="QQAlbum" desc="1、QQ相册批量下载" ver="1.3"/>
 	</scripts>
 </data>
