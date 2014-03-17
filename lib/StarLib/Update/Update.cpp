@@ -147,11 +147,13 @@ void GetScriptInfo(CString&strHtml,UPDATEINFO&stUpdateInfo)
 		stScript.strLocalFileName = stScript.strScriptName + ".txt";
 
 		nPos1 = strHtml.Find(_T("desc=\""),nPos1);
-		if ( nPos1==-1 ) {
-			break;
+		if ( nPos1!=-1 ) {
+			nPos2 = strHtml.Find('\"',nPos1+6);
+			stScript.strScriptDesc = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
+		}else{
+			nPos1 = nPos2;
+			stScript.strScriptDesc = stScript.strScriptName;
 		}
-		nPos2 = strHtml.Find('\"',nPos1+6);
-		stScript.strScriptDesc = strHtml.Mid(nPos1+6,nPos2-nPos1-6);
 
 		nPos1 = strHtml.Find(_T("ver=\""),nPos1);
 		nPos2 = strHtml.Find('\"',nPos1+5);
