@@ -1,5 +1,0 @@
-代码注入的三种方法:
-http://www.vckbase.com/document/viewdoc/?id=1886
-
-Three Ways to Inject Your Code into Another Process:
-http://www.codeproject.com/KB/threads/winspy.aspx
