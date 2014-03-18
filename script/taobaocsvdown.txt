@@ -6,7 +6,7 @@
 name_en = 'taobaocsvdown';
 name_cn = '淘宝店铺宝贝复制数据包下载工具';
 prefix = 'TCSV';
-ver = '2.7';
+ver = '2.8';
 firstpagename = '官方淘宝';
 firstpageurl = 'http://www.taobao.com';
 mainwidth = 940;
@@ -254,6 +254,13 @@ function GetAlbums(ntype,url)
 	ndowntype = ntype;
 	albumcount = 0;
 	albums = {};
+
+	if url~=nil and string.len(url)>5 then
+		if string.sub(url,1,4)~='http' then
+			url = 'http://'..url
+		end
+	end
+	
      if ntype==0 then
 		_,_,homeurl = string.find(url,'(.-.taobao.com)')
 		if homeurl==nil then
@@ -377,14 +384,14 @@ end
 function FormatCSV(index)
 	local s = g_data
 	local id = albums[index].id
-	
+
     _,_,title = string.find(s,[["title":(".-")]])
     print(title)
     
     _,_,cid = string.find(s,[["cid":(%d+)]])
     print(cid)
     
-    _,_,seller_cids = string.find(s,[["seller_cids":(".-")]])
+    _,_,seller_cids = string.find(s,[["seller_cids":(".-")]])  if seller_cids==nil then seller_cids='' end
     print(seller_cids)
     
     _,_,stuff_status = string.find(s,[["stuff_status":"(.-)"]])

@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>taobaocsvdown</name>
-        <version>12.12.25</version>
+        <version>2014</version>
         <downurl>http://www.xcxzq.com/soft/taobaocsvdown.rar</downurl>
         <downurl2>http://www.xcxzq.com/soft/taobaocsvdown2.rar</downurl2>
         <regurl>http://www.sharebank.net.cn/soft/SoftBuy_38435.htm</regurl>
@@ -18,10 +18,7 @@ http://www.sharebank.net.cn/soft/SoftBuy_45667.htm
 -->
 
     </soft>
-	<scripts path=".\">
-		<script name="taobaocsvdown" ver="2.7" file="taobaocsvdown.txt">
-			<url>http://www.xcxzq.com/script/taobaocsvdown.txt</url>
-			<url2>http://downalbum.googlecode.com/svn/trunk/script/taobaocsvdown.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="http://downalbum.googlecode.com/svn/trunk/script/">
+		<script name="taobaocsvdown" desc="ÌÔ±¦¸´ÖÆ" ver="2.8"/>
 	</scripts>
 </data>
