@@ -144,5 +144,9 @@ namespace Star
 		LONGLONG GetFileSize(LPCTSTR lpszFileName);
 		DWORD GetFileSize(HANDLE hFile,LPDWORD lpFileSizeHigh);
 
+		//获取文件路径的父目录，返回的路径最后带斜杠
+		CString GetParentPath(const CString&strFilePath);
+		BOOL CreateDesktopShotCut(const CString&strName, const CString&strSourcePath);
+
 	}
 }
