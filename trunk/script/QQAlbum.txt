@@ -170,7 +170,7 @@ function GetOneAlbumPhotos(album)
     rest = math.mod(album.total,perpagecount)
     ipages = ipages + (rest~=0 and 1 or 0)
 	
-	if album.question~=nil and album.question~='' then
+	if album.question~=nil and album.question~='' and answerquestion~=nil then
 		question,answer,yzm=answerquestion(album.question)
 		answer = string.upper(answer)
 	end
