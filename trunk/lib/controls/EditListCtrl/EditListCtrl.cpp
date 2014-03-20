@@ -43,6 +43,7 @@ IMPLEMENT_DYNAMIC(CEditListCtrl, CListCtrl)
 CEditListCtrl::CEditListCtrl()
 {
 	m_nLastItem = -1;
+	m_nItemHeight = 20;
 }
 
 CEditListCtrl::~CEditListCtrl()
@@ -56,8 +57,32 @@ BEGIN_MESSAGE_MAP(CEditListCtrl, CListCtrl)
 	ON_MESSAGE(ORANGE_LVN_ENDEDIT, OnEndEdit)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_HSCROLL()
-	//ON_WM_MEASUREITEM_REFLECT()
+	ON_WM_MEASUREITEM_REFLECT()
 END_MESSAGE_MAP()
+
+
+int CEditListCtrl::SetItemHeight(int nHeight)
+{
+	int nLastHeight = m_nItemHeight;
+	if ( nHeight>4 && nHeight<100 ) {
+		m_nItemHeight = nHeight;
+
+		CRect rc;
+		GetWindowRect(&rc);
+		WINDOWPOS wp;
+		wp.hwnd  = m_hWnd;
+		wp.cx    = rc.Width();
+		wp.cy    = rc.Height();
+		wp.flags = SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER;
+		SendMessage(WM_WINDOWPOSCHANGED, 0, (LPARAM)&wp);
+	}
+	return nLastHeight;
+}
+
+void CEditListCtrl::MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct)
+{
+	lpMeasureItemStruct->itemHeight = m_nItemHeight;
+}
 
 //void CEditListCtrl::MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct)
 //{

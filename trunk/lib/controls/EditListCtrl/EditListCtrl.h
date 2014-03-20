@@ -39,7 +39,6 @@ public:
 	virtual ~CEditListCtrl();
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-	//virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 
     void DelCheckedItem();
 	void InsertOneItem();
@@ -48,6 +47,11 @@ public:
 
 
 	void SetEditable(int nItem, int nSubItem);
+
+	int SetItemHeight(int nHeight);
+private:
+	int		m_nItemHeight;
+
 
 protected:
 	int m_nLastItem;
@@ -60,5 +64,7 @@ protected:
 	afx_msg LRESULT OnEndEdit(WPARAM wParam,LPARAM lParam);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
+
 	DECLARE_MESSAGE_MAP()
 };
