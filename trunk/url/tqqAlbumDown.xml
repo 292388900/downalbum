@@ -8,7 +8,7 @@
 	<help>http://www.xcxzq.com/help/tqqAlbumDown.html</help>
         <bbs>http://www.xcxzq.com</bbs>
         <news>v2.1修复了获取相册无数多个的bug，强烈建议用户升级到最新版本。</news>
-<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<ad>https://svn.code.sf.net/p/xcxzq/code/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 
 <!--
@@ -25,7 +25,7 @@ s=2,p=61291,
 	<scripts path=".\">
 		<script name="tqqAlbumDown" ver="1.1" file="tqqAlbumDown.txt">
 			<url>http://www.xcxzq.com/script/tqqAlbumDown.txt</url>
-			<url2>http://downalbum.googlecode.com/svn/trunk/script/tqqAlbumDown.txt</url2>
+			<url2>https://svn.code.sf.net/p/xcxzq/code/script/tqqAlbumDown.txt</url2>
 		</script>
 	</scripts>
 </data>

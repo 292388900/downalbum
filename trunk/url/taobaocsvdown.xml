@@ -8,7 +8,7 @@
 	<help>http://www.xcxzq.com/help/taobaocsvdown.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
         <news>v2014.1支持多个appkey和appsecret录入，更稳定更强大!建议升级到最新版</news>
-<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<ad>https://svn.code.sf.net/p/xcxzq/code/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 
 <!--
@@ -18,7 +18,7 @@ http://www.sharebank.net.cn/soft/SoftBuy_45667.htm
 -->
 
     </soft>
-	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="http://downalbum.googlecode.com/svn/trunk/script/">
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
 		<script name="taobaocsvdown" desc="淘宝复制" ver="2.8"/>
 	</scripts>
 </data>
