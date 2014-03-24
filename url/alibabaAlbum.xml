@@ -11,7 +11,7 @@
         <help>http://www.xcxzq.com/help/alibabaalbum.html</help>
         <bbs>http://www.xcxzq.com</bbs>
       	<news>v3.0版本修全新内核，强烈建议更新软件</news>
-<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+<ad>https://svn.code.sf.net/p/xcxzq/code/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 <!--
 <votes>
@@ -23,7 +23,7 @@ s=2,p=61348,
 	<scripts path=".\">
 		<script name="alibabaAlbum" ver="2.8" file="alibabaAlbum.txt">
 			<url>http://www.xcxzq.com/script/alibabaAlbum.txt</url>
-			<url2>http://downalbum.googlecode.com/svn/trunk/script/alibabaAlbum.txt</url2>
+			<url2>https://svn.code.sf.net/p/xcxzq/code/script/alibabaAlbum.txt</url2>
 		</script>
 	</scripts>
 </data>

@@ -9,7 +9,7 @@
 	<bbs>http://www.xcxzq.com</bbs>
       	<news>v2014版本全新升级内核，建议下载最新版!</news>
 	
-	<ad>http://downalbum.googlecode.com/svn/trunk/url/ad.xml</ad>
+	<ad>https://svn.code.sf.net/p/xcxzq/code/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 <!--
 <votes>
@@ -20,7 +20,7 @@ s=2,p=57829,
 -->
 	</soft>
 
-	<scripts path=".\script\" root="http://www.xcxzq.com/script/" root2="http://downalbum.googlecode.com/svn/trunk/script/">
+	<scripts path=".\script\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
 		<script name="QQAlbum" desc="1、QQ相册批量下载" ver="1.4"/>
 		<script name="RrAlbum" desc="2、人人相册批量下载" ver="2.0"/>
 		<script name="mop" desc="3、猫扑大杂烩图片下载" ver="1.1"/>
