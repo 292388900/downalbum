@@ -1,13 +1,13 @@
 <data>
     <soft>
         <name>QQAlbum</name>
-        <version>2014.4</version>
+        <version>2014.5</version>
         <downurl>http://www.xcxzq.com/soft/QQAlbum.rar</downurl>
         <downurl2>http://www.xcxzq.com/soft/QQAlbum2.rar</downurl2>
-        <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37093.htm</regurl>
+        <regurl>http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=37093</regurl>
 	<help>http://www.xcxzq.com/help/qqalbum.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
-        <news>v2014.4版本支持输入密码下载QQ空间相册，建议升级到最新版!</news>
+        <news>v2014.5版本支持输入密码下载QQ空间相册，建议升级到最新版!</news>
 <ad>https://svn.code.sf.net/p/xcxzq/code/url/ad.xml</ad>
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 <!--
@@ -21,6 +21,6 @@ s=2,p=61291,
 -->
     </soft>
 	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
-		<script name="QQAlbum" desc="1、QQ相册批量下载" ver="1.4"/>
+		<script name="QQAlbum" desc="1、QQ相册批量下载" ver="1.5"/>
 	</scripts>
 </data>

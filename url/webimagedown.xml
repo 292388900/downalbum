@@ -4,7 +4,7 @@
         <version>2014.2</version>
         <downurl>http://www.xcxzq.com/soft/webimagedown.rar</downurl>
         <downurl2>http://www.xcxzq.com/soft/webimagedown2.rar</downurl2>
-        <regurl>http://www.sharebank.net.cn/soft/SoftBuy_37093.htm</regurl>
+        <regurl>http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=37093</regurl>
         <help>http://www.xcxzq.com/help/webimagedown.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
       	<news>v2014版本全新升级内核，建议下载最新版!</news>
@@ -21,7 +21,7 @@ s=2,p=57829,
 	</soft>
 
 	<scripts path=".\script\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
-		<script name="QQAlbum" desc="1、QQ相册批量下载" ver="1.4"/>
+		<script name="QQAlbum" desc="1、QQ相册批量下载" ver="1.5"/>
 		<script name="RrAlbum" desc="2、人人相册批量下载" ver="2.0"/>
 		<script name="mop" desc="3、猫扑大杂烩图片下载" ver="1.1"/>
 	</scripts>
