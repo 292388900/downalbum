@@ -1,10 +1,10 @@
 <data>
     <soft>
         <name>imageTao</name>
-        <version>2014.7</version>
+        <version>2014.8</version>
         <downurl>http://www.xcxzq.com/soft/imageTao.rar</downurl>
         <downurl2>http://www.xcxzq.com/soft/imageTao2.rar</downurl2>
-        <regurl>http://www.sharebank.net.cn/soft/SoftBuy_45667.htm</regurl>
+        <regurl>http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=45667</regurl>
 	<help>http://www.xcxzq.com/help/imageTao.html</help>
 	<bbs>http://www.xcxzq.com</bbs>
         <news>工具栏列出了常用快捷功能：“重命名”“缩略图”“图片水印”“文字水印”</news>
@@ -12,7 +12,7 @@
 <mailme>http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=xcxzqcom@163.com</mailme>
 
 <!--
-http://www.sharebank.net.cn/soft/SoftBuy_45667.htm
+http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=45667.htm
 <votes>
 </votes>
 -->
