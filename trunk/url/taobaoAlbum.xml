@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>taobaoAlbum</name>
-        <version>2.3</version>
-	<scriptver>2.9</scriptver>
+        <version>2.4</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8eTdSHiwvT</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8tw8jtEtrA</downurl2>
 	<scripturl>http://www.xcxzq.com/script/taobaoAlbum.txt</scripturl>
@@ -20,10 +19,7 @@ s=2,p=63113,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="taobaoAlbum" ver="2.9" file="taobaoAlbum.txt">
-			<url>http://www.xcxzq.com/script/taobaoAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/taobaoAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="taobaoAlbum" desc="ÌÔ±¦Í¼Æ¬ÏÂÔØ" ver="2.9"/>
 	</scripts>
 </data>

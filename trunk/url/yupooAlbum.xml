@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>yupooAlbum</name>
-        <version>3.1</version>
+        <version>3.2</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8XnzFsj9Rb</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8XajgqnSnV</downurl2>
         <regurl>http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=39876</regurl>
@@ -17,10 +17,7 @@ s=2,p=61033,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="yupooAlbum" ver="1.3" file="yupooAlbum.txt">
-			<url>http://www.xcxzq.com/script/yupooAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/yupooAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="yupooAlbum" desc="yupooÓÖÅÄÏà²áÏÂÔØ" ver="1.3"/>
 	</scripts>
 </data>

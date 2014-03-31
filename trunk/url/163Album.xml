@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>163Album</name>
-        <version>3.1</version>
-	<scriptver>1.7</scriptver>
+        <version>3.2</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8RygBhjJyh</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8RPRDZZKw2</downurl2>
         <regurl>http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=38627</regurl>
@@ -20,10 +19,7 @@ s=2,p=58822,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="163Album" ver="1.7" file="163Album.txt">
-			<url>http://www.xcxzq.com/script/163Album.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/163Album.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="163Album" desc="网易相册批量下载" ver="1.7"/>
 	</scripts>
 </data>

@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>paipaiAlbum</name>
-        <version>2.1</version>
-	<scriptver>1.1</scriptver>
+        <version>2.2</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8E3WPrVhUb</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8E642CZhuf</downurl2>
 	<scripturl>http://www.xcxzq.com/script/paipaiAlbum.txt</scripturl>
@@ -20,10 +19,7 @@ s=2,p=63113,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="paipaiAlbum" ver="1.1" file="paipaiAlbum.txt">
-			<url>http://www.xcxzq.com/script/paipaiAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/paipaiAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="paipaiAlbum" desc="ÅÄÅÄÍ¼Æ¬ÏÂÔØ" ver="1.1"/>
 	</scripts>
 </data>

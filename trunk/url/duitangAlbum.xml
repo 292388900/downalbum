@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>duitangAlbum</name>
-        <version>1.2</version>
-	<scriptver>1.4</scriptver>
+        <version>1.3</version>
         <downurl>http://yunpan.cn/QkJ8kFPkSIsJS</downurl>
         <downurl2>http://yunpan.cn/QkJ8kvUm4FLk7</downurl2>
 	<scripturl>http://www.xcxzq.com/script/duitangAlbum.txt</scripturl>
@@ -21,10 +20,7 @@ s=2,p=57829,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="duitangAlbum" ver="1.4" file="duitangAlbum.txt">
-			<url>http://www.xcxzq.com/script/duitangAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/duitangAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="duitangAlbum" desc="¶ÑÌÇÍøÏà²áÍ¼Æ¬ÏÂÔØ" ver="1.4"/>
 	</scripts>
 </data>
