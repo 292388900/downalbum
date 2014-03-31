@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>RrAlbum</name>
-        <version>3.2</version>
-	<scriptver>2.0</scriptver>
+        <version>3.3</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ85TaJ6mG2k</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8eQLpNUqUh</downurl2>
 	<scripturl>http://www.xcxzq.com/script/RrAlbum.txt</scripturl>
@@ -22,10 +21,7 @@ s=2,p=61291,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="RrAlbum" ver="2.0" file="RrAlbum.txt">
-			<url>http://www.xcxzq.com/script/RrAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/RrAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="RrAlbum" desc="人人相册图片下载" ver="2.0"/>
 	</scripts>
 </data>

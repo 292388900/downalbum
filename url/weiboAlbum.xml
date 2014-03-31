@@ -1,7 +1,7 @@
 <data>
     <soft>
         <name>weiboAlbum</name>
-        <version>3.1</version>
+        <version>3.2</version>
         <downurl>http://www.xcxzq.com/soft/weiboAlbum.rar</downurl>
         <downurl2>http://www.xcxzq.com/soft/weiboAlbum2.rar</downurl2>
         <regurl>http://www.sharebank.com.cn/soft/soft_iframe.php?hide=name&soid=41878</regurl>
@@ -17,10 +17,7 @@ s=2,p=57830,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="weiboAlbum" ver="1.4" file="weiboAlbum.txt">
-			<url>http://www.xcxzq.com/script/weiboAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/weiboAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="weiboAlbum" desc="Î¢²©Ïà²áÍ¼Æ¬ÏÂÔØ" ver="1.4"/>
 	</scripts>
 </data>

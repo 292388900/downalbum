@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>alibabaAlbum</name>
-        <version>3.1</version>
-	<scriptver>2.8</scriptver>
+        <version>3.2</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8BVYYMVRjn</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ8B3WvJZSGg</downurl2>
 	<scripturl>http://www.xcxzq.com/script/alibabaAlbum.txt</scripturl>
@@ -20,10 +19,7 @@ s=2,p=61348,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="alibabaAlbum" ver="2.8" file="alibabaAlbum.txt">
-			<url>http://www.xcxzq.com/script/alibabaAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/alibabaAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="alibabaAlbum" desc="°¢Àï°Í°ÍÏà²áÍ¼Æ¬ÏÂÔØ" ver="2.8"/>
 	</scripts>
 </data>

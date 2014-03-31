@@ -1,8 +1,7 @@
 <data>
     <soft>
         <name>HiAlbum</name>
-        <version>3.2</version>
-	<scriptver>1.8</scriptver>
+        <version>3.3</version>
         <downurl>http://l13.yunpan.cn/lk/QkJ8vi6NzqbnX</downurl>
         <downurl2>http://l13.yunpan.cn/lk/QkJ82SQuEjT9h</downurl2>
 	<scripturl>http://www.xcxzq.com/script/HiAlbum.txt</scripturl>
@@ -21,10 +20,7 @@ s=2,p=57829,
 </votes>
 -->
     </soft>
-	<scripts path=".\">
-		<script name="HiAlbum" ver="1.7" file="HiAlbum.txt">
-			<url>http://www.xcxzq.com/script/HiAlbum.txt</url>
-			<url2>https://svn.code.sf.net/p/xcxzq/code/script/HiAlbum.txt</url2>
-		</script>
+	<scripts path=".\" root="http://www.xcxzq.com/script/" root2="https://svn.code.sf.net/p/xcxzq/code/script/">
+		<script name="HiAlbum" desc="百度相册图片下载" ver="1.8"/>
 	</scripts>
 </data>
